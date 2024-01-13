@@ -1,27 +1,24 @@
 ﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh Jia Xuan
+// Student Number : S10257856
+// Student Name : Amelia Goh 
+// Partner Name : Lee Wei Ying
 //==========================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace S10258645_PRG2Assignment
+using System;
+using Code;
+
+namespace Code
 {
-    class Cone:IceCream
+    class Cone : IceCream
     {
         private bool dipped;
         public bool Dipped
         {
-            get;set;
+            get; set;
         }
-        public Cone():base() { }
-        public Cone(string o, int s, List<Flavour> f, List<Topping> t, bool d) : base(o,s,f,t)
+        public Cone() : base() { }
+        public Cone(string o, int s, List<Flavour> f, List<Topping> t, bool d) : base(o, s, f, t)
         {
             Dipped = d;
         }
@@ -46,7 +43,7 @@ namespace S10258645_PRG2Assignment
             {
                 price += 5.50;
             }
-            else if(Option.Contains("chocolate-dipped cone"))
+            else if (Option.Contains("chocolate-dipped cone"))
             {
                 price += 2;
             }
@@ -64,6 +61,6 @@ namespace S10258645_PRG2Assignment
         {
             return base.ToString() + "\tDipped: " + Dipped;
         }
-        
+
     }
 }
