@@ -1,4 +1,11 @@
-﻿using System;
+﻿//==========================================================
+// Student Number : S10257856
+// Student Name : Amelia Goh 
+// Partner Name : Lee Wei Ying
+//==========================================================
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -31,21 +38,18 @@ namespace Code
             get { return timeFulfilled; }
             set { timeFulfilled = value; }
         }
-        public List<IceCream> IceCreamList { get; set; } = new List<IceCream>();//Do this instead of the normal get set bc if do normal get set means you assuming there is Order items to be added into this list. By doing THIS method which is correct, just means that youre simply creating empty list first then later add Order items to it
+        public List<IceCream> IceCreamList { get; set; } 
 
         //Constructors 
         public Order()
         {
-            Id = 0;
-            TimeReceived = DateTime.Now;
-            TimeFulfilled = DateTime.Now;
-            IceCreamList = new List<IceCream>();
         }
 
         public Order(int userOrderId, DateTime userTimeReceived) //****Is the datetime for time recieved or time fulfilled???
         {
             Id = userOrderId;
             TimeReceived = userTimeReceived;
+            IceCreamList = new List<IceCream>();
         }
 
         //Methods
