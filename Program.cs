@@ -99,15 +99,18 @@ namespace Code
 
 
 
-        /*  !!!!***ERRORS WHEN RUNNING THIS STEP 3: Firstly, something wrong with the DateTime.... TRY USER INPUT AND YOULL SEE WHAT I MEAN */
+
+        // NOW JUST NEED TRY DO DATA VALIDATION eg when user enters string for id instead of numbeers or when datetime dont make sense since it is 41/03/03 meaning 41 march 2003..... must make sure is legit like 01/03/03 aka 1 march 2003
 
 
 
-        void RegisterCustomer(List<Customer> customerList)  //??? Is the parameter a list...?? Do I even need a list.... same for above's method ^^^..
+
+
+        void RegisterCustomer(List<Customer> customerList)  //Parameter list since need this list later due to the fact that you need add this new registered customer to the customer list.
         {
-            Console.Write("Enter customer's Name: ");
+            Console.Write("Enter customer's name: ");
             string newName = Console.ReadLine();
-            Console.Write("Enter customer's Id: ");
+            Console.Write("Enter customer's id: ");
             int newId = Convert.ToInt32(Console.ReadLine());
             Console.Write("Enter customer's date of birth: ");
             DateTime newDob = Convert.ToDateTime(Console.ReadLine());
@@ -115,7 +118,9 @@ namespace Code
             Customer newCustomer = new Customer(newName, newId, newDob);
             customerList.Add(newCustomer);
 
-            //Since PointCard constructor parameter are int, int which is for Points and PunchCard
+            //Since PointCard constructor parameters are int, int which is for Points and PunchCard
+            newCustomer.Rewards = new PointCard(0, 0); //Initialize first, before assigning newCustomer.Rewards = PointCard object aka newCustomerPC.
+            //^^ Btw, should always initialize in case that it is ever null value. Bc if is legit null value, then you will have error when trying to run the next code bc you wont be able to access the newCustomer.Rewards.Points due to the fact that it is NULL! it is a NullReferenceException
             PointCard newCustomerPC = new PointCard(newCustomer.Rewards.Points, newCustomer.Rewards.PunchCard); //Need .Rewards because Rewards in customer class and is also of type PointCard. (is like the example giving in slides with John.Addr.Shipping)
 
             newCustomer.Rewards = newCustomerPC; //Assigning of PointCard to customer is done in this code. (Rewards is of class type PointCard, but it is stored in the customer class) So thats why can equate pointcard object to another pointcard obj
@@ -129,6 +134,7 @@ namespace Code
                     sw.WriteLine($"{newName},{newId},{newDob.ToString("dd/MM/yy")}");
                 }
                 Console.WriteLine("Customer registered successfully.");
+                Console.WriteLine("");
 
             }
 
@@ -136,6 +142,7 @@ namespace Code
             {
                 Console.WriteLine("Customer could not be registered.");
                 Console.WriteLine($"Reason: {ex.Message}");
+                Console.WriteLine("");
             }
 
         }
