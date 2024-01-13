@@ -1,23 +1,20 @@
 ﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh Jia Xuan
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
 //==========================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Code;
 
-namespace S10258645_PRG2Assignment
+namespace Code
 {
     abstract class IceCream
     {
         // HAVENT CHECK THE LENGTH OF THE 2 LISTS !! ASSOCIATION !!
         private string option;
         private int scoops;
-        private List<Flavour> flavours ;
+        private List<Flavour> flavours;
         private List<Topping> toppings;
 
         public string Option { get; set; }
@@ -35,7 +32,7 @@ namespace S10258645_PRG2Assignment
         {
             Option = o;
             Scoops = s;
-            List<Flavour> Flavours = new List<Flavour>(); 
+            List<Flavour> Flavours = new List<Flavour>();
             List<Topping> toppings = new List<Topping>();
         }
         public abstract double CalculatePrice();
@@ -45,13 +42,13 @@ namespace S10258645_PRG2Assignment
             string toppings = "";
             foreach (Flavour f in Flavours)
             {
-                flavours += f+ "\n" ;
+                flavours += f + "\n";
             }
             foreach (Topping t in Toppings)
             {
                 toppings += t + "\n";
             }
-            return "Option: " + Option + "\tScoops: " + Scoops + "\nFlavours: " + flavours +"\nToppings: " + toppings; 
+            return "Option: " + Option + "\tScoops: " + Scoops + "\nFlavours: " + flavours + "\nToppings: " + toppings;
         }
 
 

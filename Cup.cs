@@ -1,29 +1,26 @@
 ﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh Jia Xuan
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
 //==========================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace S10258645_PRG2Assignment
+using System;
+using Code;
+
+namespace Code
 {
-    class Cup:IceCream
+    class Cup : IceCream
     {
-        public Cup():base() { }
-        public Cup(string o , int s, List<Flavour> f, List<Topping> t) : base(o,s,f,t)
+        public Cup() : base() { }
+        public Cup(string o, int s, List<Flavour> f, List<Topping> t) : base(o, s, f, t)
         {
 
         }
         public override double CalculatePrice()
         {
             // checking if got toppings in option
-            string[]toppings = {"sprinkles","mochi","sago","oreos"};
+            string[] toppings = { "sprinkles", "mochi", "sago", "oreos" };
             bool contains = false;
             foreach (string t in toppings)
             {
@@ -32,7 +29,7 @@ namespace S10258645_PRG2Assignment
                     contains = true;
                 }
             }
-            double price  = 0;
+            double price = 0;
             if (Option == "single")
             {
                 price += 4.00;

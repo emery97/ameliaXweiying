@@ -115,7 +115,7 @@ namespace Code
             Customer newCustomer = new Customer(newName, newId, newDob);
             customerList.Add(newCustomer);
 
-            //Since PointCard constructor parameters are int, int which is for Points and PunchCard
+            //Since PointCard constructor parameter are int, int which is for Points and PunchCard
             PointCard newCustomerPC = new PointCard(newCustomer.Rewards.Points, newCustomer.Rewards.PunchCard); //Need .Rewards because Rewards in customer class and is also of type PointCard. (is like the example giving in slides with John.Addr.Shipping)
 
             newCustomer.Rewards = newCustomerPC; //Assigning of PointCard to customer is done in this code. (Rewards is of class type PointCard, but it is stored in the customer class) So thats why can equate pointcard object to another pointcard obj
