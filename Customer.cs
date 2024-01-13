@@ -1,4 +1,11 @@
-﻿using System;
+﻿//==========================================================
+// Student Number : S10257856
+// Student Name : Amelia Goh 
+// Partner Name : Lee Wei Ying
+//==========================================================
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,7 +44,7 @@ namespace Code
             get { return currentOrder; }
             set { currentOrder = value; }
         }
-        public List<Order> OrderHistory { get; set; } //Do this instead of the normal get set bc if do normal get set means you assuming there is Order items to be added into this list. By doing THIS method which is correct, just means that youre simply creating empty list first then later add Order items to it
+        public List<Order> OrderHistory { get; set; }
         public PointCard Rewards
         {
             get { return rewards; }

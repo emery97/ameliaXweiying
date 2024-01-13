@@ -1,4 +1,11 @@
-﻿using System;
+﻿//==========================================================
+// Student Number : S10257856
+// Student Name : Amelia Goh 
+// Partner Name : Lee Wei Ying
+//==========================================================
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;

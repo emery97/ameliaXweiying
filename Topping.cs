@@ -1,16 +1,13 @@
 ﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh Jia Xuan
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
 //==========================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Code;
 
-namespace S10258645_PRG2Assignment
+namespace Code
 {
     class Topping
     {
