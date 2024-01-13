@@ -11,103 +11,120 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace S10258645_PRG2Assignment
+namespace Code
 {
     class Program
     {
-
         //Basic feature 1's method
         static void InitCustomerList(List<Customer> customerList)
         {
             using (StreamReader sr = new StreamReader("customers.csv"))
             {
-                string? header = sr.ReadLine(); //Ignore headers
+                string header = sr.ReadLine(); //Ignore headers
 
                 while (!sr.EndOfStream) //Ensures that all data read 
                 {
-                    string? s = sr.ReadLine();
+                    string s = sr.ReadLine();
 
                     if (s != null) // Aka what will b carried out if there is still data
                     {
-                        string[] customerData = s.Split(","); //When spilt, become an array + rmb tht if want print data out, must use foreach loop since this is an array
+                        string[] customerData = s.Split(','); //When spilt, become an array + rmb tht if want print data out, must use foreach loop since this is an array
 
                         string Name = customerData[0];
                         int Memberid = Convert.ToInt32(customerData[1]);
                         DateTime Dob = Convert.ToDateTime(customerData[2]);
 
                         Customer customerDetails = new Customer(Name, Memberid, Dob);  // This line is making object 
-                        customerList.Add(customerDetails);
-
+                        customerList.Add(customerDetails); // to add the customers in the customerList
                         Console.WriteLine(customerDetails);
                     }
                 }
             }
         }
-        //Basic feature 2's method
-        void ListOrder(List<Customer> customerList)
+        // option 2 method - display customer info in both queues
+        static void ListOrder(List<Customer> customerList, Queue<Customer> goldQueue, Queue<Customer>normalQueue)
         {
+            // making sure got people in queue
+            if (goldQueue.Count() > 0)
+            {
+                Console.WriteLine("Customers in gold queue: ");
+                foreach(Customer c in goldQueue)
+                {
+                    foreach (Order o in c.OrderHistory)
+                    {
+                        Console.Write(o+"\t");
+                    }
+                }
+            }
+            // if no one in queue
+            else
+            {
+                Console.WriteLine("There is no one in the gold queue.");
+            }
+            if (normalQueue.Count() > 0)
+            {
+                Console.WriteLine("Customers in normal queue: ");
+                foreach (Customer c in normalQueue)
+                {
+                    foreach (Order o in c.OrderHistory)
+                    {
+                        Console.Write(o + "\t");
+                    }
+                }
+            }
+            // if no one in queue
+            else
+            {
+                Console.WriteLine("There is no one in the regular queue");
+            }
+        }
+        // To list current customers
+        static void ListCustomer()
+        {
+            Console.WriteLine("Our Current Customers: ");
+            using (StreamReader sr = new StreamReader("customers.csv"))
+            {
+                string s = sr.ReadLine(); //header
+                string[] header = s.Split(',');
+                Console.WriteLine($"{header[0],-10} {header[1],-10} {header[2]}");
+                while ( (s = sr.ReadLine()) != null)
+                {
+                    string[] data = s.Split(',');
+                    Console.WriteLine($"{data[0],-10} {data[1],-10} {data[2]}");
+                }
+            }
+        }
+        // option 5 method - display order details
+        // DOUBLE CHECK THE OUTPUT, NEED ICE CREAM DETAILS 
+        static void OrderDetails(List<Customer> customerList)
+        {
+            Console.Write("Please choose a customer: ");
+            string name = Console.ReadLine();
+            Customer chosenCustomer = new Customer(); 
             foreach(Customer c in customerList)
             {
-                if (c.Tier)
-            }
-        }
-
-        //Basic feature 3's method
-        static void RegisterCustomer(List<Customer> customerList)  //??? Is the parameter a list...?? Do I even need a list.... same for above's method ^^^..
-        {
-            Console.Write("Enter customer's details in the format of 'name, id, date of birth': ");
-            string newCustomerInfo = Console.ReadLine();
-            string[] customerInfoSplit = newCustomerInfo.Split(","); //Split -> so become array ! 
-
-            string newName = customerInfoSplit[0];
-            int newId = Convert.ToInt32(customerInfoSplit[1]);  //OG data type is string thus need convert
-            DateTime newDob = Convert.ToDateTime(customerInfoSplit[2]);
-
-            Customer newCustomer = new Customer(newName, newId, newDob);
-            customerList.Add(newCustomer);
-
-            //Since PointCard constructor parameters are int, int which is for Points and PunchCard
-            PointCard newCustomerPC = new PointCard(newCustomer.Rewards.Points, newCustomer.Rewards.PunchCard); //Need .Rewards because Rewards in customer class and is also of type PointCard. (is like the example giving in slides with John.Addr.Shipping)
-
-            newCustomer.Rewards = newCustomerPC; //Assigning of PointCard to customer is done in this code. (Rewards is of class type PointCard, but it is stored in the customer class) So thats why can equate pointcard object to another pointcard obj
-
-            //Appending..
-
-            try  //If can append successfully
-            {
-                using (StreamWriter sw = new StreamWriter("customers.csv", true))
+                if (c.Name == name)
                 {
-                    sw.WriteLine($"{newName},{newId},{newDob.ToString("dd/MM/yy")}");
+                    chosenCustomer = c;
                 }
-                Console.WriteLine("Customer registered successfully.");
-
             }
-
-            catch (Exception ex)  //In case got any other error (Exception ex catch any and all types of exception so this is if eg User anyhow enter somethiing, then cannot be registered alrd..
+            Console.WriteLine("Current order: ");
+            Console.WriteLine(chosenCustomer.CurrentOrder.ToString());
+            Console.WriteLine("\nPrevious order(s): ");
+            List<Order> orderHist = chosenCustomer.OrderHistory;
+            foreach(Order o in orderHist)
             {
-                Console.WriteLine("Customer could not be registered.");
-                Console.WriteLine($"Reason: {ex.Message}");
+                Console.WriteLine(o.ToString());
             }
-
         }
-
-        /*Basic feature 4's method
-        static void CreateOrder(???)
-        {
-          CONTINUEFROM HERE... IDK WHAGTS PARAMETER TO PUT ASLO ETC ETC
-        } AND REMEMBER TO COMMENT OUT ALL CODE WITH ICECREAM IF U WANNA RUN UR PRGM! OR ELSE WAIT FOR WEIYING SEND U HERCODE!
-        */
-
-
-
         static void Main(string[] args)
         {
             Queue<Customer> goldQueue = new Queue<Customer>();
             Queue<Customer> normalQueue = new Queue<Customer>();
             List<Customer> customerList = new List<Customer>();
-
             while (true)
             {
+                Console.WriteLine(new String('-', 10) + "MENU" + new string('-',10));
                 Console.WriteLine("[1] List all customers");
                 Console.WriteLine("[2] List all current orders");
                 Console.WriteLine("[3] Register a new customer");
@@ -115,40 +132,28 @@ namespace S10258645_PRG2Assignment
                 Console.WriteLine("[5] Display order details of a customer");
                 Console.WriteLine("[6] Modify order details");
                 Console.WriteLine("[0] Exit");
+                Console.WriteLine(new string('-', 23));
 
                 Console.Write("Enter your option: ");
                 string userOption = Console.ReadLine();
 
-
                 if (userOption == "0")
                 {
+                    Console.WriteLine("Please come again next time!!");
                     break;
                 }
-
-                //Basic feature 1 
-                if (userOption == "1")
+                else if (userOption == "1")
                 {
-                    //Calling out the method
                     InitCustomerList(customerList);
                 }
-
-
-                if (userOption == "2")
+                else if (userOption == "2")
                 {
-
+                    ListOrder(customerList, goldQueue, normalQueue);
                 }
-
-                //Basic feature 3
-                if (userOption == "3")
+                else if (userOption == "5")
                 {
-                    //Call out 
-                    RegisterCustomer(customerList);
-                }
-
-                //Basic feature 4
-                if (userOption == "4")
-                {
-                    CreateOrder(??);
+                    ListCustomer();
+                    OrderDetails(customerList);
                 }
 
             }
