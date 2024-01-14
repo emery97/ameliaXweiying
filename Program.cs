@@ -1,8 +1,10 @@
-//==========================================================
+﻿//==========================================================
 // Student Number : S10258645
 // Student Name : Lee Wei Ying
 // Partner Name : Amelia Goh Jia Xuan
 //==========================================================
+
+
 
 using System;
 using System.Collections.Generic;
@@ -22,7 +24,7 @@ namespace Code
             {
                 string header = sr.ReadLine(); //Ignore headers
 
-                while (!sr.EndOfStream) //Ensures that all data read 
+                while (!sr.EndOfStream) //Ensures all data read
                 {
                     string s = sr.ReadLine();
 
@@ -36,7 +38,6 @@ namespace Code
 
                         Customer customerDetails = new Customer(Name, Memberid, Dob);  // This line is making object 
                         customerList.Add(customerDetails); // to add the customers in the customerList
-                        Console.WriteLine(customerDetails);
                     }
                 }
             }
@@ -95,32 +96,23 @@ namespace Code
             }
         }
 
-        //Basic feature 3's method 
+        //Basic feature 3's method
+        //!!!!***ERRORS WHEN RUNNING THIS STEP 3: Firstly, something wrong with the DateTime.... TRY USER INPUT AND YOULL SEE WHAT I MEAN */
 
-
-
-
-        // NOW JUST NEED TRY DO DATA VALIDATION eg when user enters string for id instead of numbeers or when datetime dont make sense since it is 41/03/03 meaning 41 march 2003..... must make sure is legit like 01/03/03 aka 1 march 2003
-
-
-
-
-
-        void RegisterCustomer(List<Customer> customerList)  //Parameter list since need this list later due to the fact that you need add this new registered customer to the customer list.
+        void RegisterCustomer(List<Customer> customerList)  //??? Is the parameter a list...?? Do I even need a list.... same for above's method ^^^..
         {
-            Console.Write("Enter customer's name: ");
-            string newName = Console.ReadLine();
-            Console.Write("Enter customer's id: ");
-            int newId = Convert.ToInt32(Console.ReadLine());
-            Console.Write("Enter customer's date of birth: ");
-            DateTime newDob = Convert.ToDateTime(Console.ReadLine());
+            Console.Write("Enter customer's details in the format of 'name, id, date of birth': ");
+            string newCustomerInfo = Console.ReadLine();
+            string[] customerInfoSplit = newCustomerInfo.Split(','); //Split -> so become array ! 
+
+            string newName = customerInfoSplit[0];
+            int newId = Convert.ToInt32(customerInfoSplit[1]);  //OG data type is string thus need convert
+            DateTime newDob = Convert.ToDateTime(customerInfoSplit[2]);
 
             Customer newCustomer = new Customer(newName, newId, newDob);
             customerList.Add(newCustomer);
 
             //Since PointCard constructor parameters are int, int which is for Points and PunchCard
-            newCustomer.Rewards = new PointCard(0, 0); //Initialize first, before assigning newCustomer.Rewards = PointCard object aka newCustomerPC.
-            //^^ Btw, should always initialize in case that it is ever null value. Bc if is legit null value, then you will have error when trying to run the next code bc you wont be able to access the newCustomer.Rewards.Points due to the fact that it is NULL! it is a NullReferenceException
             PointCard newCustomerPC = new PointCard(newCustomer.Rewards.Points, newCustomer.Rewards.PunchCard); //Need .Rewards because Rewards in customer class and is also of type PointCard. (is like the example giving in slides with John.Addr.Shipping)
 
             newCustomer.Rewards = newCustomerPC; //Assigning of PointCard to customer is done in this code. (Rewards is of class type PointCard, but it is stored in the customer class) So thats why can equate pointcard object to another pointcard obj
@@ -134,7 +126,6 @@ namespace Code
                     sw.WriteLine($"{newName},{newId},{newDob.ToString("dd/MM/yy")}");
                 }
                 Console.WriteLine("Customer registered successfully.");
-                Console.WriteLine("");
 
             }
 
@@ -142,7 +133,6 @@ namespace Code
             {
                 Console.WriteLine("Customer could not be registered.");
                 Console.WriteLine($"Reason: {ex.Message}");
-                Console.WriteLine("");
             }
 
         }
@@ -164,7 +154,7 @@ namespace Code
             int selectedCustomerID = Convert.ToInt32(Console.ReadLine());
 
             Console.Write("Enter your ice cream option: ");
-            string userOption = Console.ReadLine();
+            string userOption = Console.ReadLine().ToLower();
             Console.Write("Enter your ice cream scoops amount in numbers '1', '2' or '3': ");
             int userScoops = Convert.ToInt32(Console.ReadLine());
 
@@ -172,7 +162,7 @@ namespace Code
             for (int i = 1; i <= userScoops; i++)
             {
                 Console.Write($"Enter the flavor for scoop {i}: ");
-                string userType = Console.ReadLine(); //Type as in the TYPE OF FLAVOUR
+                string userType = Console.ReadLine().ToLower(); //Type as in the TYPE OF FLAVOUR
 
                 // Determine if the flavor is premium 
                 bool userPremium = false; //Aka non premium flavours
@@ -190,7 +180,7 @@ namespace Code
             while (true)
             {
                 Console.Write("Enter your chosen toppings, if desired. Otherwise, enter 'NO' and once done, enter 'DONE': ");
-                string userToppingChoice = Console.ReadLine();
+                string userToppingChoice = Console.ReadLine().ToUpper();
 
                 if (userToppingChoice == "NO" || userToppingChoice == "DONE")
                 {
@@ -225,7 +215,7 @@ namespace Code
             else if (userOption == "Waffle" || userOption == "waffle")
             {
                 Console.Write("Enter waffle flavour [Original/Red velvet/Charcoal/Pandan]: ");
-                string userWaffle = Console.ReadLine();
+                string userWaffle = Console.ReadLine().ToLower();
                 userIceCream = new Waffle(userOption, userScoops, userFlavourList, userToppingList, userWaffle);
             }
 
@@ -253,35 +243,102 @@ namespace Code
 
 
         // option 5 method - display order details
-        // DOUBLE CHECK THE OUTPUT, NEED ICE CREAM DETAILS 
         static void OrderDetails(List<Customer> customerList)
         {
-            Console.Write("Please choose a customer: ");
-            string name = Console.ReadLine();
+            string nameInCSV = "";
             Customer chosenCustomer = new Customer(); 
-            foreach(Customer c in customerList)
+            
+            // checking if correct ID is entered
+            while (true)
             {
-                if (c.Name == name)
+                Console.Write("Enter a customer ID: ");
+                int ID = Convert.ToInt32(Console.ReadLine());
+                bool brk = false;
+                foreach (Customer c in customerList)
                 {
-                    chosenCustomer = c;
+                    if (c.Memberid == ID)
+                    {
+                        nameInCSV += c.Name;
+                        chosenCustomer = c;
+                        brk = true;
+                    }
+                }
+                if (brk == true)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Enter the correct ID please.");
                 }
             }
-            Console.WriteLine("Current order: ");
-            Console.WriteLine(chosenCustomer.CurrentOrder.ToString());
-            // ice cream details from current order
-            Console.WriteLine("Ice cream details: ");
-            foreach (IceCream ic in chosenCustomer.CurrentOrder.IceCreamList)
+      
+            // checking if customer has an order 
+            if (chosenCustomer.CurrentOrder != null)
             {
-                Console.WriteLine(ic);
+                Console.WriteLine("Current order: ");
+                Console.WriteLine(chosenCustomer.CurrentOrder.ToString());
+                // ice cream details from current order
+                Console.WriteLine("Ice cream details: ");
+                foreach (IceCream ic in chosenCustomer.CurrentOrder.IceCreamList)
+                {
+                    Console.WriteLine(ic);
+                }
+            }
+            else
+            {
+                Console.WriteLine($"{nameInCSV} has no current order.");
             }
 
-            Console.WriteLine("\nPrevious order(s): ");
-            List<Order> orderHist = chosenCustomer.OrderHistory;
-            foreach(Order o in orderHist)
+            // checking if customer has an order
+            if (chosenCustomer.OrderHistory.Count() >0)
             {
-                Console.WriteLine(o.ToString());
-                Console.WriteLine("Ice cream details: ");
+                Console.WriteLine("\nPrevious order(s): ");
+                List<Order> orderHist = chosenCustomer.OrderHistory;
+                foreach (Order o in orderHist)
+                {
+                    Console.WriteLine(o.ToString());
+                    Console.WriteLine("Ice cream details: ");
+                }
             }
+            else
+            {
+                Console.WriteLine($"{nameInCSV} has no order history.");
+            }
+        }
+
+        // option 6 method - modify order details
+        static void ModifyOrderDetails(List<Customer> customerList)
+        {
+            Order currentOrder = new Order();
+            // checking if correct ID is entered
+            while (true)
+            {
+                Console.Write("Enter a customer ID: ");
+                int ID = Convert.ToInt32(Console.ReadLine());
+                bool brk = false;
+                foreach (Customer c in customerList)
+                {
+                    if (c.Memberid == ID)
+                    {
+                        currentOrder = c.CurrentOrder;
+                        brk = true;
+                    }
+                }
+                if (brk == true)
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Enter the correct ID please.");
+                }
+            }
+            foreach (IceCream ic in currentOrder.IceCreamList)
+            {
+                Console.WriteLine(ic.ToString());
+            }
+
         }
         static void Main(string[] args)
         {
@@ -290,6 +347,8 @@ namespace Code
             List<Customer> customerList = new List<Customer>();
             while (true)
             {
+                // initialise customer list
+                InitCustomerList(customerList);
                 Console.WriteLine(new String('-', 10) + "MENU" + new string('-',10));
                 Console.WriteLine("[1] List all customers");
                 Console.WriteLine("[2] List all current orders");
@@ -310,18 +369,32 @@ namespace Code
                 }
                 else if (userOption == "1")
                 {
-                    InitCustomerList(customerList);
+                    foreach (Customer c in customerList)
+                    {
+                        Console.WriteLine(c.ToString());
+                    }
                 }
                 else if (userOption == "2")
                 {
                     ListOrder(customerList, goldQueue, normalQueue);
+                }
+                else if (userOption == "3")
+                {
+                    //RegisterCustomer(customerList);
+                }
+                else if (userOption == "4")
+                {
+                    ListCustomer();
                 }
                 else if (userOption == "5")
                 {
                     ListCustomer();
                     OrderDetails(customerList);
                 }
-
+                else if (userOption == "6")
+                {
+                    ListCustomer();
+                }
             }
         }
     }
