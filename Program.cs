@@ -16,27 +16,34 @@ namespace Code
     class Program
     {
         //Basic feature 1's method
-        static void InitCustomerList(List<Customer> customerList)
+        void InitCustomerList(List<Customer> customerList)
         {
             using (StreamReader sr = new StreamReader("customers.csv"))
             {
-                string header = sr.ReadLine(); //Ignore headers
+                string? header = sr.ReadLine(); //Ignore headers
 
                 while (!sr.EndOfStream) //Ensures that all data read 
                 {
-                    string s = sr.ReadLine();
+                    string? s = sr.ReadLine();
 
                     if (s != null) // Aka what will b carried out if there is still data
                     {
-                        string[] customerData = s.Split(','); //When spilt, become an array + rmb tht if want print data out, must use foreach loop since this is an array
+                        string[] customerData = s.Split(","); //When spilt, become an array + rmb tht if want print data out, must use foreach loop since this is an array
 
                         string Name = customerData[0];
                         int Memberid = Convert.ToInt32(customerData[1]);
                         DateTime Dob = Convert.ToDateTime(customerData[2]);
+                        string Tier = customerData[3];
+                        int Points = Convert.ToInt32(customerData[4]);
+                        int PunchCard = Convert.ToInt32(customerData[5]);
 
-                        Customer customerDetails = new Customer(Name, Memberid, Dob);  // This line is making object 
-                        customerList.Add(customerDetails); // to add the customers in the customerList
-                        Console.WriteLine(customerDetails);
+                        Customer c = new Customer(Name, Memberid, Dob);  //Need make customer obj first so can access class Pointcard by accessing rewards first since rewards is of class Pointcard but can only be used by a customer object
+                        c.Rewards = new PointCard(Points, PunchCard);
+                        c.Rewards.Tier = Tier;
+
+                        customerList.Add(c);
+                            
+                        Console.WriteLine(c);  // **** Will also print order history etc etc because customerDetails is of class CUSTOMER. Then class CUSTOMER your override to string includes printing orderhistory, current order etc
                     }
                 }
             }
@@ -96,15 +103,8 @@ namespace Code
         }
 
         //Basic feature 3's method 
-
-
-
-
+   
         // NOW JUST NEED TRY DO DATA VALIDATION eg when user enters string for id instead of numbeers or when datetime dont make sense since it is 41/03/03 meaning 41 march 2003..... must make sure is legit like 01/03/03 aka 1 march 2003
-
-
-
-
 
         void RegisterCustomer(List<Customer> customerList)  //Parameter list since need this list later due to the fact that you need add this new registered customer to the customer list.
         {
@@ -114,6 +114,13 @@ namespace Code
             int newId = Convert.ToInt32(Console.ReadLine());
             Console.Write("Enter customer's date of birth: ");
             DateTime newDob = Convert.ToDateTime(Console.ReadLine());
+            Console.Write("Enter customer's tier: ");
+            string newTier = Console.ReadLine();
+            Console.Write("Enter customer's points: ");
+            int newPoints = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Enter customer's punch card: ");
+            int newPC = Convert.ToInt32(Console.ReadLine());
+
 
             Customer newCustomer = new Customer(newName, newId, newDob);
             customerList.Add(newCustomer);
@@ -131,7 +138,7 @@ namespace Code
             {
                 using (StreamWriter sw = new StreamWriter("customers.csv", true))
                 {
-                    sw.WriteLine($"{newName},{newId},{newDob.ToString("dd/MM/yy")}");
+                    sw.WriteLine($"{newName},{newId},{newDob.ToString("dd/MM/yy")},{newTier},{newPoints},{newPC}");
                 }
                 Console.WriteLine("Customer registered successfully.");
                 Console.WriteLine("");
@@ -147,7 +154,6 @@ namespace Code
 
         }
 
-
         //Basic feature 4's method
         void CreateOrder(List<Order> OrderHistory, List<Customer> customerList) //Because need both of these for method
         {
@@ -156,7 +162,7 @@ namespace Code
             Random random = new Random();  //Creating a object variable named 'random' of the random class type
             int orderID = random.Next(1000, 9999);
 
-
+ 
             //List customers from file
             ListCustomer();
 

@@ -96,7 +96,8 @@ namespace Code
                     stringOrderHistory += dataOHfromList.ToString();
                 }
             }
-            return $"Name: {Name} \nMemberID: {Memberid} \nDate Of Birth: {Dob.ToString("dd/MM/yy")} \nCurrent Order: {CurrentOrder} \nOrder History: {stringOrderHistory} \nRewards: {Rewards} \n"; //Dob.ToString("dd/MM/yy") put output into eg 12/01/22 instead of 12/01/22 12:00AM etc. And is MM, for month. Not mm bc mm = minutes
+            return $"Name: {Name} \nMemberID: {Memberid} \nDate Of Birth: {Dob.ToString("dd/MM/yy")} \nCurrent Order: {CurrentOrder} \nOrder History: {stringOrderHistory} \nPoints: {Rewards.Points} \nPunch Card: {Rewards.PunchCard} \nTier: {Rewards.Tier} \n"; //Dob.ToString("dd/MM/yy") put output into eg 12/01/22 instead of 12/01/22 12:00AM etc. And is MM, for month. Not mm bc mm = minutes
+                                                                                                                                                                                                                                                                    //^^ Rewards.Points  also because i want output Points, but it is in class pointcard. so i have to go through rewards first, which is in class customer but it is of the pointcard type. so i access rewards first before accessing the attributes in pointcard class itself.
         }
     }
 }
