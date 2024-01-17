@@ -1,20 +1,23 @@
 ﻿//==========================================================
-// Student Number : S10257856
-// Student Name : Amelia Goh
-// Partner Name : Lee Wei Ying
+// Student Number : S10258645
+// Student Name : Lee Wei Ying
+// Partner Name : Amelia Goh Jia Xuan
 //==========================================================
 
 using System;
-using Code;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Code
 {
-    class Waffle : IceCream
+    class Waffle:IceCream
     {
         private string waffleFlavour;
         public string WaffleFlavour { get; set; }
         public Waffle() : base() { }
-        public Waffle(string o, int s, List<Flavour> f, List<Topping> t, string w) : base(o, s, f, t)
+        public Waffle(string o,int s,List<Flavour> f, List<Topping> t,string w) : base(o, s, f, t)
         {
             WaffleFlavour = w;
         }
@@ -39,7 +42,7 @@ namespace Code
             {
                 price = 8.50;
             }
-            else if (contains == true)
+            else if(contains == true)
             {
                 price += 1;
             }
@@ -55,7 +58,7 @@ namespace Code
         }
         public override string ToString()
         {
-            return base.ToString() + "\tWaffle flavour: " + WaffleFlavour;
+            return base.ToString()+ "Waffle flavour: " + WaffleFlavour + "\n";
         }
     }
 }

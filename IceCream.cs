@@ -1,11 +1,14 @@
 ﻿//==========================================================
-// Student Number : S10257856
-// Student Name : Amelia Goh
-// Partner Name : Lee Wei Ying
+// Student Number : S10258645
+// Student Name : Lee Wei Ying
+// Partner Name : Amelia Goh Jia Xuan
 //==========================================================
 
 using System;
-using Code;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Code
 {
@@ -14,7 +17,7 @@ namespace Code
         // HAVENT CHECK THE LENGTH OF THE 2 LISTS !! ASSOCIATION !!
         private string option;
         private int scoops;
-        private List<Flavour> flavours;
+        private List<Flavour> flavours ;
         private List<Topping> toppings;
 
         public string Option { get; set; }
@@ -32,9 +35,10 @@ namespace Code
         {
             Option = o;
             Scoops = s;
-            List<Flavour> Flavours = new List<Flavour>();
-            List<Topping> toppings = new List<Topping>();
+            Flavours = f;
+            Toppings = t;
         }
+
         public abstract double CalculatePrice();
         public override string ToString()
         {
@@ -42,13 +46,13 @@ namespace Code
             string toppings = "";
             foreach (Flavour f in Flavours)
             {
-                flavours += f + "\n";
+                flavours += f+ "\n" ;
             }
             foreach (Topping t in Toppings)
             {
                 toppings += t + "\n";
             }
-            return "Option: " + Option + "\tScoops: " + Scoops + "\nFlavours: " + flavours + "\nToppings: " + toppings;
+            return "Option: " + Option + "\tScoops: " + Scoops + "\nFlavours: \n" + flavours +"Toppings: \n" + toppings; 
         }
 
 

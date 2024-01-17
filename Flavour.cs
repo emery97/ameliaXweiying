@@ -1,11 +1,15 @@
 ﻿//==========================================================
-// Student Number : S10257856
-// Student Name : Amelia Goh
-// Partner Name : Lee Wei Ying
+// Student Number : S10258645
+// Student Name : Lee Wei Ying
+// Partner Name : Amelia Goh Jia Xuan
 //==========================================================
 
 using System;
-using Code;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace Code
 {
@@ -28,7 +32,7 @@ namespace Code
         }
         public override string ToString()
         {
-            return "Type: " + Type + "\tPremium: " + Premium + "Quantity: " + Quantity;
+            return "Type: " + Type + "\tPremium: " + Premium + "\tQuantity: " + Quantity;
         }
     }
 }

@@ -86,7 +86,6 @@ namespace Code
 
             return totalPrice;
         }
-
         //Override string 
         public override string ToString()
         {
@@ -95,7 +94,7 @@ namespace Code
             {
                 stringIceCreamList += dataICFromList.ToString();
             }
-            return $"Id: {Id} \n Time Received: {TimeReceived} \n Time Fulfilled: {TimeFulfilled} + Ice Cream List: {stringIceCreamList}";
+            return $"Id: {Id} \nTime Received: {TimeReceived} \nTime Fulfilled: {TimeFulfilled} \nIce Cream List:\n{stringIceCreamList}";
         }
     }
 }

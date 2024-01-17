@@ -1,11 +1,14 @@
 ﻿//==========================================================
-// Student Number : S10257856
-// Student Name : Amelia Goh
-// Partner Name : Lee Wei Ying
+// Student Number : S10258645
+// Student Name : Lee Wei Ying
+// Partner Name : Amelia Goh Jia Xuan
 //==========================================================
 
 using System;
-using Code;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Code
 {

@@ -17,38 +17,20 @@ namespace Code
 {
     class Program
     {
-
-        // To list current customers
-        void ListCustomer()
-        {
-            Console.WriteLine("Our Current Customers: ");
-            using (StreamReader sr = new StreamReader("customers.csv"))
-            {
-                string s = sr.ReadLine(); //header
-                string[] header = s.Split(',');
-                Console.WriteLine($"{header[0],-10} {header[1],-10} {header[2], -10} {header[3],-10} {header[4],-10} {header[5],-10}");
-                while ((s = sr.ReadLine()) != null)
-                {
-                    string[] data = s.Split(',');
-                    Console.WriteLine($"{data[0],-10} {data[1],-10} {data[2],-10} {data[3],-10} {data[4],-10} {data[5],-10}"); // only STRICTLY print data from csv file bc you not making anything of object type CUSTOMER here, so is really just printing from the csv file itself..(unlike below, where you make all these data into CUSTOMER type where other info like orderHistory is printed)
-                }
-            }
-        }
-
         //Basic feature 1's method
-        void InitCustomerList(List<Customer> customerList)
+        static void InitCustomerList(List<Customer> customerList, Queue<Customer> goldQueue, Queue<Customer> normalQueue)
         {
             using (StreamReader sr = new StreamReader("customers.csv"))
             {
-                string? header = sr.ReadLine(); //Ignore headers
+                string header = sr.ReadLine(); //Ignore headers
 
                 while (!sr.EndOfStream) //Ensures that all data read 
                 {
-                    string? s = sr.ReadLine();
+                    string s = sr.ReadLine();
 
                     if (s != null) // Aka what will b carried out if there is still data
                     {
-                        string[] customerData = s.Split(","); //When spilt, become an array + rmb tht if want print data out, must use foreach loop since this is an array  
+                        string[] customerData = s.Split(','); //When spilt, become an array + rmb tht if want print data out, must use foreach loop since this is an array  
                         string Name = customerData[0];
                         int Memberid = Convert.ToInt32(customerData[1]);
                         DateTime Dob = Convert.ToDateTime(customerData[2]);
@@ -62,26 +44,42 @@ namespace Code
                         c.Rewards.Tier = Tier;
 
                         customerList.Add(c);
-                            
-                        Console.WriteLine(c); // **** Will also print order history etc etc because customerDetails is of class CUSTOMER. Then class CUSTOMER your override to string includes printing orderhistory, current order etc
+
+                        // add to respective queues
+                        if (c.Rewards.Tier == "Gold")
+                        {
+                            goldQueue.Enqueue(c);
+                        }
+                        else
+                        {
+                            normalQueue.Enqueue(c);
+                        }
                     }
 
 
                 }
             }
         }
+
         // option 2 method - display customer info in both queues
         static void ListOrder(List<Customer> customerList, Queue<Customer> goldQueue, Queue<Customer>normalQueue)
         {
             // making sure got people in queue
             if (goldQueue.Count() > 0)
             {
-                Console.WriteLine("Customers in gold queue: ");
+                Console.WriteLine("Customers in gold queue:");
                 foreach(Customer c in goldQueue)
                 {
-                    foreach (Order o in c.OrderHistory)
+                    if (c.CurrentOrder != null)
                     {
-                        Console.Write(o+"\t");
+                        foreach (Order o in c.OrderHistory)
+                        {
+                            Console.Write(o + "\t");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{c.Name} has no current order");
                     }
                 }
             }
@@ -90,14 +88,23 @@ namespace Code
             {
                 Console.WriteLine("There is no one in the gold queue.");
             }
+
+            // making sure got people in queue
             if (normalQueue.Count() > 0)
             {
-                Console.WriteLine("Customers in normal queue: ");
+                Console.WriteLine("\nCustomers in normal queue: ");
                 foreach (Customer c in normalQueue)
                 {
-                    foreach (Order o in c.OrderHistory)
+                    if (c.CurrentOrder != null)
                     {
-                        Console.Write(o + "\t");
+                        foreach (Order o in c.OrderHistory)
+                        {
+                            Console.Write(o + "\t");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{c.Name} has no current order");
                     }
                 }
             }
@@ -107,7 +114,22 @@ namespace Code
                 Console.WriteLine("There is no one in the regular queue");
             }
         }
-
+        // To list current customers
+        static void ListCustomer()
+        {
+            Console.WriteLine("Our Current Customers: ");
+            using (StreamReader sr = new StreamReader("customers.csv"))
+            {
+                string s = sr.ReadLine(); //header
+                string[] header = s.Split(',');
+                Console.WriteLine($"{header[0],-10} {header[1],-10} {header[2]}");
+                while ( (s = sr.ReadLine()) != null)
+                {
+                    string[] data = s.Split(',');
+                    Console.WriteLine($"{data[0],-10} {data[1],-10} {data[2]}");
+                }
+            }
+        }
         //Basic feature 3's method 
 
         void RegisterCustomer(List<Customer> customerList)  //Parameter list since need this list later due to the fact that you need add this new registered customer to the customer list.
@@ -129,7 +151,7 @@ namespace Code
             Customer newCustomer = new Customer(newName, newId, newDob);
             customerList.Add(newCustomer);
 
-             //Since PointCard constructor parameters are int, int which is for Points and PunchCard
+            //Since PointCard constructor parameters are int, int which is for Points and PunchCard
             newCustomer.Rewards = new PointCard(0, 0); //Initialize first, before assigning newCustomer.Rewards = PointCard object aka newCustomerPC.
             //^^ Btw, should always initialize in case that it is ever null value. Bc if is legit null value, then you will have error when trying to run the next code bc you wont be able to access the newCustomer.Rewards.Points due to the fact that it is NULL! it is a NullReferenceException
             PointCard newCustomerPC = new PointCard(newCustomer.Rewards.Points, newCustomer.Rewards.PunchCard); //Need .Rewards because Rewards in customer class and is also of type PointCard. (is like the example giving in slides with John.Addr.Shipping)
@@ -167,7 +189,7 @@ namespace Code
             Random random = new Random();  //Creating a object variable named 'random' of the random class type
             int orderID = random.Next(1000, 9999);
 
- 
+
             //List customers from file
             ListCustomer();
 
@@ -264,16 +286,17 @@ namespace Code
 
 
         // option 5 method - display order details
-        static void OrderDetails(List<Customer> customerList)
+        static void OrderDetails(List<Customer> customerList, Dictionary<Order, int> customerOrderHistory)
         {
             string nameInCSV = "";
-            Customer chosenCustomer = new Customer(); 
-            
+            Customer chosenCustomer = new Customer();
+            int ID = 0;
+
             // checking if correct ID is entered
             while (true)
             {
                 Console.Write("Enter a customer ID: ");
-                int ID = Convert.ToInt32(Console.ReadLine());
+                ID = Convert.ToInt32(Console.ReadLine());
                 bool brk = false;
                 foreach (Customer c in customerList)
                 {
@@ -293,12 +316,13 @@ namespace Code
                     Console.WriteLine("Enter the correct ID please.");
                 }
             }
-      
+
             // checking if customer has an order 
             if (chosenCustomer.CurrentOrder != null)
             {
                 Console.WriteLine("Current order: ");
                 Console.WriteLine(chosenCustomer.CurrentOrder.ToString());
+
                 // ice cream details from current order
                 Console.WriteLine("Ice cream details: ");
                 foreach (IceCream ic in chosenCustomer.CurrentOrder.IceCreamList)
@@ -308,25 +332,142 @@ namespace Code
             }
             else
             {
-                Console.WriteLine($"{nameInCSV} has no current order.");
+                Console.WriteLine($"{nameInCSV} has no current order.\n");
             }
 
             // checking if customer has an order
-            if (chosenCustomer.OrderHistory.Count() >0)
+            bool hasOrderHistory = false;
+            Console.WriteLine($"{nameInCSV} order history:");
+            foreach (Order order in customerOrderHistory.Keys)
             {
-                Console.WriteLine("\nPrevious order(s): ");
-                List<Order> orderHist = chosenCustomer.OrderHistory;
-                foreach (Order o in orderHist)
+                if (customerOrderHistory[order] == ID)
                 {
-                    Console.WriteLine(o.ToString());
-                    Console.WriteLine("Ice cream details: ");
+                    Console.WriteLine(order.ToString());
+                    hasOrderHistory = true;
                 }
             }
-            else
+            if (hasOrderHistory == false)
             {
-                Console.WriteLine($"{nameInCSV} has no order history.");
+                Console.WriteLine("NULL");
             }
         }
+
+        // reading order.csv and making orders
+        static void GettingOrderHistory(Dictionary<Order, int> customerOrderHistory)
+        {
+            List<string> premiumFlavour = new List<string> { "durian", "ube", "sea salt" };
+
+            using (StreamReader sr = new StreamReader("orders.csv"))
+            {
+                string header = sr.ReadLine(); // headers
+
+                while (!sr.EndOfStream) //Ensures all data read
+                {
+                    List<Flavour> flavours = new List<Flavour>();
+                    List<Topping> toppings = new List<Topping>();
+
+                    bool dipped = false;
+
+                    // flavours variable
+                    string type = "";
+                    int quantity = 1;
+
+                    // toppings variable
+                    string toppingType = "";
+                    string s = sr.ReadLine()?.ToLower(); // Using ?. to handle null
+                    bool premium = false;
+
+                    if (s != null)
+                    {
+                        string[] data = s.Split(',');
+
+                        int orderID = Convert.ToInt32(data[0]);
+                        int memberID = Convert.ToInt32(data[1]);
+                        DateTime timeRecieved = Convert.ToDateTime(data[2]);
+                        DateTime timefulfilled = Convert.ToDateTime(data[3]);
+                        string option = data[4];
+                        int scoops = Convert.ToInt32(data[5]);
+                        // converting dipped to boolean
+                        string dip = data[6];
+                        if (dip == "true")
+                        {
+                            dipped = true;
+                        }
+                        string waffleFlavour = data[7];
+
+                        // storing all the flavours 
+                        string[] flavoursData = { data[8], data[9], data[10] };
+                        Dictionary<string, int> flavourQuantity = new Dictionary<string, int>();
+
+                        foreach (string f in flavoursData)
+                        {
+                            if (!string.IsNullOrEmpty(f))
+                            {
+                                type = f.Trim(); // Trim to remove leading/trailing spaces
+
+                                // check if it's a premium flavour
+                                premium = premiumFlavour.Contains(type);
+
+                                // finding out flavour quantity
+                                if (flavourQuantity.ContainsKey(type))
+                                {
+                                    // Update quantity if the key already exists
+                                    flavourQuantity[type]++;
+                                }
+                                else
+                                {
+                                    // Add a new entry if the key doesn't exist
+                                    flavourQuantity.Add(type, 1);
+                                }
+                            }
+                        }
+
+                        // Now you have a dictionary with flavor types and their quantities
+                        foreach (var kvp in flavourQuantity)
+                        {
+                            Flavour flavour = new Flavour(kvp.Key, premiumFlavour.Contains(kvp.Key), kvp.Value);
+                            flavours.Add(flavour);
+                        }
+
+                        // storing all the toppings
+                        string[] toppingsData = { data[11], data[12], data[13], data[14] };
+                        foreach (string t in toppingsData)
+                        {
+                            if (!string.IsNullOrEmpty(t))
+                            {
+                                toppingType += t + " ";
+                            }
+                        }
+                        Topping topping = new Topping(toppingType.Trim()); // Trim to remove leading/trailing spaces
+                        toppings.Add(topping);
+
+                        Order orderHist = new Order(orderID, timeRecieved);
+
+                        // cup option
+                        if (option == "cup")
+                        {
+                            Cup cup = new Cup(option, scoops, flavours, toppings);
+                            orderHist.AddIceCream(cup);
+                        }
+                        else if (option == "cone")
+                        {
+                            Cone cone = new Cone(option, scoops, flavours, toppings, dipped);
+                            orderHist.AddIceCream(cone);
+                        }
+                        else if (option == "waffle")
+                        {
+                            Waffle waffle = new Waffle(option, scoops, flavours, toppings, waffleFlavour);
+                            orderHist.AddIceCream(waffle);
+                        }
+                        orderHist.TimeFulfilled = timefulfilled;
+                        // tracks which customer has what order
+                        customerOrderHistory.Add(orderHist, memberID);
+                    }
+                }
+            }
+        }
+
+
 
         // option 6 method - modify order details
         static void ModifyOrderDetails(List<Customer> customerList)
@@ -363,13 +504,15 @@ namespace Code
         }
         static void Main(string[] args)
         {
-            Queue<Customer> goldQueue = new Queue<Customer>();
-            Queue<Customer> normalQueue = new Queue<Customer>();
-            List<Customer> customerList = new List<Customer>();
             while (true)
             {
+                Queue<Customer> goldQueue = new Queue<Customer>();
+                Queue<Customer> normalQueue = new Queue<Customer>();
+                List<Customer> customerList = new List<Customer>();
+                Dictionary<Order, int> customerOrderHistory = new Dictionary<Order, int>();
+
                 // initialise customer list
-                InitCustomerList(customerList);
+                InitCustomerList(customerList,goldQueue,normalQueue);
                 Console.WriteLine(new String('-', 10) + "MENU" + new string('-',10));
                 Console.WriteLine("[1] List all customers");
                 Console.WriteLine("[2] List all current orders");
@@ -410,7 +553,8 @@ namespace Code
                 else if (userOption == "5")
                 {
                     ListCustomer();
-                    OrderDetails(customerList);
+                    GettingOrderHistory(customerOrderHistory);
+                    OrderDetails(customerList, customerOrderHistory);
                 }
                 else if (userOption == "6")
                 {

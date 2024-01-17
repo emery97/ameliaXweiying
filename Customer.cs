@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -61,10 +62,12 @@ namespace Code
             Memberid = id;
             Dob = d;
             OrderHistory = new List<Order>(); // !*!*!*!*!**! Initialize the list here, because if you initialize it in property, you are possibly wasting memory since every time you run your program, you will keep initializing it even when you do not need to do so. 
-                                              //But if you initialze in constructory, you would only initalize it when you need to do so (by using the constructor). 
+                                              //But if you initialze in constructory, you would only initalize it when you need to do so (by using the constructor).
+            Rewards = new PointCard();
         }
 
         //Methods  
+
         public Order MakeOrder() //return Order object!
         {
             CurrentOrder = new Order(); //Empty first, so can store the new order being made
