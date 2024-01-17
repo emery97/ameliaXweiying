@@ -17,6 +17,24 @@ namespace Code
 {
     class Program
     {
+
+        // To list current customers
+        void ListCustomer()
+        {
+            Console.WriteLine("Our Current Customers: ");
+            using (StreamReader sr = new StreamReader("customers.csv"))
+            {
+                string s = sr.ReadLine(); //header
+                string[] header = s.Split(',');
+                Console.WriteLine($"{header[0],-10} {header[1],-10} {header[2], -10} {header[3],-10} {header[4],-10} {header[5],-10}");
+                while ((s = sr.ReadLine()) != null)
+                {
+                    string[] data = s.Split(',');
+                    Console.WriteLine($"{data[0],-10} {data[1],-10} {data[2],-10} {data[3],-10} {data[4],-10} {data[5],-10}"); // only STRICTLY print data from csv file bc you not making anything of object type CUSTOMER here, so is really just printing from the csv file itself..(unlike below, where you make all these data into CUSTOMER type where other info like orderHistory is printed)
+                }
+            }
+        }
+
         //Basic feature 1's method
         void InitCustomerList(List<Customer> customerList)
         {
@@ -24,14 +42,13 @@ namespace Code
             {
                 string? header = sr.ReadLine(); //Ignore headers
 
-                while (!sr.EndOfStream) //Ensures all data read
+                while (!sr.EndOfStream) //Ensures that all data read 
                 {
                     string? s = sr.ReadLine();
 
                     if (s != null) // Aka what will b carried out if there is still data
                     {
-                        string[] customerData = s.Split(","); //When spilt, become an array + rmb tht if want print data out, must use foreach loop since this is an array
-
+                        string[] customerData = s.Split(","); //When spilt, become an array + rmb tht if want print data out, must use foreach loop since this is an array  
                         string Name = customerData[0];
                         int Memberid = Convert.ToInt32(customerData[1]);
                         DateTime Dob = Convert.ToDateTime(customerData[2]);
@@ -39,19 +56,17 @@ namespace Code
                         int Points = Convert.ToInt32(customerData[4]);
                         int PunchCard = Convert.ToInt32(customerData[5]);
 
-<<<<<<< HEAD
+
                         Customer c = new Customer(Name, Memberid, Dob);  //Need make customer obj first so can access class Pointcard by accessing rewards first since rewards is of class Pointcard but can only be used by a customer object
                         c.Rewards = new PointCard(Points, PunchCard);
                         c.Rewards.Tier = Tier;
 
                         customerList.Add(c);
                             
-                        Console.WriteLine(c);  // **** Will also print order history etc etc because customerDetails is of class CUSTOMER. Then class CUSTOMER your override to string includes printing orderhistory, current order etc
-=======
-                        Customer customerDetails = new Customer(Name, Memberid, Dob);  // This line is making object 
-                        customerList.Add(customerDetails); // to add the customers in the customerList
->>>>>>> c91343b3fcea57b059a539940a3fa61c6f81e732
+                        Console.WriteLine(c); // **** Will also print order history etc etc because customerDetails is of class CUSTOMER. Then class CUSTOMER your override to string includes printing orderhistory, current order etc
                     }
+
+
                 }
             }
         }
@@ -92,27 +107,8 @@ namespace Code
                 Console.WriteLine("There is no one in the regular queue");
             }
         }
-        // To list current customers
-        static void ListCustomer()
-        {
-            Console.WriteLine("Our Current Customers: ");
-            using (StreamReader sr = new StreamReader("customers.csv"))
-            {
-                string s = sr.ReadLine(); //header
-                string[] header = s.Split(',');
-                Console.WriteLine($"{header[0],-10} {header[1],-10} {header[2]}");
-                while ( (s = sr.ReadLine()) != null)
-                {
-                    string[] data = s.Split(',');
-                    Console.WriteLine($"{data[0],-10} {data[1],-10} {data[2]}");
-                }
-            }
-        }
 
-<<<<<<< HEAD
         //Basic feature 3's method 
-   
-        // NOW JUST NEED TRY DO DATA VALIDATION eg when user enters string for id instead of numbeers or when datetime dont make sense since it is 41/03/03 meaning 41 march 2003..... must make sure is legit like 01/03/03 aka 1 march 2003
 
         void RegisterCustomer(List<Customer> customerList)  //Parameter list since need this list later due to the fact that you need add this new registered customer to the customer list.
         {
@@ -129,25 +125,13 @@ namespace Code
             Console.Write("Enter customer's punch card: ");
             int newPC = Convert.ToInt32(Console.ReadLine());
 
-=======
-        //Basic feature 3's method
-        //!!!!***ERRORS WHEN RUNNING THIS STEP 3: Firstly, something wrong with the DateTime.... TRY USER INPUT AND YOULL SEE WHAT I MEAN */
-
-        void RegisterCustomer(List<Customer> customerList)  //??? Is the parameter a list...?? Do I even need a list.... same for above's method ^^^..
-        {
-            Console.Write("Enter customer's details in the format of 'name, id, date of birth': ");
-            string newCustomerInfo = Console.ReadLine();
-            string[] customerInfoSplit = newCustomerInfo.Split(','); //Split -> so become array ! 
-
-            string newName = customerInfoSplit[0];
-            int newId = Convert.ToInt32(customerInfoSplit[1]);  //OG data type is string thus need convert
-            DateTime newDob = Convert.ToDateTime(customerInfoSplit[2]);
->>>>>>> c91343b3fcea57b059a539940a3fa61c6f81e732
 
             Customer newCustomer = new Customer(newName, newId, newDob);
             customerList.Add(newCustomer);
 
-            //Since PointCard constructor parameters are int, int which is for Points and PunchCard
+             //Since PointCard constructor parameters are int, int which is for Points and PunchCard
+            newCustomer.Rewards = new PointCard(0, 0); //Initialize first, before assigning newCustomer.Rewards = PointCard object aka newCustomerPC.
+            //^^ Btw, should always initialize in case that it is ever null value. Bc if is legit null value, then you will have error when trying to run the next code bc you wont be able to access the newCustomer.Rewards.Points due to the fact that it is NULL! it is a NullReferenceException
             PointCard newCustomerPC = new PointCard(newCustomer.Rewards.Points, newCustomer.Rewards.PunchCard); //Need .Rewards because Rewards in customer class and is also of type PointCard. (is like the example giving in slides with John.Addr.Shipping)
 
             newCustomer.Rewards = newCustomerPC; //Assigning of PointCard to customer is done in this code. (Rewards is of class type PointCard, but it is stored in the customer class) So thats why can equate pointcard object to another pointcard obj
@@ -161,6 +145,7 @@ namespace Code
                     sw.WriteLine($"{newName},{newId},{newDob.ToString("dd/MM/yy")},{newTier},{newPoints},{newPC}");
                 }
                 Console.WriteLine("Customer registered successfully.");
+                Console.WriteLine("");
 
             }
 
@@ -168,9 +153,11 @@ namespace Code
             {
                 Console.WriteLine("Customer could not be registered.");
                 Console.WriteLine($"Reason: {ex.Message}");
+                Console.WriteLine("");
             }
 
         }
+
 
         //Basic feature 4's method
         void CreateOrder(List<Order> OrderHistory, List<Customer> customerList) //Because need both of these for method
