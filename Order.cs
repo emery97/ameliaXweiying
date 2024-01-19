@@ -43,6 +43,7 @@ namespace Code
         //Constructors 
         public Order()
         {
+            IceCreamList = new List<IceCream>();
         }
 
         public Order(int userOrderId, DateTime userTimeReceived) //****Is the datetime for time recieved or time fulfilled???
@@ -53,6 +54,7 @@ namespace Code
         }
 
         //Methods
+        /*
         public void ModifyIceCream(int modifyIceCreamIndex)  //User will input index of the ice cream in the ice cream list that they wish to change
         {
             if (modifyIceCreamIndex >= 0 && modifyIceCreamIndex < IceCreamList.Count)
@@ -64,10 +66,147 @@ namespace Code
                 Console.WriteLine("Index out of range.");
             }
         }
+        */
+        static List<Flavour> MakingFlavoursList()
+        {
+            List<Flavour> flavours = new List<Flavour>();
+            bool premium = false;
+            int quantity = 0;
+            Console.WriteLine("For regular flavours we've got Vanilla / Chocolate / Strawberry options");
+            Console.WriteLine("For premium flavours we've got Durian / Ube / Sea salt options");
+            for (int i = 0; i < 3; i++)
+            {
+                Console.Write("Flavour choice? If you don't want to add anymore flavours enter N: ");
+                string flavourType = Console.ReadLine().ToLower();
+                if (flavourType == "n")
+                {
+                    break;
+                }
+                else
+                {
+                    quantity++;
+                    if (flavourType == "durian" || flavourType == "ube" || flavourType == "sea salt")
+                    {
+                        premium = true;
+                    }
+                }
+                Flavour flavour = new Flavour(flavourType, premium, quantity);
+                flavours.Add(flavour);
+            }
+            return flavours;
+        }
+        static List<Topping> MakingToppingsList()
+        {
+            List<Topping> toppings = new List<Topping>();
+            Console.WriteLine("We've got sprinkles, mochi, sago and oreos topping options ");
+            for (int i = 0; i < 4; i++)
+            {
+                Console.Write("Topping choice? If you don't want to add anymore flavours enter N: ");
+                string toppingChoice = Console.ReadLine().ToLower();
+                if (toppingChoice == "n")
+                {
+                    break;
+                }
+                else
+                {
+                    Topping topping = new Topping(toppingChoice);
+                    toppings.Add(topping);
+                }
+            }
+            return toppings;
+        }
+        // this is for option 6 , option 1
+        public void ModifyIceCream(int iceCreamIndex)
+        {
+            IceCream iceCream = IceCreamList[iceCreamIndex - 1];
+
+            Console.WriteLine("[1] Ice Cream Option");
+            Console.WriteLine("[2] Ice Cream Scoops");
+            Console.WriteLine("[3] Ice Cream Flavours");
+            Console.WriteLine("[4] Ice Cream Toppings");
+            int menuOption = Convert.ToInt32(Console.ReadLine());
+            
+            // changing option 
+            if (menuOption == 1)
+            {
+                Console.Write("Options to choose from: Cup / Cone / Waffle: ");
+                string iceCreamOption = Console.ReadLine().ToLower();
+                iceCream.Option = iceCreamOption;
+                IceCream newIceCream = null;
+                if (iceCreamOption != iceCream.Option)
+                {
+                    // if the ice cream option is different
+                    switch (iceCreamOption)
+                    {
+                        case "cup":
+                            newIceCream = new Cup();
+                            break;
+                        case "cone":
+                            newIceCream = new Cone();
+                            break;
+                        case "waffle":
+                            newIceCream = new Waffle();
+                            break;
+                        default:
+                            Console.WriteLine("Invalid ice cream option.");
+                            break;
+                    }
+                }
+                if (newIceCream != null)
+                {
+                    newIceCream.Option = iceCreamOption;
+                    newIceCream.Scoops = iceCream.Scoops;
+                    newIceCream.Flavours = iceCream.Flavours;
+                    newIceCream.Toppings = iceCream.Toppings;
+
+                    // set iceCream reference to the new ice cream obj
+                    iceCream = newIceCream;
+                }
+                if (iceCreamOption == "cone" && iceCream is Cone cone)
+                {
+                    Console.Write("Do you want your cone to be dipped Y / N");
+                    string dippedChoice = Console.ReadLine().ToLower();
+                    if (dippedChoice == "y")
+                    {
+                        cone.Dipped = true;
+                    }
+                }
+                if (iceCreamOption == "waffle" && iceCream is Waffle waffle)
+                {
+                    Console.Write("Do you want to change your waffle flavour Y / N ");
+                    string waffleFlavourOption = Console.ReadLine().ToLower();
+                    if (waffleFlavourOption == "y")
+                    {
+                        Console.WriteLine("We've got Original / Red Velvet / Charcoal / Pandan options: ");
+                        string waffleFlavour = Console.ReadLine().ToLower();
+                        waffle.WaffleFlavour = waffleFlavour;
+                    }
+                }
+            }
+            // changing ice cream scoops
+            else if (menuOption == 2)
+            {
+                Console.Write("Please enter new number of scoops: ");
+                int scoops = Convert.ToInt32(Console.ReadLine());
+                iceCream.Scoops = scoops;
+            }
+            // changing ice cream flavours
+            else if (menuOption == 3)
+            {
+                List<Flavour> flavours = MakingFlavoursList();
+                iceCream.Flavours = flavours;
+            }
+            else if (menuOption == 4)
+            {
+                List<Topping> toppings = MakingToppingsList();
+                iceCream.Toppings = toppings;
+            }
+        }
 
         public void AddIceCream(IceCream userAddIceCream)
         {
             IceCreamList.Add(userAddIceCream);
+            timeReceived = DateTime.Now; // update time when ice cream is added
         }
 
         public void DeleteIceCream(int deleteIceCreamIndex)
