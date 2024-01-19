@@ -528,123 +528,186 @@ namespace Code
             {
                 Console.Write("Enter your option: ");
                 option = Convert.ToInt32(Console.ReadLine());
-                if (option >= 1 || option <= 3)
+                if (option >= 1 && option <= 3)
                 {
-                    break;
+                    if (chosenCustomer.CurrentOrder != null && chosenCustomer.CurrentOrder.IceCreamList.Count > 0)
+                    {
+                        break;
+                    }
+                    else if (option == 2)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("You do not have any ice cream in your order. You can only choose option 2.");
+                    }
                 }
                 else
                 {
                     Console.WriteLine("Please enter a number from 1 to 3");
                 }
             }
+
             if (option == 1)
             {
                 Console.WriteLine("Choose an ice cream from the list above: ");
                 int iceCreamIndex = Convert.ToInt32(Console.ReadLine());
                 // finding out which ice cream user wants to edit 
                 IceCream iceCream = chosenCustomer.CurrentOrder.IceCreamList[iceCreamIndex - 1];
-                // ice cream option 
-                Console.Write("Would you like to change ice cream option Y/N: ");
-                string checkingOption = Console.ReadLine().ToLower();
-                if (checkingOption== "y")
+                chosenCustomer.CurrentOrder.ModifyIceCream(iceCreamIndex - 1);
+            }
+            else if (option == 2)
+            {
+                if (chosenCustomer.CurrentOrder == null)
                 {
-                    Console.Write("Options to choose from: Cup / Cone / Waffle: ");
+                    chosenCustomer.CurrentOrder = new Order();
+                }
+
+                while (true)
+                {
+                    int scoops = 0;
+                    Console.Write("Enter ice cream option choose from Cup / Cone / Waffle: ");
                     string iceCreamOption = Console.ReadLine().ToLower();
-                    iceCream.Option = iceCreamOption;
-
-                    IceCream newIceCream = null;
-                    if (iceCreamOption != iceCream.Option)
+                    List<Flavour> flavours = MakingFlavoursList();
+                    List<Topping> toppings = MakingToppingsList();
+                    while (true)
                     {
-                        // if the ice cream option is different
-                        switch (iceCreamOption)
+                        Console.Write("Please enter new number of scoops: ");
+                        int scoopsEntered = Convert.ToInt32(Console.ReadLine());
+                        if (scoops >= 1 && scoops <= 3)
                         {
-                            case "cup":
-                                newIceCream = new Cup();
-                                break;
-                            case "cone":
-                                newIceCream = new Cone();
-                                break;
-                            case "waffle":
-                                newIceCream = new Waffle();
-                                break;
-                            default:
-                                Console.WriteLine("Invalid ice cream option.");
-                                break;
-                        }
-                    }
-                    if (newIceCream != null)
-                    {
-                        newIceCream.Option = iceCreamOption;
-                        newIceCream.Scoops = iceCream.Scoops;
-                        newIceCream.Flavours = iceCream.Flavours;
-                        newIceCream.Toppings = iceCream.Toppings;
-
-                        // set iceCream reference to the new ice cream obj
-                        iceCream = newIceCream;
-                    }
-                    if (iceCreamOption == "cone" && iceCream is Cone cone)
-                    {
-                        Console.Write("Do you want your cone to be dipped Y / N");
-                        string dippedChoice = Console.ReadLine().ToLower();
-                        if (dippedChoice == "y")
-                        {
-                            cone.Dipped = true;
-                        }
-                    }
-                    if (iceCreamOption == "waffle" && iceCream is Waffle waffle)
-                    {
-                        Console.Write("Do you want your cone to change your waffle flavour Y / N ");
-                        string waffleFlavourOption = Console.ReadLine().ToLower();
-                        if (waffleFlavourOption == "y")
-                        {
-                            Console.WriteLine("We've got Red Velvet / Charcoal / Pandan options: ");
-                            string waffleFlavour = Console.ReadLine().ToLower();
-                            waffle.WaffleFlavour = waffleFlavour;
-                        }
-
-                        
-                    }
-                }
-                // ice cream scoops
-                Console.Write("Would you like to change number of ice cream scoops Y/N: ");
-                checkingOption = Console.ReadLine().ToLower();
-                if (checkingOption == "y")
-                {
-                    Console.Write("Please enter new number of scoops: ");
-                    int scoops = Convert.ToInt32(Console.ReadLine());
-                    iceCream.Scoops = scoops;
-                }
-                // ice cream flavours 
-                Console.Write("Would you like to change your ice cream flavours Y/N: ");
-                checkingOption = Console.ReadLine().ToLower();
-                if (checkingOption == "y")
-                {
-                    List<Flavour> flavours = new List<Flavour>();
-                    bool premium = false;
-                    Console.WriteLine("For regular flavours we've got Vanilla / Chocolate / Strawberry options");
-                    Console.WriteLine("For premium flavours we've got Durian / Ube / Sea salt options");
-                    for (int i = 0; i < 3; i++)
-                    {
-                        Console.Write("Flavour choice? If you don't want to add anymore flavours enter N: ");
-                        string flavourType = Console.ReadLine().ToLower();
-                        if (flavourType == "n")
-                        {
+                            scoops = scoopsEntered;
                             break;
                         }
                         else
                         {
-                            if (flavourType == "durian" || flavourType == "ube" || flavourType == "sea salt")
-                            {
-                                premium = true;
-                            }
+                            Console.WriteLine("please enter an integer from 1 to 3");
                         }
-
+                    }
+                    if (iceCreamOption == "cup")
+                    {
+                        Cup cup = new Cup(iceCreamOption, scoops, flavours, toppings);
+                        chosenCustomer.CurrentOrder.AddIceCream(cup);
+                        break;
+                    }
+                    else if (iceCreamOption == "cone")
+                    {
+                        bool dipped = false;
+                        Console.Write("Do you want your cone to be dipped Y / N");
+                        string dippedChoice = Console.ReadLine().ToLower();
+                        if (dippedChoice == "y")
+                        {
+                            dipped = true;
+                        }
+                        Cone cone = new Cone(iceCreamOption, scoops, flavours, toppings, dipped);
+                        chosenCustomer.CurrentOrder.AddIceCream(cone);
+                        break;
+                    }
+                    else if (iceCreamOption == "waffle")
+                    {
+                        string waffleFlavour = "original";
+                        Console.Write("Do you want to change your waffle flavour Y / N ");
+                        string waffleFlavourOption = Console.ReadLine().ToLower();
+                        if (waffleFlavourOption == "y")
+                        {
+                            Console.WriteLine("We've got Red Velvet / Charcoal / Pandan options: ");
+                            waffleFlavour = Console.ReadLine().ToLower();
+                        }
+                        Waffle waffle = new Waffle(iceCreamOption, scoops, flavours, toppings, waffleFlavour);
+                        chosenCustomer.CurrentOrder.AddIceCream(waffle);
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Please choose from the options above.");
                     }
                 }
+            }
 
+            else
+            {
+                int indexing = 1;
+                if (chosenCustomer.CurrentOrder == null || chosenCustomer.CurrentOrder.IceCreamList.Count() == 1)
+                {
+                    Console.WriteLine("Sorry you cannot have zero orders.");
+                }
+                else
+                {
+                    foreach (IceCream ic in chosenCustomer.CurrentOrder.IceCreamList)
+                    {
+                        Console.WriteLine($"[{indexing}]{ic}");
+                        indexing++;
+                    }
+                    Console.WriteLine("Please choose an ice cream to delete, enter the number: ");
+                    int chosenIndex = Convert.ToInt32(Console.ReadLine());
+                    chosenCustomer.CurrentOrder.IceCreamList.RemoveAt(chosenIndex - 1);
+                }
+            }
+            Console.WriteLine("Here is your updated order: ");
+            if (chosenCustomer.CurrentOrder.IceCreamList.Count > 0)
+            {
+                Console.WriteLine("Ice cream details: ");
+                foreach (IceCream ic in chosenCustomer.CurrentOrder.IceCreamList)
+                {
+                    Console.WriteLine(ic);
+                }
+            }
+            else
+            {
+                Console.WriteLine("No ice cream in the order.");
             }
 
 
+        }
+        
+        static List<Flavour> MakingFlavoursList()
+        {
+            List<Flavour> flavours = new List<Flavour>();
+            bool premium = false;
+            int quantity = 0;
+            Console.WriteLine("For regular flavours we've got Vanilla / Chocolate / Strawberry options");
+            Console.WriteLine("For premium flavours we've got Durian / Ube / Sea salt options");
+            for (int i = 0; i < 3; i++)
+            {
+                Console.Write("Flavour choice? If you don't want to add anymore flavours enter N: ");
+                string flavourType = Console.ReadLine().ToLower();
+                if (flavourType == "n")
+                {
+                    break;
+                }
+                else
+                {
+                    quantity++;
+                    if (flavourType == "durian" || flavourType == "ube" || flavourType == "sea salt")
+                    {
+                        premium = true;
+                    }
+                }
+                Flavour flavour = new Flavour(flavourType, premium, quantity);
+                flavours.Add(flavour);
+            }
+            return flavours;
+        }
+        static List<Topping> MakingToppingsList()
+        {
+            List<Topping> toppings = new List<Topping>();
+            Console.WriteLine("We've got sprinkles, mochi, sago and oreos topping options ");
+            for (int i = 0; i < 4; i++)
+            {
+                Console.Write("Topping choice? If you don't want to add anymore flavours enter N: ");
+                string toppingChoice = Console.ReadLine().ToLower();
+                if (toppingChoice == "n")
+                {
+                    break;
+                }
+                else
+                {
+                    Topping topping = new Topping(toppingChoice);
+                    toppings.Add(topping);
+                }
+            }
+            return toppings;
         }
         static void Main(string[] args)
         {
@@ -703,6 +766,7 @@ namespace Code
                 else if (userOption == "6")
                 {
                     ListCustomer();
+                    ModifyOrderDetails(customerList);
                 }
             }
         }
