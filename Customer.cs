@@ -92,14 +92,14 @@ namespace Code
         {
             string stringOrderHistory = "";
 
-            if (orderHistory != null) //Check this to prevent error of NullReferenceException, this error occurs when attempt to access a type variable(that hasn't been instantiated) is made
+            if (OrderHistory.Count>0) //Check this to prevent error of NullReferenceException, this error occurs when attempt to access a type variable(that hasn't been instantiated) is made
             {
-                foreach (Order dataOHfromList in orderHistory) //dataOH stands for data order from list hist
+                foreach (Order dataOHfromList in OrderHistory) //dataOH stands for data order from list hist
                 {
-                    stringOrderHistory += dataOHfromList.ToString();
+                    stringOrderHistory += dataOHfromList.ToString() + "\n";
                 }
             }
-            return $"Name: {Name} \nMemberID: {Memberid} \nDate Of Birth: {Dob.ToString("dd/MM/yy")} \nCurrent Order: {CurrentOrder} \nOrder History: {stringOrderHistory} \nPoints: {Rewards.Points} \nPunch Card: {Rewards.PunchCard} \nTier: {Rewards.Tier} \n"; //Dob.ToString("dd/MM/yy") put output into eg 12/01/22 instead of 12/01/22 12:00AM etc. And is MM, for month. Not mm bc mm = minutes
+            return $"Name: {Name} \nMemberID: {Memberid} \nDate Of Birth: {Dob.ToString("dd/MM/yy")} \nCurrent Order: {CurrentOrder} \nOrder History:\n{stringOrderHistory}Points: {Rewards.Points} \nPunch Card: {Rewards.PunchCard} \nTier: {Rewards.Tier} \n"; //Dob.ToString("dd/MM/yy") put output into eg 12/01/22 instead of 12/01/22 12:00AM etc. And is MM, for month. Not mm bc mm = minutes
                                                                                                                                                                                                                                                                     //^^ Rewards.Points  also because i want output Points, but it is in class pointcard. so i have to go through rewards first, which is in class customer but it is of the pointcard type. so i access rewards first before accessing the attributes in pointcard class itself.
         }
     }
