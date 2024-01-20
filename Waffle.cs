@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,37 +24,68 @@ namespace Code
         }
         public override double CalculatePrice()
         {
-            // checking if got toppings in option
-            string[] toppings = { "sprinkles", "mochi", "sago", "oreos" };
-            bool contains = false;
-            foreach (string t in toppings)
+            // as long as customer choose waffle base price $3
+            double price = 3;
+            Dictionary<string, int> flavourDict = new Dictionary<string, int>();
+            Dictionary<string, int> toppingDict = new Dictionary<string, int>();
+
+            // looking through toppings.csv
+            using (StreamReader sr = new StreamReader("toppings.csv"))
             {
-                if (Option.Contains(t))
+                string s = sr.ReadLine(); //header
+                string[] header = s.Split(',');
+                while ((s = sr.ReadLine()) != null)
                 {
-                    contains = true;
+                    string[] data = s.Split(',');
+                    toppingDict.Add(data[0], Convert.ToInt32(data[1]));
                 }
             }
-            double price = 0;
-            if (Option == "single")
+            // looking through flavours.csv
+            using (StreamReader sr = new StreamReader("flavours.csv"))
             {
-                price = 7.00;
+                string s = sr.ReadLine(); //header
+                string[] header = s.Split(',');
+                while ((s = sr.ReadLine()) != null)
+                {
+                    string[] data = s.Split(',');
+                    toppingDict.Add(data[0], Convert.ToInt32(data[1]));
+                }
             }
-            else if (Option == "double")
+            // checking if got toppings in toppingsDict
+            foreach (Topping t in Toppings)
             {
-                price = 8.50;
+                foreach (KeyValuePair<string, int> kvp in toppingDict)
+                {
+                    if (kvp.Key == t.Type)
+                    {
+                        price += kvp.Value;
+                    }
+                }
             }
-            else if(contains == true)
+            // checking if got flavours in flavoursDict
+            foreach (Flavour f in Flavours)
             {
-                price += 1;
+                foreach (KeyValuePair<string, int> kvp in flavourDict)
+                {
+                    if (kvp.Key == f.Type)
+                    {
+                        price += kvp.Value;
+                    }
+                }
             }
-            else if (WaffleFlavour != "original")
+            if (Scoops == 1)
             {
-                price += 3;
+                price += 7.00;
             }
-            else
+            else if (Scoops == 2)
             {
-                price = 9.50;
+                price += 8.50;
             }
+            else if (Scoops == 3)
+            {
+                price += 9.50;
+            }
+
             return price;
         }
         public override string ToString()

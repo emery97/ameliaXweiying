@@ -132,8 +132,9 @@ namespace Code
         }
         //Basic feature 3's method 
 
-        void RegisterCustomer(List<Customer> customerList)  //Parameter list since need this list later due to the fact that you need add this new registered customer to the customer list.
+        static void RegisterCustomer(List<Customer> customerList)  //Parameter list since need this list later due to the fact that you need add this new registered customer to the customer list.
         {
+
             Console.Write("Enter customer's name: ");
             string newName = Console.ReadLine();
             Console.Write("Enter customer's id: ");
@@ -153,31 +154,30 @@ namespace Code
 
             //Since PointCard constructor parameters are int, int which is for Points and PunchCard
             newCustomer.Rewards = new PointCard(0, 0); //Initialize first, before assigning newCustomer.Rewards = PointCard object aka newCustomerPC.
-            //^^ Btw, should always initialize in case that it is ever null value. Bc if is legit null value, then you will have error when trying to run the next code bc you wont be able to access the newCustomer.Rewards.Points due to the fact that it is NULL! it is a NullReferenceException
+                                                        //^^ Btw, should always initialize in case that it is ever null value. Bc if is legit null value, then you will have error when trying to run the next code bc you wont be able to access the newCustomer.Rewards.Points due to the fact that it is NULL! it is a NullReferenceException
             PointCard newCustomerPC = new PointCard(newCustomer.Rewards.Points, newCustomer.Rewards.PunchCard); //Need .Rewards because Rewards in customer class and is also of type PointCard. (is like the example giving in slides with John.Addr.Shipping)
 
             newCustomer.Rewards = newCustomerPC; //Assigning of PointCard to customer is done in this code. (Rewards is of class type PointCard, but it is stored in the customer class) So thats why can equate pointcard object to another pointcard obj
-
-            //Appending..
-
-            try  //If can append successfully
-            {
+            try 
+            { 
+                //Appending..
                 using (StreamWriter sw = new StreamWriter("customers.csv", true))
                 {
                     sw.WriteLine($"{newName},{newId},{newDob.ToString("dd/MM/yy")},{newTier},{newPoints},{newPC}");
                 }
                 Console.WriteLine("Customer registered successfully.");
                 Console.WriteLine("");
-
             }
-
+            catch (FormatException ex)
+            {
+                Console.WriteLine("Please enter your input in the correct format.");
+            }
             catch (Exception ex)  //In case got any other error (Exception ex catch any and all types of exception so this is if eg User anyhow enter somethiing, then cannot be registered alrd..
             {
                 Console.WriteLine("Customer could not be registered.");
                 Console.WriteLine($"Reason: {ex.Message}");
                 Console.WriteLine("");
             }
-
         }
 
 
@@ -297,6 +297,7 @@ namespace Code
             {
                 Console.Write("Enter a customer ID: ");
                 ID = Convert.ToInt32(Console.ReadLine());
+                // validation for id input
                 bool brk = false;
                 foreach (Customer c in customerList)
                 {
@@ -361,7 +362,7 @@ namespace Code
             {
                 string header = sr.ReadLine(); // headers
 
-                while (!sr.EndOfStream) //Ensures all data read
+                while (!sr.EndOfStream) 
                 {
                     List<Flavour> flavours = new List<Flavour>();
                     List<Topping> toppings = new List<Topping>();
@@ -374,8 +375,7 @@ namespace Code
 
                     // toppings variable
                     string toppingType = "";
-                    string s = sr.ReadLine()?.ToLower(); // Using ?. to handle null
-                    bool premium = false;
+                    string s = sr.ReadLine()?.ToLower(); 
 
                     if (s != null)
                     {
@@ -397,6 +397,7 @@ namespace Code
 
                         // storing all the flavours 
                         string[] flavoursData = { data[8], data[9], data[10] };
+                        // key = flavour, value = quantity
                         Dictionary<string, int> flavourQuantity = new Dictionary<string, int>();
 
                         foreach (string f in flavoursData)
@@ -404,9 +405,6 @@ namespace Code
                             if (!string.IsNullOrEmpty(f))
                             {
                                 type = f.Trim(); // Trim to remove leading/trailing spaces
-
-                                // check if it's a premium flavour
-                                premium = premiumFlavour.Contains(type);
 
                                 // finding out flavour quantity
                                 if (flavourQuantity.ContainsKey(type))
@@ -422,7 +420,7 @@ namespace Code
                             }
                         }
 
-                        // Now you have a dictionary with flavor types and their quantities
+                        // now got dictionary with flavor types and their quantities
                         foreach (var kvp in flavourQuantity)
                         {
                             Flavour flavour = new Flavour(kvp.Key, premiumFlavour.Contains(kvp.Key), kvp.Value);
@@ -435,11 +433,11 @@ namespace Code
                         {
                             if (!string.IsNullOrEmpty(t))
                             {
-                                toppingType += t + " ";
+                                toppingType = t;
+                                Topping topping = new Topping(toppingType.Trim()); // Trim to remove leading/trailing spaces
+                                toppings.Add(topping);
                             }
                         }
-                        Topping topping = new Topping(toppingType.Trim()); // Trim to remove leading/trailing spaces
-                        toppings.Add(topping);
 
                         Order orderHist = new Order(orderID, timeRecieved);
 
@@ -459,6 +457,7 @@ namespace Code
                             Waffle waffle = new Waffle(option, scoops, flavours, toppings, waffleFlavour);
                             orderHist.AddIceCream(waffle);
                         }
+                        orderHist.TimeReceived = timeRecieved;
                         orderHist.TimeFulfilled = timefulfilled;
                         // tracks which customer has what order
                         customerOrderHistory.Add(orderHist, memberID);
@@ -660,7 +659,7 @@ namespace Code
 
 
         }
-        
+        // making new flavoursList
         static List<Flavour> MakingFlavoursList()
         {
             List<Flavour> flavours = new List<Flavour>();
@@ -689,6 +688,7 @@ namespace Code
             }
             return flavours;
         }
+        // making new topping list
         static List<Topping> MakingToppingsList()
         {
             List<Topping> toppings = new List<Topping>();
@@ -735,7 +735,6 @@ namespace Code
 
                 if (userOption == "0")
                 {
-                    Console.WriteLine("Please come again next time!!");
                     break;
                 }
                 else if (userOption == "1")
@@ -751,7 +750,7 @@ namespace Code
                 }
                 else if (userOption == "3")
                 {
-                    //RegisterCustomer(customerList);
+                    RegisterCustomer(customerList);
                 }
                 else if (userOption == "4")
                 {
@@ -767,6 +766,10 @@ namespace Code
                 {
                     ListCustomer();
                     ModifyOrderDetails(customerList);
+                }
+                else
+                {
+                    Console.WriteLine("Please input a number from 0 to 6 thank you.");
                 }
             }
         }

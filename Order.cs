@@ -54,19 +54,6 @@ namespace Code
         }
 
         //Methods
-        /*
-        public void ModifyIceCream(int modifyIceCreamIndex)  //User will input index of the ice cream in the ice cream list that they wish to change
-        {
-            if (modifyIceCreamIndex >= 0 && modifyIceCreamIndex < IceCreamList.Count)
-            {
-                IceCream modifiedIceCream = IceCreamList[modifyIceCreamIndex];
-            }
-            else
-            {
-                Console.WriteLine("Index out of range.");
-            }
-        }
-        */
         static List<Flavour> MakingFlavoursList()
         {
             List<Flavour> flavours = new List<Flavour>();
@@ -183,12 +170,23 @@ namespace Code
                     }
                 }
             }
-            // changing ice cream scoops
+            // changing ice cream scoops including check for no. of scoops
             else if (menuOption == 2)
             {
-                Console.Write("Please enter new number of scoops: ");
-                int scoops = Convert.ToInt32(Console.ReadLine());
-                iceCream.Scoops = scoops;
+                while (true)
+                {
+                    Console.Write("Please enter new number of scoops: ");
+                    int scoops = Convert.ToInt32(Console.ReadLine());
+                    if (scoops >= 1 && scoops <= 3)
+                    {
+                        iceCream.Scoops = scoops;
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("please enter an integer from 1 to 3");
+                    }
+                }
             }
             // changing ice cream flavours
             else if (menuOption == 3)
