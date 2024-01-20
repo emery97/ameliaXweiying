@@ -54,29 +54,36 @@ namespace Code
         }
 
         //Methods
-        static List<Flavour> MakingFlavoursList()
+        static List<Flavour> MakingFlavoursList(int scoops)
         {
+            string[] flavourOptions = { "vanilla", "chocolate", "strawberry", "durian", "ube", "sea salt" };
             List<Flavour> flavours = new List<Flavour>();
             bool premium = false;
             int quantity = 0;
-            Console.WriteLine("For regular flavours we've got Vanilla / Chocolate / Strawberry options");
-            Console.WriteLine("For premium flavours we've got Durian / Ube / Sea salt options");
-            for (int i = 0; i < 3; i++)
+            string flavourType = "";
+            for (int i = 1; i <= scoops; i++)
             {
-                Console.Write("Flavour choice? If you don't want to add anymore flavours enter N: ");
-                string flavourType = Console.ReadLine().ToLower();
-                if (flavourType == "n")
+                while (true)
                 {
-                    break;
-                }
-                else
-                {
-                    quantity++;
-                    if (flavourType == "durian" || flavourType == "ube" || flavourType == "sea salt")
+                    Console.WriteLine("For regular flavours we've got Vanilla / Chocolate / Strawberry options");
+                    Console.WriteLine("For premium flavours we've got Durian / Ube / Sea salt options");
+                    Console.Write($"Flavour {i} choice: ");
+                    flavourType = Console.ReadLine().ToLower();
+                    if (!flavourOptions.Contains(flavourType))
                     {
-                        premium = true;
+                        Console.WriteLine("Please enter a flavour from the available options.");
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
+                quantity++;
+                if (flavourType == "durian" || flavourType == "ube" || flavourType == "sea salt")
+                {
+                    premium = true;
+                }
+
                 Flavour flavour = new Flavour(flavourType, premium, quantity);
                 flavours.Add(flavour);
             }
@@ -164,7 +171,7 @@ namespace Code
                     string waffleFlavourOption = Console.ReadLine().ToLower();
                     if (waffleFlavourOption == "y")
                     {
-                        Console.WriteLine("We've got Original / Red Velvet / Charcoal / Pandan options: ");
+                        Console.WriteLine("We've got Red Velvet / Charcoal / Pandan options: ");
                         string waffleFlavour = Console.ReadLine().ToLower();
                         waffle.WaffleFlavour = waffleFlavour;
                     }
@@ -191,7 +198,8 @@ namespace Code
             // changing ice cream flavours
             else if (menuOption == 3)
             {
-                List<Flavour> flavours = MakingFlavoursList();
+                int scoops = iceCream.Scoops;
+                List<Flavour> flavours = MakingFlavoursList(scoops);
                 iceCream.Flavours = flavours;
             }
             else if (menuOption == 4)
