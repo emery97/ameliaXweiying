@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Code
 {
@@ -119,8 +120,25 @@ namespace Code
                 }
                 else if (userOption == "6")
                 {
+
+                    ListCustomer();  // Assuming this lists all customers and their IDs.
+                    Console.Write("Enter a customer ID: ");
+                    int customerId = Convert.ToInt32(Console.ReadLine());
+                    Customer chosenCustomer = FindCustomerById(customerList, customerId);
+
+                    if (chosenCustomer != null)
+                    {
+                        ModifyOrderDetails(chosenCustomer);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Customer not found.");
+                    }
+
+                    /*
                     ListCustomer();
                     Customer chosenCustomer = new Customer();
+                    Order chosenCustomerCurrentOrder = new Order();
                     int ID = 0;
                     // checking if correct ID is entered
                     while (true)
@@ -133,6 +151,7 @@ namespace Code
                             if (c.Memberid == ID)
                             {
                                 chosenCustomer = c;
+                                chosenCustomerCurrentOrder = chosenCustomer.CurrentOrder;
                                 brk = true;
                             }
                         }
@@ -143,10 +162,15 @@ namespace Code
                         else
                         {
                             Console.WriteLine("Enter the correct ID please.");
-                        }
+                        } 
+                    
                     }
-                    ModifyOrderDetails(customerList, chosenCustomer);
-                }
+
+                    //List ice cream objects contained inside current order. current order is of order type
+                    Console.WriteLine(chosenCustomerCurrentOrder.ToString());
+
+                    ModifyOrderDetails(customerList, chosenCustomer); */
+                } 
                 else
                 {
                     Console.WriteLine("Please input a number from 0 to 6 thank you.");
@@ -499,9 +523,110 @@ namespace Code
             }
         }
 
+        //Option 6 method 
+
+        static Customer FindCustomerById(List<Customer> customerList, int customerId)
+        {
+            return customerList.FirstOrDefault(c => c.Memberid == customerId);
+        }
+
+        void ModifyOrderDetails(Customer customer)
+        {
+            if (customer.CurrentOrder == null || customer.CurrentOrder.IceCreamList.Count == 0)
+            {
+                Console.WriteLine("There are no ice creams in the order.");
+                return;
+            }
+
+            Console.WriteLine("Current order: ");
+            for (int i = 0; i < customer.CurrentOrder.IceCreamList.Count; i++)
+            {
+                Console.WriteLine($"[{i + 1}] {customer.CurrentOrder.IceCreamList[i]}");
+            }
+
+            Console.WriteLine("[1] Modify an existing ice cream");
+            Console.WriteLine("[2] Add a new ice cream");
+            Console.WriteLine("[3] Delete an existing ice cream");
+            Console.Write("Enter your option: ");
+            int option = Convert.ToInt32(Console.ReadLine());
+
+            switch (option)
+            {
+                case 1:
+                    Console.Write("Select the number of the ice cream to modify: ");
+                    int iceCreamIndex = Convert.ToInt32(Console.ReadLine()) - 1; // Adjusting for zero-based index
+                    if (iceCreamIndex < 0 || iceCreamIndex >= customer.CurrentOrder.IceCreamList.Count)
+                    {
+                        Console.WriteLine("Invalid ice cream number.");
+                    }
+                    else
+                    {
+                        customer.CurrentOrder.ModifyIceCream(iceCreamIndex);
+                    }
+                    break;
+                case 2:
+                    AddIceCream(customer.CurrentOrder);
+                    break;
+                case 3:
+                    DeleteIceCream(customer.CurrentOrder);
+                    break;
+                default:
+                    Console.WriteLine("Invalid option selected.");
+                    break;
+            }
+
+            Console.WriteLine("Updated order: ");
+            foreach (IceCream ic in customer.CurrentOrder.IceCreamList)
+            {
+                Console.WriteLine(ic);
+            }
+        }
+
+        void AddNewIceCream(Order order)
+        {
+            // Prompt user for ice cream details and create a new IceCream object
+            // Example:
+            Console.Write("Enter ice cream option (Cup/Cone/Waffle): ");
+            string option = Console.ReadLine();
+
+            // Additional details like scoops, flavours, toppings etc.
+            // ...
+
+            IceCream newIceCream = new IceCream(option, scoops, flavours, toppings);
+            order.AddIceCream(newIceCream);
+        }
+
+        void DeleteIceCream(Order order)
+        {
+            if (order.IceCreamList.Count == 0)
+            {
+                Console.WriteLine("No ice creams available to delete.");
+                return;
+            }
+
+            Console.WriteLine("Select an ice cream to delete:");
+            for (int i = 0; i < order.IceCreamList.Count; i++)
+            {
+                Console.WriteLine($"[{i + 1}] {order.IceCreamList[i]}");
+            }
+
+            int indexToDelete = Convert.ToInt32(Console.ReadLine()) - 1;
+            if (indexToDelete < 0 || indexToDelete >= order.IceCreamList.Count)
+            {
+                Console.WriteLine("Invalid selection.");
+            }
+            else
+            {
+                order.DeleteIceCream(indexToDelete);
+            }
+        }
+
+
         // option 6 method - modify order details
+        /*
         static void ModifyOrderDetails(List<Customer> customerList, Customer chosenCustomer)
         {
+            
             int option = 0;
             // checking if customer has a current order 
             if (chosenCustomer.CurrentOrder != null)
@@ -518,6 +643,7 @@ namespace Code
                     index++;
                 }
             }
+            
             // printing out option 6 menu
             Console.WriteLine("[1] choose an existing ice cream object to modify");
             Console.WriteLine("[2] add an entirely new ice cream object to the order");
@@ -528,22 +654,22 @@ namespace Code
                 option = Convert.ToInt32(Console.ReadLine());
                 if (option >= 1 && option <= 3)
                 {
-                    if (chosenCustomer.CurrentOrder != null)
+                    if (chosenCustomer.CurrentOrder != null) //Aka customers have order, can do option 1 and 3 since order exists.
                     {
                         break;
                     }
-                    else if (option == 2)
+                    else if (option == 2) 
                     {
                         break;
                     }
                     else
                     {
-                        Console.WriteLine("You do not have any ice cream in your order. You can only choose option 2.");
+                        Console.WriteLine("You do not have any ice cream in your order. You can only choose option 2."); //If option is NOT 2 and they DONT HAVE order, then have error
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Please enter a number from 1 to 3");
+                    Console.WriteLine("Please enter a number from 1 to 3"); //If they anyhow input number like 10 or -2
                 }
             }
 
@@ -776,7 +902,7 @@ namespace Code
 
             }
             return toppings;
-        }
+        } */
 
-    }
-}
+    }  
+}  

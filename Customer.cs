@@ -194,8 +194,8 @@ namespace Code
 
         public Order MakeOrder()
         {
-            string[] waffleFlavourOptions = { "original", "red velvet" , "charcoal" ,"pandan"  }
-        Order newOrder = new Order();
+            string[] waffleFlavourOptions = { "original", "red velvet", "charcoal", "pandan" };
+            Order newOrder = new Order();
             string option = "";
             int scoops = 0;
 
@@ -245,7 +245,7 @@ namespace Code
                     {
                         Console.Write("We've got Original / Red Velvet / Charcoal / Pandan options: ");
                         waffleFlavour = Console.ReadLine().ToLower();
-                        if (waffleFlavour == "original" ||  waffleFlavour == "red velvet" || waffleFlavour == "charcoal" || waffleFlavour == "pandan")
+                        if (waffleFlavourOptions.Contains(waffleFlavour) == true)
                         {
                             break;
                         }

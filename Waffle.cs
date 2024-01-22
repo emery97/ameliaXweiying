@@ -48,7 +48,7 @@ namespace Code
                 while ((s = sr.ReadLine()) != null)
                 {
                     string[] data = s.Split(',');
-                    toppingDict.Add(data[0], Convert.ToInt32(data[1]));
+                    flavourDict.Add(data[0], Convert.ToInt32(data[1]));
                 }
             }
             // checking if got toppings in toppingsDict
@@ -84,6 +84,10 @@ namespace Code
             else if (Scoops == 3)
             {
                 price += 9.50;
+            }
+            else if (WaffleFlavour != "original")
+            {
+                price += 3;
             }
 
             return price;

@@ -19,7 +19,7 @@ namespace Code
         //Attributes
         private int id;
         private DateTime timeReceived;
-        private DateTime timeFulfilled;
+        private DateTime ?timeFulfilled;
         private List<IceCream> iceCreamList;
 
         //Properties
@@ -33,7 +33,7 @@ namespace Code
             get { return timeReceived; }
             set { timeReceived = value; }
         }
-        public DateTime TimeFulfilled
+        public DateTime? TimeFulfilled
         {
             get { return timeFulfilled; }
             set { timeFulfilled = value; }
@@ -54,7 +54,7 @@ namespace Code
         }
 
         //Methods
-        static List<Flavour> MakingFlavoursList(int scoops) //own method to use later
+        private static List<Flavour> MakingFlavoursList(int scoops) //own method to use later
         {
             List<string> premiumFlavour = new List<string>();
             // looking through flavours.csv
@@ -127,7 +127,7 @@ namespace Code
             }
             return flavours;
         }
-        static List<Topping> MakingToppingsList() //own method to use later
+        private static List<Topping> MakingToppingsList() //own method to use later
         {
             List<string> toppingList = new List<string>();
             // looking through toppings.csv
@@ -174,6 +174,97 @@ namespace Code
             return toppings;
         }
         // this is for option 6 , option 1
+
+        public void ModifyIceCream(int iceCreamIndex)
+        {
+            // Assuming IceCreamList is a List<IceCream>
+            IceCream iceCream = IceCreamList[iceCreamIndex - 1];
+
+            Console.WriteLine("[1] Ice Cream Option");
+            Console.WriteLine("[2] Ice Cream Scoops");
+            Console.WriteLine("[3] Ice Cream Flavours");
+            Console.WriteLine("[4] Ice Cream Toppings");
+            int menuOption = Convert.ToInt32(Console.ReadLine());
+
+            // Changing option 
+            if (menuOption == 1)
+            {
+                Console.Write("Options to choose from: Cup / Cone / Waffle: ");
+                string iceCreamOption = Console.ReadLine().ToLower();
+                IceCream newIceCream = null;
+
+                if (iceCreamOption != iceCream.Option)
+                {
+                    switch (iceCreamOption)
+                    {
+                        case "cup":
+                            newIceCream = new Cup(iceCreamOption, iceCream.Scoops, iceCream.Flavours, iceCream.Toppings);
+                            break;
+                        case "cone":
+                            newIceCream = new Cone(iceCreamOption, iceCream.Scoops, iceCream.Flavours, iceCream.Toppings, false); // Assume not dipped by default
+                            break;
+                        case "waffle":
+                            newIceCream = new Waffle(iceCreamOption, iceCream.Scoops, iceCream.Flavours, iceCream.Toppings, "Original"); // Default flavor
+                            break;
+                        default:
+                            Console.WriteLine("Invalid ice cream option.");
+                            break;
+                    }
+                }
+
+                if (newIceCream != null)
+                {
+                    if (iceCreamOption == "cone" && newIceCream is Cone cone)
+                    {
+                        Console.Write("Do you want your cone to be dipped [ Y / N ]: ");
+                        string dippedChoice = Console.ReadLine().ToLower();
+                        cone.Dipped = dippedChoice == "y";
+                    }
+                    else if (iceCreamOption == "waffle" && newIceCream is Waffle waffle)
+                    {
+                        Console.Write("Do you want to change your waffle flavour [ Y / N ]: ");
+                        string waffleFlavourOption = Console.ReadLine().ToLower();
+                        if (waffleFlavourOption == "y")
+                        {
+                            Console.WriteLine("We've got Red Velvet / Charcoal / Pandan options: ");
+                            waffle.WaffleFlavour = Console.ReadLine().ToLower();
+                        }
+                    }
+
+                    IceCreamList[iceCreamIndex - 1] = newIceCream;
+                }
+            }
+            else if (menuOption == 2)
+            {
+                while (true)
+                {
+                    Console.Write("Please enter new number of scoops: ");
+                    int scoops = Convert.ToInt32(Console.ReadLine());
+                    if (scoops >= 1 && scoops <= 3)
+                    {
+                        iceCream.Scoops = scoops;
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("please enter an integer from 1 to 3");
+                    }
+                }
+            }
+            else if (menuOption == 3)
+            {
+                List<Flavour> flavours = MakingFlavoursList(iceCream.Scoops); // Assuming this method exists
+                iceCream.Flavours = flavours;
+            }
+            else if (menuOption == 4)
+            {
+                List<Topping> toppings = MakingToppingsList(); // Assuming this method exists
+                iceCream.Toppings = toppings;
+            }
+        }
+
+
+        /*
         public void ModifyIceCream(int iceCreamIndex) //methods here onwards are those that need to do bc qn says so 
         {
             IceCream iceCream = IceCreamList[iceCreamIndex - 1];
@@ -189,7 +280,7 @@ namespace Code
             {
                 Console.Write("Options to choose from: Cup / Cone / Waffle: ");
                 string iceCreamOption = Console.ReadLine().ToLower();
-                iceCream.Option = iceCreamOption; //Equate the current exisitng option (iceCream.Option) to the new choice (iceCreamOption)
+               // iceCream.Option = iceCreamOption; //Equate the current exisitng option (iceCream.Option) to the new choice (iceCreamOption)
                 IceCream newIceCream = null; //Initialize 
                 if (iceCreamOption != iceCream.Option)
                 {
@@ -271,7 +362,7 @@ namespace Code
                 List<Topping> toppings = MakingToppingsList();
                 iceCream.Toppings = toppings;
             }
-        }
+        } */
 
         public void AddIceCream(IceCream userAddIceCream)
         {
