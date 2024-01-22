@@ -70,22 +70,40 @@ namespace Code
         //Methods  
 
         // making new flavoursList
-        static List<Flavour> MakingFlavoursList(int scoops)
+        private static List<Flavour> MakingFlavoursList(int scoops) //own method to use later
         {
-            string[] flavourOptions = { "vanilla", "chocolate", "strawberry", "durian", "ube", "sea salt" };
-            List<Flavour> flavours = new List<Flavour>();
-            bool premium = false;
-            int quantity = 0;
-            string flavourType = "";
-            for (int i = 1; i <= scoops; i++)
+            List<string> premiumFlavour = new List<string>();
+            // looking through flavours.csv
+            using (StreamReader sr = new StreamReader("flavours.csv"))
             {
-                while (true)
+                string s = sr.ReadLine(); //header
+                string[] header = s.Split(',');
+                while ((s = sr.ReadLine()) != null)
+                {
+                    string[] data = s.Split(',');
+                    if (Convert.ToInt32(data[1]) != 0)
+                    {
+                        premiumFlavour.Add(data[0].ToLower());
+                    }
+                }
+            }
+
+            //key = flavour, value = quantity
+            Dictionary<string, int> flavourQuantity = new Dictionary<string, int>();
+            string[] flavourOptions = { "vanilla", "chocolate", "strawberry", "durian", "ube", "sea salt" }; //This is an array. Do this so later can check if user's chosen flavour is indeed one of the flavour options in our menu. Aka this part of the code for validation (!flavourOptions.Contains(flavourType))
+            //Initializing
+            List<Flavour> flavours = new List<Flavour>(); //So that can store all flavours user choose
+            bool premium = false;
+            string flavourType = "";
+            for (int i = 1; i <= scoops; i++) //for loop is for asking for flavours
+            {
+                while (true) // this while loop is for validation. bc if user enters a flavour type that dont exist, then prg will ask them to "Please enter a flavour from the available options." ---> then will while loop again to ask them the flvours. Finally when they enter a flavour that exist, then will break from this while loop and go back to the for loop whr it is for the flavours.
                 {
                     Console.WriteLine("For regular flavours we've got Vanilla / Chocolate / Strawberry options");
                     Console.WriteLine("For premium flavours we've got Durian / Ube / Sea salt options");
                     Console.Write($"Flavour {i} choice: ");
                     flavourType = Console.ReadLine().ToLower();
-                    if (!flavourOptions.Contains(flavourType))
+                    if (!flavourOptions.Contains(flavourType))  //The ! is saying If flavourType cannot be found in array called flavourOptions...
                     {
                         Console.WriteLine("Please enter a flavour from the available options.");
                     }
@@ -94,58 +112,90 @@ namespace Code
                         break;
                     }
                 }
-                quantity++;
-                if (flavourType == "durian" || flavourType == "ube" || flavourType == "sea salt")
+
+                //Dtermine quantity
+                if (flavourQuantity.ContainsKey(flavourType))
                 {
-                    premium = true;
+                    // Update quantity if the key already exists
+                    flavourQuantity[flavourType]++; //flavourQuantity[type] is dictionary[yourchosenkey] which will give you the value aka quantity 
+                }
+                else
+                {
+                    // Add a new entry if the key doesn't exist
+                    flavourQuantity.Add(flavourType, 1);
                 }
 
-                Flavour flavour = new Flavour(flavourType, premium, quantity);
+            }
+
+            foreach (KeyValuePair<string, int> kvp in flavourQuantity)
+            {
+                string actualFlavourType = kvp.Key;
+                foreach (string pf in premiumFlavour)
+                {
+                    if (actualFlavourType == pf)
+                    {
+                        premium = true;
+                    }
+                }
+
+                Flavour flavour = new Flavour(actualFlavourType, premium, kvp.Value);
                 flavours.Add(flavour);
             }
             return flavours;
         }
 
-        // making new topping list
-        static List<Topping> MakingToppingsList()
+        // making toppings list
+        private static List<Topping> MakingToppingsList() //own method to use later
         {
-            string[] flavourOptions = { "sprinkles", "mochi", "sago", "oreos" };
+            List<string> toppingList = new List<string>();
+            // looking through toppings.csv
+            using (StreamReader sr = new StreamReader("toppings.csv"))
+            {
+                string s = sr.ReadLine(); //header
+                while ((s = sr.ReadLine()) != null)
+                {
+                    string[] data = s.Split(',');
+                    toppingList.Add(data[0].ToLower());
+                }
+            }
+            string toppingChoice = "";
             List<Topping> toppings = new List<Topping>();
-            Console.WriteLine("We've got sprinkles, mochi, sago and oreos topping options ");
-            bool breakEarly = false;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++) //Bc can only choose up to 4 toppings!
             {
                 while (true)
                 {
-                    Console.Write("Topping choice? If you don't want to add anymore flavours enter N: ");
-                    string toppingChoice = Console.ReadLine().ToLower();
-                    if (flavourOptions.Contains(toppingChoice) == true)
+                    Console.WriteLine("We've got sprinkles, mochi, sago and oreos topping options ");
+                    Console.Write("Topping choice? If you don't want to add anymore toppings enter N: ");
+                    toppingChoice = Console.ReadLine().ToLower();
+                    if (toppingChoice == "n")
                     {
-                        Topping topping = new Topping(toppingChoice);
-                        toppings.Add(topping);
                         break;
                     }
-                    else if (toppingChoice == "n")
+                    else if ((toppingList.Contains(toppingChoice) == true))
                     {
-                        breakEarly = true;
+                        Topping topping = new Topping(toppingChoice);
+                        toppings.Add(topping); //add topping obj to list called toppings
                         break;
                     }
                     else
                     {
-                        Console.WriteLine("Please enter a topping option mentioned above.");
+                        Console.WriteLine("Please enter a valid topping");
                     }
+
                 }
-                if (breakEarly == true)
+                if (toppingChoice == "n")
                 {
                     break;
                 }
+
             }
             return toppings;
         }
 
         public Order MakeOrder()
         {
-            Order newOrder = new Order();
+            string[] waffleFlavourOptions = { "original", "red velvet" , "charcoal" ,"pandan"  }
+        Order newOrder = new Order();
             string option = "";
             int scoops = 0;
 
@@ -177,7 +227,7 @@ namespace Code
             }
 
             // making flavour and toppings list
-            List<Flavour> flavours = MakingFlavoursList(scoops);
+            List<Flavour> flavours = MakingFlavoursList(scoops); //MakingFlavourList is the method youu call out but flavours is the name of the list that is returned when you call out MakingFlavourList
             List<Topping> toppings = MakingToppingsList();
 
             switch (option)
@@ -190,12 +240,12 @@ namespace Code
 
                     break;
                 case "waffle":
-                    string waffleFlavour = "";
+                    string waffleFlavour = "original";
                     while (true)
                     {
-                        Console.Write("We've got Red Velvet / Charcoal / Pandan options: ");
+                        Console.Write("We've got Original / Red Velvet / Charcoal / Pandan options: ");
                         waffleFlavour = Console.ReadLine().ToLower();
-                        if (waffleFlavour == "red velvet" || waffleFlavour == "charcoal" || waffleFlavour == "pandan")
+                        if (waffleFlavour == "original" ||  waffleFlavour == "red velvet" || waffleFlavour == "charcoal" || waffleFlavour == "pandan")
                         {
                             break;
                         }

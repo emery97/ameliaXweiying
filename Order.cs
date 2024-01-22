@@ -46,7 +46,7 @@ namespace Code
             IceCreamList = new List<IceCream>();
         }
 
-        public Order(int userOrderId, DateTime userTimeReceived) //****Is the datetime for time recieved or time fulfilled???
+        public Order(int userOrderId, DateTime userTimeReceived)
         {
             Id = userOrderId;
             TimeReceived = userTimeReceived;
@@ -54,22 +54,40 @@ namespace Code
         }
 
         //Methods
-        static List<Flavour> MakingFlavoursList(int scoops)
+        static List<Flavour> MakingFlavoursList(int scoops) //own method to use later
         {
-            string[] flavourOptions = { "vanilla", "chocolate", "strawberry", "durian", "ube", "sea salt" };
-            List<Flavour> flavours = new List<Flavour>();
-            bool premium = false;
-            int quantity = 0;
-            string flavourType = "";
-            for (int i = 1; i <= scoops; i++)
+            List<string> premiumFlavour = new List<string>();
+            // looking through flavours.csv
+            using (StreamReader sr = new StreamReader("flavours.csv"))
             {
-                while (true)
+                string s = sr.ReadLine(); //header
+                string[] header = s.Split(',');
+                while ((s = sr.ReadLine()) != null)
+                {
+                    string[] data = s.Split(',');
+                    if (Convert.ToInt32(data[1])!= 0)
+                    {
+                        premiumFlavour.Add(data[0].ToLower());
+                    }
+                }
+            }
+
+            //key = flavour, value = quantity
+            Dictionary<string, int> flavourQuantity = new Dictionary<string, int>();
+            string[] flavourOptions = { "vanilla", "chocolate", "strawberry", "durian", "ube", "sea salt" }; //This is an array. Do this so later can check if user's chosen flavour is indeed one of the flavour options in our menu. Aka this part of the code for validation (!flavourOptions.Contains(flavourType))
+            //Initializing
+            List<Flavour> flavours = new List<Flavour>(); //So that can store all flavours user choose
+            bool premium = false; 
+            string flavourType = "";
+            for (int i = 1; i <= scoops; i++) //for loop is for asking for flavours
+            {
+                while (true) // this while loop is for validation. bc if user enters a flavour type that dont exist, then prg will ask them to "Please enter a flavour from the available options." ---> then will while loop again to ask them the flvours. Finally when they enter a flavour that exist, then will break from this while loop and go back to the for loop whr it is for the flavours.
                 {
                     Console.WriteLine("For regular flavours we've got Vanilla / Chocolate / Strawberry options");
                     Console.WriteLine("For premium flavours we've got Durian / Ube / Sea salt options");
                     Console.Write($"Flavour {i} choice: ");
                     flavourType = Console.ReadLine().ToLower();
-                    if (!flavourOptions.Contains(flavourType))
+                    if (!flavourOptions.Contains(flavourType))  //The ! is saying If flavourType cannot be found in array called flavourOptions...
                     {
                         Console.WriteLine("Please enter a flavour from the available options.");
                     }
@@ -78,39 +96,85 @@ namespace Code
                         break;
                     }
                 }
-                quantity++;
-                if (flavourType == "durian" || flavourType == "ube" || flavourType == "sea salt")
+
+                //Dtermine quantity
+                if (flavourQuantity.ContainsKey(flavourType))
                 {
-                    premium = true;
+                    // Update quantity if the key already exists
+                    flavourQuantity[flavourType]++; //flavourQuantity[type] is dictionary[yourchosenkey] which will give you the value aka quantity 
+                }
+                else
+                {
+                    // Add a new entry if the key doesn't exist
+                    flavourQuantity.Add(flavourType, 1);
                 }
 
-                Flavour flavour = new Flavour(flavourType, premium, quantity);
+            }
+
+            foreach (KeyValuePair<string,int> kvp in flavourQuantity)
+            {
+                string actualFlavourType = kvp.Key;
+                foreach (string pf in premiumFlavour)
+                {
+                    if (actualFlavourType == pf)
+                    {
+                        premium = true;
+                    }
+                }
+
+                Flavour flavour = new Flavour(actualFlavourType, premium, kvp.Value);
                 flavours.Add(flavour);
             }
             return flavours;
         }
-        static List<Topping> MakingToppingsList()
+        static List<Topping> MakingToppingsList() //own method to use later
         {
-            List<Topping> toppings = new List<Topping>();
-            Console.WriteLine("We've got sprinkles, mochi, sago and oreos topping options ");
-            for (int i = 0; i < 4; i++)
+            List<string> toppingList = new List<string>();
+            // looking through toppings.csv
+            using (StreamReader sr = new StreamReader("toppings.csv"))
             {
-                Console.Write("Topping choice? If you don't want to add anymore flavours enter N: ");
-                string toppingChoice = Console.ReadLine().ToLower();
+                string s = sr.ReadLine(); //header
+                while ((s = sr.ReadLine()) != null)
+                {
+                    string[] data = s.Split(',');
+                    toppingList.Add(data[0].ToLower());
+                }
+            }
+            string toppingChoice = "";
+            List<Topping> toppings = new List<Topping>();
+            for (int i = 0; i < 4; i++) //Bc can only choose up to 4 toppings!
+            {
+                while (true)
+                {
+                    Console.WriteLine("We've got sprinkles, mochi, sago and oreos topping options ");
+                    Console.Write("Topping choice? If you don't want to add anymore toppings enter N: ");
+                    toppingChoice = Console.ReadLine().ToLower();
+                    if (toppingChoice == "n")
+                    { 
+                        break;
+                    }
+                    else if ((toppingList.Contains(toppingChoice) == true))
+                    {
+                        Topping topping = new Topping(toppingChoice);
+                        toppings.Add(topping); //add topping obj to list called toppings
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Please enter a valid topping");
+                    }
+
+                }
                 if (toppingChoice == "n")
                 {
                     break;
                 }
-                else
-                {
-                    Topping topping = new Topping(toppingChoice);
-                    toppings.Add(topping);
-                }
+
             }
             return toppings;
         }
         // this is for option 6 , option 1
-        public void ModifyIceCream(int iceCreamIndex)
+        public void ModifyIceCream(int iceCreamIndex) //methods here onwards are those that need to do bc qn says so 
         {
             IceCream iceCream = IceCreamList[iceCreamIndex - 1];
 
@@ -125,15 +189,15 @@ namespace Code
             {
                 Console.Write("Options to choose from: Cup / Cone / Waffle: ");
                 string iceCreamOption = Console.ReadLine().ToLower();
-                iceCream.Option = iceCreamOption;
-                IceCream newIceCream = null;
+                iceCream.Option = iceCreamOption; //Equate the current exisitng option (iceCream.Option) to the new choice (iceCreamOption)
+                IceCream newIceCream = null; //Initialize 
                 if (iceCreamOption != iceCream.Option)
                 {
                     // if the ice cream option is different
-                    switch (iceCreamOption)
+                    switch (iceCreamOption) //Basically is testing iceCreamOption. 
                     {
-                        case "cup":
-                            newIceCream = new Cup();
+                        case "cup": //So if iceCreamOption is cup then...
+                            newIceCream = new Cup(); 
                             break;
                         case "cone":
                             newIceCream = new Cone();
@@ -141,7 +205,7 @@ namespace Code
                         case "waffle":
                             newIceCream = new Waffle();
                             break;
-                        default:
+                        default:  //Default is if iceCreamOption is none of those listed (the cases), then....
                             Console.WriteLine("Invalid ice cream option.");
                             break;
                     }
@@ -149,16 +213,16 @@ namespace Code
                 if (newIceCream != null)
                 {
                     newIceCream.Option = iceCreamOption;
-                    newIceCream.Scoops = iceCream.Scoops;
+                    newIceCream.Scoops = iceCream.Scoops; //Set it to previous ones since did not change those
                     newIceCream.Flavours = iceCream.Flavours;
                     newIceCream.Toppings = iceCream.Toppings;
 
                     // set iceCream reference to the new ice cream obj
-                    iceCream = newIceCream;
+                    iceCream = newIceCream; //current ice cream is now replaced with the new ice cream
                 }
-                if (iceCreamOption == "cone" && iceCream is Cone cone)
+                if (iceCreamOption == "cone" && iceCream is Cone cone) //use iceCream and iceCreamOption to equate now instead of newIceCream since you alrd set iceCream = newIceCream above already + "iceCream is Cone cone" is just checking if iceCream is of CONE class type! Eg if want check if it is of waffle type, then would be if(iceCream is Waffle waffle) etc
                 {
-                    Console.Write("Do you want your cone to be dipped Y / N");
+                    Console.Write("Do you want your cone to be dipped [ Y / N ]");
                     string dippedChoice = Console.ReadLine().ToLower();
                     if (dippedChoice == "y")
                     {
@@ -167,7 +231,7 @@ namespace Code
                 }
                 if (iceCreamOption == "waffle" && iceCream is Waffle waffle)
                 {
-                    Console.Write("Do you want to change your waffle flavour Y / N ");
+                    Console.Write("Do you want to change your waffle flavour [ Y / N ]");
                     string waffleFlavourOption = Console.ReadLine().ToLower();
                     if (waffleFlavourOption == "y")
                     {

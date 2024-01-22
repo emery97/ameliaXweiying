@@ -25,9 +25,9 @@ namespace Code
             Queue<Order> goldOrderqueue = new Queue<Order>();  //This is for basic 4, for me to append the orders into queues
             Queue<Order> regularOrderQueue = new Queue<Order>();
             while (true)
-            { 
+            {
 
-                InitCustomerList(customerList,customerOrderHistory);
+                InitCustomerList(customerList, customerOrderHistory);
                 Console.WriteLine(new String('-', 10) + "MENU" + new string('-', 10));
                 Console.WriteLine("[1] List all customers");
                 Console.WriteLine("[2] List all current orders");
@@ -50,7 +50,7 @@ namespace Code
                     GettingOrderHistory(customerOrderHistory, customerList);
                     foreach (Customer c in customerList)
                     {
-                        Console.WriteLine(c.ToString());
+                        Console.WriteLine(c.ToString()); //Output will have some with and without order history because of csv file. Then some will have 2 diff order IDs in their order history bc they order more than 1 time and order ID changes EACH TIME they order. NOT EACH ICE CREAM THEY ORDER BUT EACH TIME THEY ORDER
                     }
                 }
                 else if (userOption == "2")
@@ -68,7 +68,7 @@ namespace Code
                     int ID = 0;
                     int orderID = 0;
                     DateTime timeReceived = DateTime.Now;
-                    Order newOrder = new Order(orderID,timeReceived);
+                    Order newOrder = new Order(orderID, timeReceived);
                     Customer chosenCustomer = new Customer();
                     while (true)
                     {
@@ -96,7 +96,7 @@ namespace Code
                         }
                     }
                     while (true)
-                    { 
+                    {
                         Console.Write("Would you like to add another ice cream Y / N: ");
                         string goAgain = Console.ReadLine().ToLower();
                         if (goAgain == "n")
@@ -114,7 +114,7 @@ namespace Code
                 else if (userOption == "5")
                 {
                     ListCustomer();
-                    GettingOrderHistory(customerOrderHistory,customerList);
+                    GettingOrderHistory(customerOrderHistory, customerList);
                     OrderDetails(customerList, customerOrderHistory);
                 }
                 else if (userOption == "6")
@@ -145,7 +145,7 @@ namespace Code
                             Console.WriteLine("Enter the correct ID please.");
                         }
                     }
-                    ModifyOrderDetails(customerList,chosenCustomer);
+                    ModifyOrderDetails(customerList, chosenCustomer);
                 }
                 else
                 {
@@ -205,13 +205,13 @@ namespace Code
         }
 
         // option 2 method - display customer info in both queues
-        static void ListOrder(List<Customer> customerList, Queue<Order> goldOrderQueue, Queue<Order>regularOrderQueue)
+        static void ListOrder(List<Customer> customerList, Queue<Order> goldOrderQueue, Queue<Order> regularOrderQueue)
         {
             // making sure got people in queue
             if (goldOrderQueue.Count() > 0)
             {
                 Console.WriteLine("Customers in gold queue:");
-                foreach(Order o in goldOrderQueue)
+                foreach (Order o in goldOrderQueue)
                 {
                     if (o != null)
                     {
@@ -267,12 +267,12 @@ namespace Code
 
             //Since PointCard constructor parameters are int, int which is for Points and PunchCard
             newCustomer.Rewards = new PointCard(0, 0); //Initialize first, before assigning newCustomer.Rewards = PointCard object aka newCustomerPC.
-                                                        //^^ Btw, should always initialize in case that it is ever null value. Bc if is legit null value, then you will have error when trying to run the next code bc you wont be able to access the newCustomer.Rewards.Points due to the fact that it is NULL! it is a NullReferenceException
+                                                       //^^ Btw, should always initialize in case that it is ever null value. Bc if is legit null value, then you will have error when trying to run the next code bc you wont be able to access the newCustomer.Rewards.Points due to the fact that it is NULL! it is a NullReferenceException
             PointCard newCustomerPC = new PointCard(newCustomer.Rewards.Points, newCustomer.Rewards.PunchCard); //Need .Rewards because Rewards in customer class and is also of type PointCard. (is like the example giving in slides with John.Addr.Shipping)
 
             newCustomer.Rewards = newCustomerPC; //Assigning of PointCard to customer is done in this code. (Rewards is of class type PointCard, but it is stored in the customer class) So thats why can equate pointcard object to another pointcard obj
-            try 
-            { 
+            try
+            {
                 //Appending..
                 using (StreamWriter sw = new StreamWriter("customers.csv", true))
                 {
@@ -378,15 +378,15 @@ namespace Code
         }
 
         // reading order.csv and making orders
-        static void GettingOrderHistory(Dictionary<Order, int> customerOrderHistory, List<Customer> customerList)
+        static void GettingOrderHistory(Dictionary<Order, int> customerOrderHistory, List<Customer> customerList) //Use Order as key in the customerOrderHistory and not int bc int would represent the id in the orders.csv class. But then the key would have repeated values bc have multiple data with id as 3. And dictionary cannot have key with same values
         {
-            List<string> premiumFlavour = new List<string> { "durian", "ube", "sea salt" };
+            string[] premiumFlavour = { "durian", "ube", "sea salt" }; //This is array so later can see if the flavour user choose is premium
 
             using (StreamReader sr = new StreamReader("orders.csv"))
             {
                 string header = sr.ReadLine(); // headers
 
-                while (!sr.EndOfStream) 
+                while (!sr.EndOfStream)
                 {
                     List<Flavour> flavours = new List<Flavour>();
                     List<Topping> toppings = new List<Topping>();
@@ -399,7 +399,7 @@ namespace Code
 
                     // toppings variable
                     string toppingType = "";
-                    string s = sr.ReadLine()?.ToLower(); 
+                    string s = sr.ReadLine()?.ToLower();
 
                     if (s != null)
                     {
@@ -420,13 +420,13 @@ namespace Code
                         string waffleFlavour = data[7];
 
                         // storing all the flavours 
-                        string[] flavoursData = { data[8], data[9], data[10] };
+                        string[] flavoursData = { data[8], data[9], data[10] }; //This is array. I store all the flavour types in the csv file IN this array. So that later i can use loop and determine quantity
                         // key = flavour, value = quantity
-                        Dictionary<string, int> flavourQuantity = new Dictionary<string, int>();
+                        Dictionary<string, int> flavourQuantity = new Dictionary<string, int>(); //So later can use function .ContainsKey and see if the flavour alrd exist in dict. If yes, then just add its quantity. If no, then i make quanitty = 1 first.
 
-                        foreach (string f in flavoursData)
+                        foreach (string f in flavoursData) //Loop through the array of csv flavour types so later can compare with exisitng flavours in dictionary called flavourQuantity
                         {
-                            if (!string.IsNullOrEmpty(f))
+                            if (!string.IsNullOrEmpty(f)) 
                             {
                                 type = f.Trim(); // Trim to remove leading/trailing spaces
 
@@ -434,12 +434,12 @@ namespace Code
                                 if (flavourQuantity.ContainsKey(type))
                                 {
                                     // Update quantity if the key already exists
-                                    flavourQuantity[type]++;
+                                    flavourQuantity[type]++; //flavourQuantity[type] is dictionary[yourchosenkey] which will give you the value aka quantity 
                                 }
                                 else
                                 {
-                                    // Add a new entry if the key doesn't exist
-                                    flavourQuantity.Add(type, 1);
+                                    // Add a new entry  to dictionary if the key doesn't exist
+                                    flavourQuantity.Add(type, 1); 
                                 }
                             }
                         }
@@ -447,12 +447,12 @@ namespace Code
                         // now got dictionary with flavor types and their quantities
                         foreach (var kvp in flavourQuantity)
                         {
-                            Flavour flavour = new Flavour(kvp.Key, premiumFlavour.Contains(kvp.Key), kvp.Value);
-                            flavours.Add(flavour);
+                            Flavour flavour = new Flavour(kvp.Key, premiumFlavour.Contains(kvp.Key), kvp.Value); //premiumFlavour.Contains(kvp.Key) is using premiumFlavours aka the array to see if the flavour type is inside the array which shows all premiumFlavours. 
+                            flavours.Add(flavour); //Adding into list made earlier
                         }
 
                         // storing all the toppings
-                        string[] toppingsData = { data[11], data[12], data[13], data[14] };
+                        string[] toppingsData = { data[11], data[12], data[13], data[14] }; //Same concept as storing the flavours from csv file in an array jn
                         foreach (string t in toppingsData)
                         {
                             if (!string.IsNullOrEmpty(t))
@@ -463,13 +463,13 @@ namespace Code
                             }
                         }
 
-                        Order orderHist = new Order(orderID, timeRecieved);
+                        Order orderHist = new Order(orderID, timeRecieved); //make a order obj called orderHist, with parameters  on data in csv file.
 
                         // cup option
                         if (option == "cup")
                         {
                             Cup cup = new Cup(option, scoops, flavours, toppings);
-                            orderHist.AddIceCream(cup);
+                            orderHist.AddIceCream(cup);  //Only can access AddIceCream method when you have smth of order class. And the thing you add inside must be icecream class aka cup/cone/waffle
                         }
                         else if (option == "cone")
                         {
@@ -481,10 +481,12 @@ namespace Code
                             Waffle waffle = new Waffle(option, scoops, flavours, toppings, waffleFlavour);
                             orderHist.AddIceCream(waffle);
                         }
-                        orderHist.TimeReceived = timeRecieved;
+
+                        orderHist.TimeReceived = timeRecieved; //equating the order history made above to the timerecieved and timefulfilled from the csv file.
                         orderHist.TimeFulfilled = timefulfilled;
                         // tracks which customer has what order
-                        customerOrderHistory.Add(orderHist, memberID);
+                        customerOrderHistory.Add(orderHist, memberID); //Adding these data to dictionary called customerOrderHistory which is declared above. 
+                        //^^Btw, this is inside the reading of csv files line by line, so the data would be stored line by line. Dont have to worry about data getting missed out bc all data is gone through line by line
                         foreach (Customer c in customerList)
                         {
                             if (c.Memberid == memberID)
@@ -500,7 +502,7 @@ namespace Code
         // option 6 method - modify order details
         static void ModifyOrderDetails(List<Customer> customerList, Customer chosenCustomer)
         {
-            int option  = 0;
+            int option = 0;
             // checking if customer has a current order 
             if (chosenCustomer.CurrentOrder != null)
             {
@@ -526,7 +528,7 @@ namespace Code
                 option = Convert.ToInt32(Console.ReadLine());
                 if (option >= 1 && option <= 3)
                 {
-                    if (chosenCustomer.CurrentOrder != null )
+                    if (chosenCustomer.CurrentOrder != null)
                     {
                         break;
                     }
@@ -551,7 +553,7 @@ namespace Code
                 int iceCreamIndex = Convert.ToInt32(Console.ReadLine());
                 // finding out which ice cream user wants to edit 
                 IceCream iceCream = chosenCustomer.CurrentOrder.IceCreamList[iceCreamIndex - 1];
-                chosenCustomer.CurrentOrder.ModifyIceCream(iceCreamIndex - 1);
+                chosenCustomer.CurrentOrder.ModifyIceCream(iceCreamIndex);
             }
             else if (option == 2)
             {
@@ -637,7 +639,7 @@ namespace Code
                     }
                     Console.WriteLine("Please choose an ice cream to delete, enter the number: ");
                     int chosenIndex = Convert.ToInt32(Console.ReadLine());
-                    chosenCustomer.CurrentOrder.IceCreamList.RemoveAt(chosenIndex - 1);
+                    chosenCustomer.CurrentOrder.DeleteIceCream(chosenIndex - 1); // need to use method in class
                 }
             }
             Console.WriteLine("Here is your updated order: ");
@@ -656,23 +658,40 @@ namespace Code
 
 
         }
-        // making new flavoursList
-        static List<Flavour> MakingFlavoursList(int scoops)
+        static List<Flavour> MakingFlavoursList(int scoops) //own method to use later
         {
-            string[] flavourOptions = { "vanilla", "chocolate", "strawberry", "durian", "ube", "sea salt" };
-            List<Flavour> flavours = new List<Flavour>();
-            bool premium = false;
-            int quantity = 0;
-            string flavourType = "";
-            for (int i = 1; i<=scoops; i++)
+            List<string> premiumFlavour = new List<string>();
+            // looking through flavours.csv
+            using (StreamReader sr = new StreamReader("flavours.csv"))
             {
-                while (true)
+                string s = sr.ReadLine(); //header
+                string[] header = s.Split(',');
+                while ((s = sr.ReadLine()) != null)
+                {
+                    string[] data = s.Split(',');
+                    if (Convert.ToInt32(data[1]) != 0)
+                    {
+                        premiumFlavour.Add(data[0].ToLower());
+                    }
+                }
+            }
+
+            //key = flavour, value = quantity
+            Dictionary<string, int> flavourQuantity = new Dictionary<string, int>();
+            string[] flavourOptions = { "vanilla", "chocolate", "strawberry", "durian", "ube", "sea salt" }; //This is an array. Do this so later can check if user's chosen flavour is indeed one of the flavour options in our menu. Aka this part of the code for validation (!flavourOptions.Contains(flavourType))
+            //Initializing
+            List<Flavour> flavours = new List<Flavour>(); //So that can store all flavours user choose
+            bool premium = false;
+            string flavourType = "";
+            for (int i = 1; i <= scoops; i++) //for loop is for asking for flavours
+            {
+                while (true) // this while loop is for validation. bc if user enters a flavour type that dont exist, then prg will ask them to "Please enter a flavour from the available options." ---> then will while loop again to ask them the flvours. Finally when they enter a flavour that exist, then will break from this while loop and go back to the for loop whr it is for the flavours.
                 {
                     Console.WriteLine("For regular flavours we've got Vanilla / Chocolate / Strawberry options");
                     Console.WriteLine("For premium flavours we've got Durian / Ube / Sea salt options");
                     Console.Write($"Flavour {i} choice: ");
                     flavourType = Console.ReadLine().ToLower();
-                    if (!flavourOptions.Contains(flavourType))
+                    if (!flavourOptions.Contains(flavourType))  //The ! is saying If flavourType cannot be found in array called flavourOptions...
                     {
                         Console.WriteLine("Please enter a flavour from the available options.");
                     }
@@ -681,51 +700,80 @@ namespace Code
                         break;
                     }
                 }
-                quantity++;
-                if (flavourType == "durian" || flavourType == "ube" || flavourType == "sea salt")
+
+                //Dtermine quantity
+                if (flavourQuantity.ContainsKey(flavourType))
                 {
-                    premium = true;
+                    // Update quantity if the key already exists
+                    flavourQuantity[flavourType]++; //flavourQuantity[type] is dictionary[yourchosenkey] which will give you the value aka quantity 
+                }
+                else
+                {
+                    // Add a new entry if the key doesn't exist
+                    flavourQuantity.Add(flavourType, 1);
                 }
 
-                Flavour flavour = new Flavour(flavourType, premium, quantity);
+            }
+
+            foreach (KeyValuePair<string, int> kvp in flavourQuantity)
+            {
+                string actualFlavourType = kvp.Key;
+                foreach (string pf in premiumFlavour)
+                {
+                    if (actualFlavourType == pf)
+                    {
+                        premium = true;
+                    }
+                }
+
+                Flavour flavour = new Flavour(actualFlavourType, premium, kvp.Value);
                 flavours.Add(flavour);
             }
-            return flavours;           
+            return flavours;
         }
-
-        // making new topping list
-        static List<Topping> MakingToppingsList()
+        static List<Topping> MakingToppingsList() //own method to use later
         {
-            string[] flavourOptions = { "sprinkles", "mochi", "sago", "oreos" };
+            List<string> toppingList = new List<string>();
+            // looking through toppings.csv
+            using (StreamReader sr = new StreamReader("toppings.csv"))
+            {
+                string s = sr.ReadLine(); //header
+                while ((s = sr.ReadLine()) != null)
+                {
+                    string[] data = s.Split(',');
+                    toppingList.Add(data[0].ToLower());
+                }
+            }
+            string toppingChoice = "";
             List<Topping> toppings = new List<Topping>();
-            Console.WriteLine("We've got sprinkles, mochi, sago and oreos topping options ");
-            bool breakEarly = false;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++) //Bc can only choose up to 4 toppings!
             {
                 while (true)
                 {
-                    Console.Write("Topping choice? If you don't want to add anymore flavours enter N: ");
-                    string toppingChoice = Console.ReadLine().ToLower();
-                    if (flavourOptions.Contains(toppingChoice) == true)
+                    Console.WriteLine("We've got sprinkles, mochi, sago and oreos topping options ");
+                    Console.Write("Topping choice? If you don't want to add anymore toppings enter N: ");
+                    toppingChoice = Console.ReadLine().ToLower();
+                    if (toppingChoice == "n")
                     {
-                        Topping topping = new Topping(toppingChoice);
-                        toppings.Add(topping);
                         break;
                     }
-                    else if (toppingChoice == "n")
+                    else if ((toppingList.Contains(toppingChoice) == true))
                     {
-                        breakEarly = true;
+                        Topping topping = new Topping(toppingChoice);
+                        toppings.Add(topping); //add topping obj to list called toppings
                         break;
                     }
                     else
                     {
-                        Console.WriteLine("Please enter a topping option mentioned above.");
+                        Console.WriteLine("Please enter a valid topping");
                     }
+
                 }
-                if (breakEarly == true)
+                if (toppingChoice == "n")
                 {
                     break;
                 }
+
             }
             return toppings;
         }

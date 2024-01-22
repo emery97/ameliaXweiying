@@ -24,8 +24,8 @@ namespace Code
         }
         public override double CalculatePrice()
         {
-            // as long as customer choose waffle base price $3
-            double price = 3;
+            // as long as customer choose waffle base price $0
+            double price = 0;
             Dictionary<string, int> flavourDict = new Dictionary<string, int>();
             Dictionary<string, int> toppingDict = new Dictionary<string, int>();
 
