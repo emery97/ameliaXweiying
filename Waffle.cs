@@ -1,100 +1,67 @@
-﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh Jia Xuan
-//==========================================================
-
+﻿
+using PairAssignment;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code
+namespace PairAssignment
 {
-    class Waffle:IceCream
+    class Waffle : IceCream
     {
         private string waffleFlavour;
-        public string WaffleFlavour { get; set; }
-        public Waffle() : base() { }
-        public Waffle(string o,int s,List<Flavour> f, List<Topping> t,string w) : base(o, s, f, t)
+
+        public string WaffleFlavour
         {
-            WaffleFlavour = w;
+            get { return waffleFlavour; }
+            set { waffleFlavour = value; }
         }
+        public Waffle() : base() { }
+
+        public Waffle(string option, int scoops, List<Flavour> flavourList, List<Topping> toppingList, string waffleFlavour) : base(option, scoops, flavourList, toppingList)
+        {
+            WaffleFlavour = waffleFlavour;
+        }
+
         public override double CalculatePrice()
         {
-            // as long as customer choose waffle base price $0
-            double price = 0;
-            Dictionary<string, int> flavourDict = new Dictionary<string, int>();
-            Dictionary<string, int> toppingDict = new Dictionary<string, int>();
+            int countPremium = 0;
+            int countTopping = ToppingList.Count();
+            double premiumWaffle = 0;
 
-            // looking through toppings.csv
-            using (StreamReader sr = new StreamReader("toppings.csv"))
+            foreach (Flavour flavour in FlavourList)
             {
-                string s = sr.ReadLine(); //header
-                string[] header = s.Split(',');
-                while ((s = sr.ReadLine()) != null)
+                string flavour_str = Convert.ToString(flavour).ToLower();
+                if (flavour_str == "durian" || flavour_str == "ube" || flavour_str == "sea salt")
                 {
-                    string[] data = s.Split(',');
-                    toppingDict.Add(data[0], Convert.ToInt32(data[1]));
+                    countPremium += 1;
                 }
             }
-            // looking through flavours.csv
-            using (StreamReader sr = new StreamReader("flavours.csv"))
+            WaffleFlavour = WaffleFlavour.ToLower();
+            if (WaffleFlavour == "red velvet" || WaffleFlavour == "charcoal" || WaffleFlavour == "pandan")
             {
-                string s = sr.ReadLine(); //header
-                string[] header = s.Split(',');
-                while ((s = sr.ReadLine()) != null)
-                {
-                    string[] data = s.Split(',');
-                    flavourDict.Add(data[0], Convert.ToInt32(data[1]));
-                }
+                premiumWaffle = 3;
             }
-            // checking if got toppings in toppingsDict
-            foreach (Topping t in Toppings)
-            {
-                foreach (KeyValuePair<string, int> kvp in toppingDict)
-                {
-                    if (kvp.Key == t.Type)
-                    {
-                        price += kvp.Value;
-                    }
-                }
-            }
-            // checking if got flavours in flavoursDict
-            foreach (Flavour f in Flavours)
-            {
-                foreach (KeyValuePair<string, int> kvp in flavourDict)
-                {
-                    if (kvp.Key == f.Type)
-                    {
-                        price += kvp.Value;
-                    }
-                }
-            }
+
             if (Scoops == 1)
             {
-                price += 7.00;
+                return 7 + premiumWaffle + countTopping + (2 * countPremium);
             }
             else if (Scoops == 2)
             {
-                price += 8.50;
+                return 8.5 + premiumWaffle + countTopping+ (2 * countPremium);
             }
             else if (Scoops == 3)
             {
-                price += 9.50;
+                return 9.5 + premiumWaffle + countTopping + (2 * countPremium);
             }
-            else if (WaffleFlavour != "original")
-            {
-                price += 3;
-            }
-
-            return price;
+            return 0;
         }
+
         public override string ToString()
         {
-            return base.ToString()+ "Waffle flavour: " + WaffleFlavour + "\n";
+            return "Waffle Flavour: " + WaffleFlavour + "\n" + base.ToString();
         }
     }
 }

@@ -1,89 +1,45 @@
-﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh Jia Xuan
-//==========================================================
-
+﻿
+using PairAssignment;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code
+namespace PairAssignment
 {
-    class Cup:IceCream
+    class Cup : IceCream
     {
-        public Cup():base() { }
-        public Cup(string o , int s, List<Flavour> f, List<Topping> t) : base(o,s,f,t)
+        public Cup() : base() { }
+        public Cup(string option, int scoops, List<Flavour> flavourList, List<Topping> toppingList) : base(option, scoops, flavourList, toppingList)
         {
 
         }
         public override double CalculatePrice()
         {
-            double price = 0;
-            Dictionary<string,int> flavourDict = new Dictionary<string,int>();
-            Dictionary<string,int> toppingDict = new Dictionary<string, int>();
-
-            // looking through toppings.csv
-            using (StreamReader sr = new StreamReader("toppings.csv"))
+            int topping_count = ToppingList.Count();
+            int countPremium = 0;
+            foreach (Flavour flavour in FlavourList)
             {
-                string s = sr.ReadLine(); //header
-                string[] header = s.Split(',');
-                while ((s = sr.ReadLine()) != null)
+                string flavourName = Convert.ToString(flavour).ToLower();
+                if (flavourName == "DURIAN" || flavourName == "UBE" || flavourName == "SEA SALT")
                 {
-                    string[] data = s.Split(',');
-                    toppingDict.Add(data[0], Convert.ToInt32(data[1]));
-                }
-            }
-            // looking through flavours.csv
-            using (StreamReader sr = new StreamReader("flavours.csv"))
-            {
-                string s = sr.ReadLine(); //header
-                string[] header = s.Split(',');
-                while ((s = sr.ReadLine()) != null)
-                {
-                    string[] data = s.Split(',');
-                    toppingDict.Add(data[0], Convert.ToInt32(data[1]));
-                }
-            }
-            // checking if got toppings in toppingsDict
-            foreach (Topping t in Toppings)
-            {
-                foreach(KeyValuePair<string,int> kvp in  toppingDict)
-                {
-                    if (kvp.Key == t.Type)
-                    {
-                        price += kvp.Value;
-                    }
-                }
-            }
-            // checking if got flavours in flavoursDict
-            foreach (Flavour f in Flavours)
-            {
-                foreach (KeyValuePair<string, int> kvp in flavourDict)
-                {
-                    if (kvp.Key == f.Type)
-                    {
-                        price += kvp.Value;
-                    }
+                    countPremium += 1;
                 }
             }
             if (Scoops == 1)
             {
-                price += 4.00;
+                return 4 + topping_count + (2 * countPremium);
             }
             else if (Scoops == 2)
             {
-                price += 5.50;
+                return 5.5 + topping_count + (2 * countPremium);
             }
-            else
+            else if (Scoops == 3)
             {
-                price += 6.50;
+                return 6.5 + topping_count + (2 * countPremium) ;
             }
-            return price;
+            return 0;
         }
         public override string ToString()
         {

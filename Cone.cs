@@ -1,103 +1,73 @@
-﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh Jia Xuan
-//==========================================================
-
+﻿
+using PairAssignment;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Formats.Asn1.AsnWriter;
 
-namespace Code
+namespace PairAssignment
 {
-    class Cone:IceCream
+    class Cone : IceCream
     {
         private bool dipped;
         public bool Dipped
         {
-            get;set;
+            get { return dipped; }
+            set { dipped = value; }
         }
-        public Cone():base() { }
-        public Cone(string o, int s, List<Flavour> f, List<Topping> t, bool d) : base(o,s,f,t)
+        public Cone() : base() { }
+        public Cone(string option, int scoops, List<Flavour> flavourList, List<Topping> toppingList, bool dipped) : base(option, scoops, flavourList, toppingList)
         {
-            Dipped = d;
+            Dipped = dipped;
         }
         public override double CalculatePrice()
         {
-            double price = 0;
-            Dictionary<string, int> flavourDict = new Dictionary<string, int>();
-            Dictionary<string, int> toppingDict = new Dictionary<string, int>();
-
-            // looking through toppings.csv
-            using (StreamReader sr = new StreamReader("toppings.csv"))
+            int countPremium = 0;
+            int countTopping = ToppingList.Count();
+            double dipped = 0;
+            foreach (Flavour flavour in FlavourList)
             {
-                string s = sr.ReadLine(); //header
-                string[] header = s.Split(',');
-                while ((s = sr.ReadLine()) != null)
+                string flavour_str = Convert.ToString(flavour);
+                flavour_str = flavour_str.ToLower();
+                if (flavour_str == "durian" || flavour_str == "ueb" || flavour_str == "sea salt")
                 {
-                    string[] data = s.Split(',');
-                    toppingDict.Add(data[0], Convert.ToInt32(data[1]));
+                    countPremium += 1;
                 }
             }
-            // looking through flavours.csv
-            using (StreamReader sr = new StreamReader("flavours.csv"))
+            if (Dipped = true)
             {
-                string s = sr.ReadLine(); //header
-                string[] header = s.Split(',');
-                while ((s = sr.ReadLine()) != null)
-                {
-                    string[] data = s.Split(',');
-                    toppingDict.Add(data[0], Convert.ToInt32(data[1]));
-                }
-            }
-            // checking if got toppings in toppingsDict
-            foreach (Topping t in Toppings)
-            {
-                foreach (KeyValuePair<string, int> kvp in toppingDict)
-                {
-                    if (kvp.Key == t.Type)
-                    {
-                        price += kvp.Value;
-                    }
-                }
-            }
-            // checking if got flavours in flavoursDict
-            foreach (Flavour f in Flavours)
-            {
-                foreach (KeyValuePair<string, int> kvp in flavourDict)
-                {
-                    if (kvp.Key == f.Type)
-                    {
-                        price += kvp.Value;
-                    }
-                }
+                dipped = 2;
             }
             if (Scoops == 1)
             {
-                price += 4.00;
+                return 4 + dipped + (2 * countPremium) + (1 * countTopping);
             }
             else if (Scoops == 2)
             {
-                price += 5.50;
+                return 5.5 + dipped + (2 * countPremium) + (1 * countTopping);
             }
             else if (Scoops == 3)
             {
-                price += 6.50;
+                return 6.5 + dipped + (2 * countPremium) + (1 * countTopping);
             }
-            else if (Dipped == true)
-            {
-                price += 2;
-            }
-            return price;
+            return 0;
         }
+
         public override string ToString()
         {
-            return base.ToString() + "Dipped: " + Dipped+"\n";
+            string dippedOutput = "";
+            if (Dipped == true)
+            {
+                dippedOutput = "Yes";
+            }
+            else
+            {
+                dippedOutput = "No";
+            }
+            return "Dipped: " + dippedOutput + "\n" + base.ToString();
         }
-        
     }
 }

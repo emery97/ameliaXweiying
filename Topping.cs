@@ -1,30 +1,30 @@
-﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh Jia Xuan
-//==========================================================
-
+﻿using PairAssignment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Code
+namespace PairAssignment
 {
     class Topping
     {
         private string type;
-        public string Type { get; set; }
+
+        public string Type
+        {
+            get { return type; }
+            set { type = value; }
+        }
 
         public Topping() { }
-        public Topping(string t)
+        public Topping(string type)
         {
-            Type = t;
+            Type = type;
         }
         public override string ToString()
         {
-            return "Type:" + Type;
+            return "Type: " + Type;
         }
     }
 }

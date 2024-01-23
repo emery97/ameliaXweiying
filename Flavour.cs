@@ -1,17 +1,12 @@
-﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh Jia Xuan
-//==========================================================
-
+﻿
+using PairAssignment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 
-namespace Code
+namespace PairAssignment
 {
     class Flavour
     {
@@ -19,20 +14,33 @@ namespace Code
         private bool premium;
         private int quantity;
 
-        public string Type { get; set; }
-        public bool Premium { get; set; }
-        public int Quantity { get; set; }
+        public string Type
+        {
+            get { return type; }
+            set { type = value; }
+        }
+        public bool Premium
+        {
+            get { return premium; }
+            set { premium = value; }
+        }
+        public int Quantity
+        {
+            get { return quantity; }
+            set { quantity = value; }
+        }
 
         public Flavour() { }
-        public Flavour(string t, bool p, int q)
+        public Flavour(string type, bool premium, int quantity)
         {
-            Type = t;
-            Premium = p;
-            Quantity = q;
+            Type = type;
+            Premium = premium;
+            Quantity = quantity;
         }
+
         public override string ToString()
         {
-            return "Type: " + Type + "\tPremium: " + Premium + "\tQuantity: " + Quantity;
+            return "Type: " + Type + "\nPremium: " + Premium + "\nQuantity: " + Quantity;
         }
     }
 }
