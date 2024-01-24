@@ -1,4 +1,10 @@
-﻿
+﻿//==========================================================
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
+//==========================================================
+
+
 using PairAssignment;
 using System;
 using System.Collections.Generic;
@@ -17,27 +23,28 @@ namespace PairAssignment
         }
         public override double CalculatePrice()
         {
-            int topping_count = ToppingList.Count();
-            int countPremium = 0;
+            int premiumCount = 0;
+            int toppingCount = ToppingList.Count();
+
             foreach (Flavour flavour in FlavourList)
             {
                 string flavourName = Convert.ToString(flavour).ToLower();
-                if (flavourName == "DURIAN" || flavourName == "UBE" || flavourName == "SEA SALT")
+                if (flavourName == "durian" || flavourName == "ube" || flavourName == "sea salt")
                 {
-                    countPremium += 1;
+                    premiumCount += 1;
                 }
             }
             if (Scoops == 1)
             {
-                return 4 + topping_count + (2 * countPremium);
+                return 4 + toppingCount + (2 * premiumCount);
             }
             else if (Scoops == 2)
             {
-                return 5.5 + topping_count + (2 * countPremium);
+                return 5.5 + toppingCount + (2 * premiumCount);
             }
             else if (Scoops == 3)
             {
-                return 6.5 + topping_count + (2 * countPremium) ;
+                return 6.5 + toppingCount + (2 * premiumCount);
             }
             return 0;
         }

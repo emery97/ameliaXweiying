@@ -1,4 +1,10 @@
-﻿using PairAssignment;
+﻿//==========================================================
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
+//==========================================================
+
+using PairAssignment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,45 +42,46 @@ namespace PairAssignment
         {
             string results = String.Format("{0,-10} {1,-10} {2,-40} {3,-40} \n", "Option", "Scoops", "Flavour [Quantity]", "Topping");
 
-            // Concatenate all flavours into a single string
+
             string flavoursText = "";
             foreach (Flavour flavour in FlavourList)
             {
-                if (flavour.Type != null && flavour.Type != "") // Check if the flavour type is not null or empty
+                if (flavour.Type != null && flavour.Type != "")
                 {
-                    if (flavoursText != "") // If already added some flavours, add a comma
+                    if (flavoursText != "") // if not empty
                     {
                         flavoursText += ", ";
                     }
                     flavoursText += flavour.Type; // Append flavour type
-                    flavoursText+= $" [{flavour.Quantity}]";
+                    flavoursText += $" [{flavour.Quantity}]";
                 }
             }
-            if (flavoursText == "") // If no flavour was added
+            if (flavoursText == "")
             {
-                flavoursText = "None";
+                flavoursText = "NIL";
             }
 
-            // Similar process for toppings
+
             string toppingsText = "";
             foreach (Topping topping in ToppingList)
             {
-                if (topping.Type != null && topping.Type != "") // Check if the topping type is not null or empty
+                if (topping.Type != null && topping.Type != "")
                 {
-                    if (toppingsText != "") // If already added some toppings, add a comma
+                    if (toppingsText != "")
                     {
                         toppingsText += ", ";
                     }
-                    toppingsText += topping.Type; // Append topping type
+                    toppingsText += topping.Type;
                 }
             }
-            if (toppingsText == "") // If no topping was added
+            if (toppingsText == "")
             {
-                toppingsText = "None";
+                toppingsText = "NIL";
             }
 
-            // Append the combined details to the result string
+
             results += String.Format("{0,-10} {1,-10} {2,-40} {3,-15}\n", Option, Scoops, flavoursText, toppingsText);
+
             return results;
         }
     }

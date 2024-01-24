@@ -1,4 +1,10 @@
-﻿using PairAssignment;
+﻿//==========================================================
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
+//==========================================================
+
+using PairAssignment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +44,7 @@ namespace PairAssignment
         }
 
         //Methods
-        public void ModifyIceCream(int modifyIceCreamIndex)  
+        public void ModifyIceCream(int modifyIceCreamIndex)
         {
             int option = 0;
             IceCream iceCreamToModify = null; // Initialize
@@ -46,12 +52,12 @@ namespace PairAssignment
 
 
 
-            while (true)  
+            while (true)
             {
                 if (modifyIceCreamIndex >= 0 && modifyIceCreamIndex < IceCreamList.Count())
                 {
                     iceCreamToModify = IceCreamList[modifyIceCreamIndex];
-                    Console.WriteLine("--------------------------------------------");
+                    Console.WriteLine();
                     Console.WriteLine("How would you like to modify your ice cream:");
 
                     Console.WriteLine("[1] Ice Cream Option");
@@ -67,16 +73,16 @@ namespace PairAssignment
                     string userToppings = Console.ReadLine();
 
                     Console.WriteLine("[5]  Dipped (Only for Cone)");
-                    Console.WriteLine("6. Waffle Flavour (Only for Waffle)");
-                    Console.WriteLine("0. Return to Main Menu");
-                    Console.WriteLine("--------------------------------------------");
-                    Console.Write("Enter choice: ");
+                    Console.WriteLine("[6] Waffle Flavour (Only for Waffle)");
+                    Console.WriteLine("[0] Return to Main Menu");
+                    Console.WriteLine();
+                    Console.Write("Enter your desired option: ");
                     Console.WriteLine("");
 
                     if (string.IsNullOrWhiteSpace(userOption))
                     {
                         Console.WriteLine("Invalid Input! Please try again.");
-                        continue; //Skip rest of the code and go back to tart of while loop
+                        continue;
                     }
 
                     option = int.Parse(userOption);
@@ -85,13 +91,17 @@ namespace PairAssignment
                 bool modifyFlavour = false;
                 if (option == 0)
                 {
-                    Console.WriteLine("You did not modify any order.");
-                    break; 
+                    Console.WriteLine();
+                    Console.WriteLine("No modification has been done to your ice cream.");
+                    Console.WriteLine("You have exited the process of modifying your ice cream.");
+                    Console.WriteLine();
+                    break;
                 }
                 else if (option == 1)
                 {
                     while (true)
                     {
+                        Console.WriteLine();
                         Console.WriteLine("We offer cup, cone and waffles.");
                         Console.Write("Please enter your new ice cream option: ");
                         Console.WriteLine("");
@@ -102,17 +112,20 @@ namespace PairAssignment
                             {
                                 iceCreamToModify.Option = iceCreamOption; //set to new option
                                 Console.WriteLine("You have successfully changed your ice cream option!");
+                                Console.WriteLine();
                                 break;
                             }
                             else
                             {
                                 Console.WriteLine("Invalid option.Please try again.");
+                                Console.WriteLine();
                                 continue;
                             }
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("Error has occurred: {0}",ex.Message);
+                            Console.WriteLine("Error has occurred: {0}", ex.Message);
+                            Console.WriteLine();
                         }
                     }
                 }
@@ -121,111 +134,111 @@ namespace PairAssignment
                 {
                     while (true)
                     {
-                        Console.Write("Enter new number of scoops (Single[1], Double[2], Triple[3]): ");
-                        string stringNoOfScoops = Console.ReadLine();
-                        if (string.IsNullOrWhiteSpace(stringNoOfScoops))
+                        Console.WriteLine();
+                        Console.WriteLine("We offer single [1], double [2], and triple [3] scoops.");
+                        Console.Write("Please enter your desired scoops amount in numbers: ");
+
+                        string stringScoopsAmt = Console.ReadLine();
+                        if (string.IsNullOrWhiteSpace(stringScoopsAmt))
                         {
                             Console.WriteLine();
-                            Console.WriteLine("*************************************************************************");
-                            Console.WriteLine("*** Invalid number of Scoops! Please re-enter valid number of Scoops! ***");
-                            Console.WriteLine("*************************************************************************");
+                            Console.WriteLine("Invalid input! Please enter again.");
                             Console.WriteLine();
                             continue;
 
                         }
-                        int noOfScoops = Convert.ToInt32(stringNoOfScoops);
-                        if (noOfScoops > 3 || noOfScoops < 1)
+                        int scoopsAmt = Convert.ToInt32(stringScoopsAmt);
+                        if (scoopsAmt > 3 || scoopsAmt < 1)
                         {
                             Console.WriteLine();
-                            Console.WriteLine("*************************************************************************");
-                            Console.WriteLine("*** Invalid number of Scoops! Please re-enter valid number of Scoops! ***");
-                            Console.WriteLine("*************************************************************************");
+                            Console.WriteLine("Invalid input! Please enter again.");
                             Console.WriteLine();
                             continue;
                         }
                         else
                         {
-                            iceCreamToModify.Scoops = noOfScoops;
+                            iceCreamToModify.Scoops = scoopsAmt;
                             Console.WriteLine();
-                            Console.WriteLine("Success! Number of Scoops have been modified!");
+                            Console.WriteLine("Amount of scoops has successfully been modified!");
                             Console.WriteLine();
                             modifyFlavour = true;
                             break;
                         }
                     }
                 }
-                if (option == 3 || modifyFlavour)  //----------
+                if (option == 3 || modifyFlavour)
                 {
                     while (true)
                     {
-                        Console.WriteLine("\nRegular Flavours: Vanilla, Chocolate, Strawberry\nPremium Flavours: Durian, Ube, Sea salt");
-                        Console.Write("\nPlease reselect the Ice Cream Flavours (comma separated) : ");
-                        string stringFlavourInputs = Console.ReadLine();
-                        if(string.IsNullOrWhiteSpace(stringFlavourInputs))
+                        Console.WriteLine();
+                        Console.WriteLine("We offer regular and premium flavours.");
+                        Console.WriteLine("Regular Flavours: Vanilla, Chocolate, Strawberry");
+                        Console.WriteLine("Premium Flavours: Durian, Ube, Sea Salt");
+                        Console.WriteLine();
+
+                        Console.Write("Please choose your new desired flavours [Do ensure that they are comma separated] : ");
+                        string stringSelectedFlavours = Console.ReadLine();
+
+                        if (string.IsNullOrWhiteSpace(stringSelectedFlavours))
                         {
                             Console.WriteLine();
-                            Console.WriteLine("**************************************************************");
-                            Console.WriteLine("*** Invalid Input! Please enter a valid Flavour selection! ***");
-                            Console.WriteLine("**************************************************************");
+                            Console.WriteLine("Invalid input! Please enter again.");
                             Console.WriteLine();
                             continue;
 
                         }
-                        string[] flavourInputs = stringFlavourInputs.ToLower().Split(',');
-                        bool allFlavoursValid = false;
+                        string[] flavourInputs = stringSelectedFlavours.ToLower().Split(',');
+
+                        bool validFlavours = false;
                         if (flavourInputs.Length != iceCreamToModify.Scoops)
                         {
                             Console.WriteLine();
-                            Console.WriteLine("**************************************************************************");
-                            Console.WriteLine("*** Error! Number of Flavours should match the number of Scoops ({0})! ***", iceCreamToModify.Scoops);
-                            Console.WriteLine("**************************************************************************");
+                            Console.WriteLine("Invalid input! Please enter again.");
                             Console.WriteLine();
                         }
                         else
                         {
                             iceCreamToModify.FlavourList.Clear();
 
-                            foreach (var input in flavourInputs)
+                            foreach (var userChoice in flavourInputs)
                             {
-                                string trimmedInput = input.Trim();
+                                string userChoiceTrimmed = userChoice.Trim();
 
-                                if (trimmedInput == "vanilla")
+                                if (userChoiceTrimmed == "vanilla")
                                 {
                                     iceCreamToModify.FlavourList.Add(new Flavour("Vanilla", false, 1));
-                                    allFlavoursValid = true;
+                                    validFlavours = true;
                                 }
-                                else if (trimmedInput == "chocolate")
+                                else if (userChoiceTrimmed == "chocolate")
                                 {
                                     iceCreamToModify.FlavourList.Add(new Flavour("Chocolate", false, 1));
-                                    allFlavoursValid = true;
+                                    validFlavours = true;
                                 }
-                                else if (trimmedInput == "strawberry")
+                                else if (userChoiceTrimmed == "strawberry")
                                 {
                                     iceCreamToModify.FlavourList.Add(new Flavour("Strawberry", false, 1));
-                                    allFlavoursValid = true;
+                                    validFlavours = true;
                                 }
-                                else if (trimmedInput == "durian")
+                                else if (userChoiceTrimmed == "durian")
                                 {
                                     iceCreamToModify.FlavourList.Add(new Flavour("Durian", true, 1));
-                                    allFlavoursValid = true;
+                                    validFlavours = true;
                                 }
-                                else if (trimmedInput == "ube")
+                                else if (userChoiceTrimmed == "ube")
                                 {
                                     iceCreamToModify.FlavourList.Add(new Flavour("Ube", true, 1));
-                                    allFlavoursValid = true;
+                                    validFlavours = true;
                                 }
-                                else if (trimmedInput == "sea salt")
+                                else if (userChoiceTrimmed == "sea salt")
                                 {
                                     iceCreamToModify.FlavourList.Add(new Flavour("Sea Salt", true, 1));
-                                    allFlavoursValid = true;
+                                    validFlavours = true;
                                 }
                             }
-                            if (!allFlavoursValid)
+                            if (!validFlavours)
                             {
                                 Console.WriteLine();
-                                Console.WriteLine("**************************************************************");
-                                Console.WriteLine("*** Invalid Input! Please enter a valid Flavour selection! ***");
-                                Console.WriteLine("**************************************************************");
+                                Console.WriteLine("Invalid input. Please enter a flavour that we offer!");
                                 Console.WriteLine();
                             }
                             else
@@ -233,13 +246,13 @@ namespace PairAssignment
                                 if (!modifyFlavour)
                                 {
                                     Console.WriteLine();
-                                    Console.WriteLine("Success! Desired Flavour has been modified! ");
+                                    Console.WriteLine("Flavour has successfully been modified! ");
                                     Console.WriteLine();
                                 }
                                 else
                                 {
                                     Console.WriteLine();
-                                    Console.WriteLine("Success! Number of Scoops and the desired Flavour has been modified! ");
+                                    Console.WriteLine("Desired number of Scoops and flavour has successfully been modified! ");
                                     Console.WriteLine();
                                 }
                                 break;
@@ -252,15 +265,16 @@ namespace PairAssignment
                 {
                     while (true)
                     {
+                        Console.WriteLine("We offer toppings.");
                         Console.WriteLine("Toppings: Sprinkles, Mochi, Sago, Oreos");
-                        Console.Write("Please reselect the ice cream toppings (comma separated): ");
-                        string[] toppingsInputs = Console.ReadLine().Split(',');
+                        Console.Write("Please enter your desired toppings [Ensure that they are comma separated]: ");
+                        string[] selectedToppings = Console.ReadLine().Split(',');
                         iceCreamToModify.ToppingList.Clear();
 
                         bool validToppingInput = true;
-                        foreach (var toppingInput in toppingsInputs)
+                        foreach (var toppingData in selectedToppings)
                         {
-                            string toppingName = toppingInput.Trim().ToLower();
+                            string toppingName = toppingData.Trim().ToLower();
 
                             if (toppingName == "sprinkles" || toppingName == "mochi" || toppingName == "sago" || toppingName == "oreos")
                             {
@@ -269,16 +283,16 @@ namespace PairAssignment
                             else
                             {
                                 validToppingInput = false;
-                                Console.WriteLine("****************************************************************************************************");
-                                Console.WriteLine("*** Invalid Topping input! Please re-enter Customer's Topping choice from the available options! ***");
-                                Console.WriteLine("****************************************************************************************************");
+                                Console.WriteLine();
+                                Console.WriteLine("Invalid input. Please enter a topping that we offer!");
+                                Console.WriteLine();
                                 break;
                             }
                         }
                         if (validToppingInput)
                         {
                             Console.WriteLine();
-                            Console.WriteLine("Success! Ice Cream Toppings have been modified!");
+                            Console.WriteLine("Toppings has been successsfully modified!");
                             Console.WriteLine();
                             break;
                         }
@@ -289,35 +303,33 @@ namespace PairAssignment
                 {
                     if (iceCreamToModify.Option.ToLower() == "cone")
                     {
-                        bool validResponse = false;
+                        bool dippedOrNo = false;
 
-                        while (!validResponse)
+                        while (!dippedOrNo)
                         {
-                            Console.Write("Chocolate Dipped Cone? [Y] / [N]: ");
+                            Console.Write("Would you like your cone dipped? [ Y / N ]: ");
                             string dipped = Console.ReadLine();
 
-                            if (dipped.ToUpper() == "Y")
+                            if (dipped.ToLower() == "y")
                             {
                                 iceCreamToModify = new Cone(iceCreamToModify.Option, iceCreamToModify.Scoops, iceCreamToModify.FlavourList, iceCreamToModify.ToppingList, true);
-                                validResponse = true;
+                                dippedOrNo = true;
                                 Console.WriteLine();
-                                Console.WriteLine("Success! The Ice Cream has been modified to include a chocolate dip!");
+                                Console.WriteLine("Ice cream has successfully been modified to be dipped!");
                                 Console.WriteLine();
                             }
-                            else if (dipped.ToUpper() == "N")
+                            else if (dipped.ToLower() == "n")
                             {
                                 iceCreamToModify = new Cone(iceCreamToModify.Option, iceCreamToModify.Scoops, iceCreamToModify.FlavourList, iceCreamToModify.ToppingList, false);
                                 Console.WriteLine();
-                                Console.WriteLine("Success! The Ice Cream has been modified to exclude a chocolate dip!");
+                                Console.WriteLine("Ice cream has successfully been modified to not be dipped!");
                                 Console.WriteLine();
-                                validResponse = true;
+                                dippedOrNo = true;
                             }
                             else
                             {
                                 Console.WriteLine();
-                                Console.WriteLine("*****************************************************");
-                                Console.WriteLine("*** Invalid option! Please re-enter only [Y]/[N]! ***");
-                                Console.WriteLine("*****************************************************");
+                                Console.WriteLine("Invalid input. Please enter again!");
                                 Console.WriteLine();
                             }
                         }
@@ -325,9 +337,7 @@ namespace PairAssignment
                     else
                     {
                         Console.WriteLine();
-                        Console.WriteLine("******************************************************************************");
-                        Console.WriteLine("*** Error! Chocolate Dipped Cones are applicable for Cone Ice Creams only! ***");
-                        Console.WriteLine("*******************************************************************************");
+                        Console.WriteLine("Error detected. You can only choose the dipping option if you ordered a cone!");
                         Console.WriteLine();
                     }
                 }
@@ -337,11 +347,12 @@ namespace PairAssignment
                     if (iceCreamToModify.Option.ToLower() == "waffle")
                     {
                         Waffle waffle = null;
-                        Console.Write("\nPremium or Original Waffle Flavour? [Y]/[N] ('N' for Original): ");
+                        Console.WriteLine("We offer premium and original waffles.");
+                        Console.Write("Would you like it premium? [ Y / N ]: ");
                         string premiumWaffle;
-                        bool validResponse = false;
+                        bool premiumOrNot = false;
 
-                        while (!validResponse)
+                        while (!premiumOrNot)
                         {
                             try
                             {
@@ -349,31 +360,32 @@ namespace PairAssignment
 
                                 if (premiumWaffle.ToLower() == "y")
                                 {
-                                    Console.WriteLine("Flavoured Waffle: Red Velvet, Charcoal, Pandan");
-                                    Console.Write("\nEnter a Premium Waffle Flavour: ");
+                                    Console.WriteLine();
+
+                                    Console.WriteLine("Premium waffles: Red Velvet, Charcoal, Pandan");
+                                    Console.Write("Enter your desired premium waffle Flavour: ");
+
                                     string waffleFlavour = Console.ReadLine();
 
                                     if (waffleFlavour.ToLower() == "red velvet")
                                     {
                                         iceCreamToModify = new Waffle("Waffle", iceCreamToModify.Scoops, iceCreamToModify.FlavourList, iceCreamToModify.ToppingList, "Red Velvet");
-                                        validResponse = true;
+                                        premiumOrNot = true;
                                     }
                                     else if (waffleFlavour.ToLower() == "charcoal")
                                     {
                                         iceCreamToModify = new Waffle("Waffle", iceCreamToModify.Scoops, iceCreamToModify.FlavourList, iceCreamToModify.ToppingList, "Charcoal");
-                                        validResponse = true;
+                                        premiumOrNot = true;
                                     }
                                     else if (waffleFlavour.ToLower() == "pandan")
                                     {
                                         iceCreamToModify = new Waffle("Waffle", iceCreamToModify.Scoops, iceCreamToModify.FlavourList, iceCreamToModify.ToppingList, "Pandan");
-                                        validResponse = true;
+                                        premiumOrNot = true;
                                     }
                                     else
                                     {
                                         Console.WriteLine();
-                                        Console.WriteLine("***********************************************************************");
-                                        Console.WriteLine("*** Invalid Waffle Flavour! Please re-enter a valid Waffle Flavour! ***");
-                                        Console.WriteLine("***********************************************************************");
+                                        Console.WriteLine("Invalid input. Please only enter a flavour that we offer.");
                                         Console.WriteLine();
                                         continue;
                                     }
@@ -381,14 +393,12 @@ namespace PairAssignment
                                 else if (premiumWaffle.ToLower() == "n")
                                 {
                                     iceCreamToModify = new Waffle("Waffle", iceCreamToModify.Scoops, iceCreamToModify.FlavourList, iceCreamToModify.ToppingList, "Original");
-                                    validResponse = true;
+                                    premiumOrNot = true;
                                 }
                                 else
                                 {
                                     Console.WriteLine();
-                                    Console.WriteLine("*****************************************************");
-                                    Console.WriteLine("*** Invalid option! Please re-enter only [Y]/[N]! ***");
-                                    Console.WriteLine("*****************************************************");
+                                    Console.WriteLine("Invalid input. Please enter again!");
                                     Console.WriteLine();
                                     continue;
                                 }
@@ -396,48 +406,42 @@ namespace PairAssignment
                             catch (FormatException)
                             {
                                 Console.WriteLine();
-                                Console.WriteLine("*****************************************************");
-                                Console.WriteLine("*** Invalid option! Please re-enter only [Y]/[N]! ***");
-                                Console.WriteLine("*****************************************************");
+                                Console.WriteLine("Invalid input. Please enter again!");
                                 Console.WriteLine();
                                 continue;
                             }
                             catch (ArgumentNullException)
                             {
                                 Console.WriteLine();
-                                Console.WriteLine("*****************************************************");
-                                Console.WriteLine("*** Invalid option! Please re-enter only [Y]/[N]! ***");
-                                Console.WriteLine("*****************************************************");
+                                Console.WriteLine("Invalid input. Please enter again!");
                                 Console.WriteLine();
                                 continue;
                             }
                             catch (ArgumentOutOfRangeException)
                             {
                                 Console.WriteLine();
-                                Console.WriteLine("*****************************************************");
-                                Console.WriteLine("*** Invalid option! Please re-enter only [Y]/[N]! ***");
-                                Console.WriteLine("*****************************************************");
+                                Console.WriteLine("Invalid input. Please enter again!");
                                 Console.WriteLine();
                                 continue;
                             }
-                            catch (Exception ex) // A general catch-all for any other types of exceptions
+                            catch (Exception ex)
                             {
-                                Console.WriteLine("\nAn unexpected error occurred: {0}\n", ex.Message);
+                                Console.WriteLine();
+                                Console.WriteLine("Error detected: {0}", ex.Message);
+                                Console.WriteLine();
                             }
                         }
-                        if (validResponse)
+                        if (premiumOrNot)
                         {
                             Console.WriteLine();
-                            Console.WriteLine("Success! Ice Cream Flavour has been modified! ");
+                            Console.WriteLine("Waffle flavour has successfully been modified! ");
                             Console.WriteLine();
                         }
                     }
                     else
                     {
                         Console.WriteLine();
-                        Console.WriteLine("************************************************************************");
-                        Console.WriteLine("*** Error! Flavoured Waffle is only applicable for Waffle Ice Cream! ***");
-                        Console.WriteLine("************************************************************************");
+                        Console.WriteLine("Error detected. You can only choose the waffle flavour if you ordered a waffle!");
                         Console.WriteLine();
                     }
                 }
@@ -459,14 +463,13 @@ namespace PairAssignment
             }
             else
             {
-                Console.WriteLine("Invalid Index entered!");
+                Console.WriteLine("Invalid input! Please enter a valid index.");
             }
 
         }
 
-        public double CalculateTotal() // need to see the birthday
+        public double CalculateTotal()
         {
-            // calculate total amount of the order ( final amount to Pay )
 
             double totalamount = 0;
 
@@ -474,24 +477,27 @@ namespace PairAssignment
             {
                 totalamount += icecream.CalculatePrice();
             }
-            return totalamount;
+            return totalamount;  //NOT INCLUDING FREE ONES 
 
 
         }
 
         public override string ToString()
         {
-            string TimeFulfilledText = "";
+            string TimeFulfilledText = ""; //initialize
+
             if (TimeFulfilled == null)
             {
                 TimeFulfilledText = "Pending";
             }
+
             else
             {
                 TimeFulfilledText = TimeFulfilled.ToString();
             }
-            string orderDetails = "";
 
+
+            string orderDetails = "";
             orderDetails = "Order ID: " + Id + "\nTime Received: " + TimeReceived + "\nTime Fulfilled: " + TimeFulfilledText + "\nIce Cream Details: ";
 
             foreach (IceCream iceCream in IceCreamList)
@@ -499,6 +505,7 @@ namespace PairAssignment
 
                 orderDetails += "\n" + iceCream;
             }
+
             return orderDetails;
         }
 

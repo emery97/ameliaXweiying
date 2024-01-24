@@ -1,4 +1,10 @@
-﻿using PairAssignment;
+﻿//==========================================================
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
+//==========================================================
+
+using PairAssignment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +49,6 @@ namespace PairAssignment
 
         public bool IsBirthday()
         {
-            // if..else (datetime today == custDOB)
 
             DateTime today = DateTime.Now;
             if (today.Day == Dob.Day && today.Month == Dob.Month && today.Year == Dob.Year)
@@ -58,7 +63,7 @@ namespace PairAssignment
 
         public override string ToString()
         {
-            return "Name: " + Name + "\nMember ID: " + MemberId + "\nOrder: " + CurrentOrder + "\nPoints: " + Rewards.Points + "\nTier: " + Rewards.Tier; // and custID, custOrder, custOrderTime??
+            return "Name: " + Name + "\nMember ID: " + MemberId + "\nOrder: " + CurrentOrder + "\nPoints: " + Rewards.Points + "\nTier: " + Rewards.Tier;
         }
 
     }

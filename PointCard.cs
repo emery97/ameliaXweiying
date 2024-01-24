@@ -1,4 +1,11 @@
-﻿using PairAssignment;
+﻿//==========================================================
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
+//==========================================================
+
+
+using PairAssignment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,7 +71,7 @@ namespace PairAssignment
         public void RedeemPoints(int reedemedPoints)
         {
             if (Tier != "Ordinary" && Points >= reedemedPoints) // only can reedeem if they NOT ordinary tier. and the points they want to redeem must be realistic aka they umust have enough points to redeem
-                                                            
+
             {
                 Points -= reedemedPoints;  // Will ask for amt of points they want redeem in main prg. 
             }

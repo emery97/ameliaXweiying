@@ -1,60 +1,54 @@
-﻿
+﻿//==========================================================
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
+//==========================================================
+
+using System;
 using PairAssignment;
-using System.Diagnostics.Metrics;
 using System.Globalization;
-using System.Reflection.PortableExecutable;
-using System.Xml.Linq;
-using static System.Formats.Asn1.AsnWriter;
 
 class Program
 {
     static List<Customer> customerList = new List<Customer>();
-    static Queue<Order> goldMemberQueue = new Queue<Order>();  // Utilizing the Order class because i think we are focusing on queue management???????
+    static Queue<Order> goldMemberQueue = new Queue<Order>();
     static Queue<Order> regularMemberQueue = new Queue<Order>();
     static int currentOrderId = 0;
     static int lastOrderId = 0;
 
-    // Judging from the option description, this program should be catering to otto's admin, make sure all the prompts are catered to admin
-
-    // QUESTION 1 (Raeann Tai) -------------------------------------------------------------------------------------------------------------------------------------- //
     static void Main(string[] args)
     {
-        // ENABLER -------------------------------------------------------------------------------------- //
         InitializeCustomerList(customerList);
-        //Customer chosenCustomer = SelectMember(customerList);
         while (true)
         {
             DisplayMenu();
-            // After the menu has been displayed...
-            //currentOrderId = ReadOrderDetails(customerList);
-            Console.Write("Enter an option: ");
+            Console.Write("Enter your option: ");
             try
             {
                 string option = Console.ReadLine();
                 Console.WriteLine();
                 if (option == "1")
                 {
-                    ListAllCustomer(customerList);
+                    ListingAllCustomer(customerList);
                     Console.WriteLine();
                 }
                 else if (option == "2")
                 {
-                    //ReadOrderDetails(customerList);
-                    ListAllCurrentOrders(customerList, goldMemberQueue, regularMemberQueue);
+                    ListingAllCurrentOrders(customerList, goldMemberQueue, regularMemberQueue);
                     Console.WriteLine();
                 }
                 else if (option == "3")
                 {
-                    RegisterANewCustomer(customerList);
+                    RegisterNewCustomer(customerList);
                 }
                 else if (option == "4")
                 {
-                    ListAllCustomer(customerList);
+                    ListingAllCustomer(customerList);
                     CreateCustomerOrder(customerList, goldMemberQueue, regularMemberQueue);
                 }
                 else if (option == "5")
                 {
-                    DisplayOrderDetails(customerList);
+                    DisplayOrderDetailsOfCustomer(customerList);
                     Console.WriteLine();
                 }
                 else if (option == "6")
@@ -64,58 +58,50 @@ class Program
                 else if (option == "0")
                 {
                     //APPEND EVERYTHING HERE
-                    Console.WriteLine("\nExiting...");
+                    Console.WriteLine("\nYou have successfully exited. Goodbye!");
                     break;
                 }
                 else
                 {
                     Console.WriteLine();
-                    Console.WriteLine("*****************************************************");
-                    Console.WriteLine("*** Invalid Input! Please re-enter a valid Input! ***");
-                    Console.WriteLine("*****************************************************");
+                    Console.WriteLine("Invalid input. Please enter again!");
                     Console.WriteLine();
                 }
             }
             catch (FormatException)
             {
                 Console.WriteLine();
-                Console.WriteLine("*****************************************************");
-                Console.WriteLine("*** Invalid Input! Please re-enter a valid input! ***");
-                Console.WriteLine("*****************************************************");
+                Console.WriteLine("Invalid input. Please enter again!");
                 Console.WriteLine();
             }
             catch (NullReferenceException)
             {
                 Console.WriteLine();
-                Console.WriteLine("*****************************************************");
-                Console.WriteLine("*** Invalid Input! Please re-enter a valid input! ***");
-                Console.WriteLine("*****************************************************");
+                Console.WriteLine("Invalid input. Please enter again!");
                 Console.WriteLine();
             }
             catch (OverflowException)
             {
                 Console.WriteLine();
-                Console.WriteLine("*****************************************************");
-                Console.WriteLine("*** Invalid Input! Please re-enter a valid input! ***");
-                Console.WriteLine("*****************************************************");
+                Console.WriteLine("Invalid input. Please enter again!");
                 Console.WriteLine();
             }
             catch (ArgumentOutOfRangeException)
             {
                 Console.WriteLine();
-                Console.WriteLine("*****************************************************");
-                Console.WriteLine("*** Invalid Input! Please re-enter a valid input! ***");
-                Console.WriteLine("*****************************************************");
+                Console.WriteLine("Invalid input. Please enter again!");
                 Console.WriteLine();
             }
-            catch (Exception ex) // General exception catch block for other unforeseen errors
+            catch (Exception ex) // General exception for other errors
             {
-                Console.WriteLine("An error occurred: {0}", ex.Message);
+                Console.WriteLine();
+                Console.WriteLine("An error has occurred: {0}", ex.Message);
+                Console.WriteLine();
             }
         }
 
 
-        // MAIN MENU ---------------------------------------------------------------------------------- //
+        // -------- MENU ---------------------------------------------------------------------------------- 
         static void DisplayMenu()
         {
             Console.WriteLine(new string('-', 20) + " M E N U " + new string('-', 20));
@@ -128,47 +114,76 @@ class Program
             Console.WriteLine("[0] Exit");
             Console.WriteLine(new string('-', 48));
         }
+
         static Customer SelectMember(List<Customer> customerList)
         {
             Customer chosenCustomer = new Customer(); // initialize
+
             while (true)
             {
-                Console.Write("Please enter customer user ID ['0' to exit]: ");
-                int ID = Convert.ToInt32(Console.ReadLine());
+                bool found = false;  // Reset found to false at the beginning of each iteration
 
-                if (ID == 0)
+                try
                 {
-                    Console.WriteLine("You have exited.");
-                    break;
-                }
-                foreach (Customer c in customerList)
-                {
-                    if (c.MemberId == ID)
+                    Console.Write("Please enter customer user ID ['0' to exit]: ");
+                    int ID = Convert.ToInt32(Console.ReadLine());
+
+                    if (ID == 0)
                     {
-                        chosenCustomer = c;
-                        break; // Break out of the foreach loop, because we've found the customer.
+                        Console.WriteLine("You have exited.");
+                        break;
+                    }
+
+                    foreach (Customer c in customerList)
+                    {
+                        if (c.MemberId == ID)
+                        {
+                            found = true;
+                            chosenCustomer = c;
+                            break; // Break out of the foreach loop, because we've found the customer.
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine(new string('*', 60));
+                        Console.WriteLine("Invalid Member ID! Member ID not found!");
+                        Console.WriteLine(new string('*', 60));
+                        Console.WriteLine();
+                    }
+                    if (found)
+                    {
+                        break;
                     }
                 }
-                if (chosenCustomer != null)
+                catch (FormatException)
                 {
-                    break; // Break out of the while loop, because a customer has been chosen.
-                }
-                else
-                {
-                    Console.WriteLine("Please enter valid ID."); // Only display this if no customer was found.
+                    Console.WriteLine();
+                    Console.WriteLine(new string('*', 60));
+                    Console.WriteLine("We only accept integers.");
+                    Console.WriteLine("Invalid Input! Please enter a valid Member ID!");
+                    Console.WriteLine(new string('*', 60));
+                    Console.WriteLine();
                 }
             }
+
             return chosenCustomer;
         }
+
+
+
+        // -------- BASIC 1 ( Amelia ) -----------------------------------------------------------
 
         static void InitializeCustomerList(List<Customer> cList)
         {
             using (StreamReader sr = new StreamReader("customers.csv"))
             {
-                // read header first
+                // read header 
                 string s = sr.ReadLine();
                 string[] header = s.Split(',');
-                // read the rest 
+
+                // read others 
                 while ((s = sr.ReadLine()) != null)
                 {
                     string[] items = s.Split(',');
@@ -191,26 +206,27 @@ class Program
             }
         }
 
-        static void ListAllCustomer(List<Customer> cList)
+        static void ListingAllCustomer(List<Customer> cList)
         {
-            Console.WriteLine("{0,-12}{1,-15}{2,-19}{3,-14}{4,-12}{5}", "Name", "Member ID", "Date of Birth", "Tier", "Points", "Punch Card");
+            Console.WriteLine("{0,-14}{1,-17}{2,-21}{3,-16}{4,-14}{5}", "Name", "Member ID", "Date of Birth", "Tier", "Points", "Punch Card");
+            Console.WriteLine("---------------------------------------------------------------------------------------------");
             foreach (var customer in cList)
             {
-                Console.WriteLine("-----------------------------------------------------------------------------------");
-                Console.WriteLine("{0,-12}{1,-15}{2,-19}{3,-14}{4,-12}{5}", customer.Name, customer.MemberId, customer.Dob.ToString("dd/MM/yyyy"), customer.Rewards.Tier, customer.Rewards.Points, customer.Rewards.PunchCard);
+                Console.WriteLine("{0,-14}{1,-17}{2,-21}{3,-16}{4,-14}{5}", customer.Name, customer.MemberId, customer.Dob.ToString("dd/MM/yyyy"), customer.Rewards.Tier, customer.Rewards.Points, customer.Rewards.PunchCard);
+                Console.WriteLine("");
             }
 
-            Console.WriteLine("-----------------------------------------------------------------------------------");
+            Console.WriteLine("");
         }
 
-        // QUESTION 2 (Ng Joe Yi) -------------------------------------------------------------------------------------------------------------------------------------- //
-        static void ListAllCurrentOrders(List<Customer> cList, Queue<Order> goldQueue, Queue<Order> regularQueue)
+
+
+        // -------- BASIC 2 ( Weiying ) -------------------------------------------------------------------------------------------------------------------------------------- //
+        static void ListingAllCurrentOrders(List<Customer> cList, Queue<Order> goldQueue, Queue<Order> regularQueue)
         {
-            // i dont need to queue anymore because question 4 has already queued them. i just need to display!
-            // next we will need to display the Gold Member's queue order details 
-            Console.WriteLine("{0,13}----------", "");
-            Console.WriteLine("{0,13}Gold Queue", "");
-            Console.WriteLine("{0,13}----------", "");
+            Console.WriteLine("{0,16}----------", "");
+            Console.WriteLine("{0,16}Gold Queue", "");
+            Console.WriteLine("{0,16}----------", "");
             if (goldQueue.Count() > 0)
             {
                 foreach (Order goldQueueOrderDetails in goldQueue)
@@ -221,14 +237,13 @@ class Program
             }
             else
             {
-                Console.WriteLine("There are no Gold Members in line.");
+                Console.WriteLine("{0, 4}There are no gold members in the queue.", "");
                 Console.WriteLine();
             }
 
-            // lastly, we will need to display the Regular Member's queue order details 
-            Console.WriteLine("{0,13}-------------", "");
-            Console.WriteLine("{0,13}Regular Queue", "");
-            Console.WriteLine("{0,13}-------------", "");
+            Console.WriteLine("{0,16}-------------", "");
+            Console.WriteLine("{0,16}Regular Queue", "");
+            Console.WriteLine("{0,16}-------------", "");
             if (regularQueue.Count() > 0)
             {
                 foreach (Order regularQueueOrderDetails in regularQueue)
@@ -239,30 +254,30 @@ class Program
             }
             else
             {
-                Console.WriteLine("There are no Regular Members in line.");
+                Console.WriteLine("{0,4}There are no regular members in the queue.", "");
             }
         }
 
-        // QUESTION 3 (Raeann Tai) -------------------------------------------------------------------------------------------------------------------------------------- //
-        static void RegisterANewCustomer(List<Customer> cList)
+        // ------- BASIC 3 ( Amelia ) -------------------------------------------------------------------------------------------------------------------------------------- //
+        static void RegisterNewCustomer(List<Customer> cList)
         {
             string name = "";
             while (true)
             {
-                Console.Write("Enter Customer's Name (0 to exit): ");
+                Console.Write("Enter new customer's name ('0' to exit): ");
 
                 string nameInput = Console.ReadLine();
                 if (nameInput == "0")
                 {
-                    Console.WriteLine("\nReturning to Main Menu...\n");
+                    Console.WriteLine();
+                    Console.WriteLine("\nYou have chosen to not register a new customer.\n");
+                    Console.WriteLine();
                     return;
                 }
                 if (string.IsNullOrWhiteSpace(nameInput))
                 {
                     Console.WriteLine();
-                    Console.WriteLine("********************************************");
-                    Console.WriteLine("*** Error! Please re-enter a valid name! ***");
-                    Console.WriteLine("********************************************");
+                    Console.WriteLine("There has been an error. Please enter again!");
                     Console.WriteLine();
                     continue;
                 }
@@ -273,11 +288,8 @@ class Program
                 }
                 else
                 {
-                    // Handle the case where the input is empty
                     Console.WriteLine();
-                    Console.WriteLine("********************************************");
-                    Console.WriteLine("*** Error! Please re-enter a valid name! ***");
-                    Console.WriteLine("********************************************");
+                    Console.WriteLine("There has been an error. Please enter again!");
                     Console.WriteLine();
                 }
             }
@@ -285,40 +297,35 @@ class Program
             int memberID;
             while (true)
             {
-                Console.Write("Enter Customer's Member ID: ");
+                Console.Write("Enter new customer's member ID: ");
 
                 string stringMemberId = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(stringMemberId))
                 {
+                    Console.WriteLine("There has been an error. Please enter again!");
                     Console.WriteLine();
-                    Console.WriteLine("*********************************************************");
-                    Console.WriteLine("*** Invalid Input! Please re-enter a valid Member ID! ***");
-                    Console.WriteLine("*********************************************************");
-                    Console.WriteLine();
-                    continue; // Reprompt the user
+                    continue; // so that can ask user again
                 }
                 else
                 {
-                    try
+                    try //for validation,handle errors
                     {
                         memberID = Convert.ToInt32(stringMemberId);
 
-                        bool memberIdExist = false;
+                        bool doesMemberIdExist = false;
 
                         foreach (Customer customerMemberId in cList)
                         {
-                            if (memberID == customerMemberId.MemberId)
+                            if (memberID == customerMemberId.MemberId) //Check if person enter a pre existing id that already is a member
                             {
                                 Console.WriteLine();
-                                Console.WriteLine("*********************************************************");
-                                Console.WriteLine("*** Error! Member ID belongs to an existing Customer! ***");
-                                Console.WriteLine("*********************************************************");
+                                Console.WriteLine($"Invalid input! This member ID '{memberID}' already belongs to an existing customer!");
                                 Console.WriteLine();
-                                memberIdExist = true;
+                                doesMemberIdExist = true;
                                 break;
                             }
                         }
-                        if (!memberIdExist)
+                        if (!doesMemberIdExist)
                         {
                             break;
                         }
@@ -326,17 +333,13 @@ class Program
                     catch (FormatException)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("*********************************************************");
-                        Console.WriteLine("*** Invalid Input! Please re-enter a valid Member ID! ***");
-                        Console.WriteLine("*********************************************************");
+                        Console.WriteLine("Invalid input. Please enter again!");
                         Console.WriteLine();
                     }
                     catch (OverflowException)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("*********************************************************");
-                        Console.WriteLine("*** Invalid Input! Please re-enter a valid Member ID! ***");
-                        Console.WriteLine("*********************************************************");
+                        Console.WriteLine("Invalid input. Please enter again!");
                         Console.WriteLine();
                     }
                 }
@@ -349,11 +352,9 @@ class Program
                 if (string.IsNullOrWhiteSpace(dobInput))
                 {
                     Console.WriteLine();
-                    Console.WriteLine("***************************************************************");
-                    Console.WriteLine("*** Invalid Date Time! Date Of Birth has to be before today ***");
-                    Console.WriteLine("***************************************************************");
+                    Console.WriteLine("Invalid input. Please enter again!");
                     Console.WriteLine();
-                    continue; // Reprompt the user
+                    continue; // ask the user again
                 }
                 try
                 {
@@ -362,111 +363,84 @@ class Program
                         if (dob > DateTime.Now)
                         {
                             Console.WriteLine();
-                            Console.WriteLine("*****************************************************************");
-                            Console.WriteLine("*** Invalid Date Time.! Date Of Birth has to be before today! ***");
-                            Console.WriteLine("*****************************************************************");
+                            Console.WriteLine("Invalid input. Date Of Birth has to be before today!");
                             Console.WriteLine();
-                            continue; // Reprompt the user
+                            continue; // ask again
                         }
                         else
                         {
-                            break; // Valid date, exit the loop
+                            break;
                         }
                     }
                     else
                     {
                         Console.WriteLine();
-                        Console.WriteLine("*********************************************************");
-                        Console.WriteLine("*** Invalid Format! Please enter in format DD/MM/YYYY ***");
-                        Console.WriteLine("*********************************************************");
+                        Console.WriteLine("There has been a formatting error. Please enter again in format of (DD/MM/YYYY)!");
                         Console.WriteLine();
                     }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine();
-                    Console.WriteLine("An error occurred while processing your Order: {0}", ex.Message);
+                    Console.WriteLine("There has been an error detected: {0}", ex.Message);
                     Console.WriteLine();
                 }
             }
-            // create a customer object with the information given
+
+            // Now make customer obj with whatever user just gave
             string dateOnly = dob.ToString("dd/MM/yyyy");
             Customer customer = new Customer(name, memberID, dob);
             cList.Add(customer);
 
-            // create a pointcard object
+            //Make pointcard object
             PointCard pointcard = new PointCard();
 
-            // assign point card object to customer 
-            customer.Rewards = pointcard;
+            //Match this new pointcard obj to the new customer
+            customer.Rewards = pointcard; //points, tier etc would be 0 and ordinary since is a new customer
 
             try
             {
-                // append the customer information to the customers.csv file
+                // appending **** SHIFT TO THE TOP LATER! ******
                 using (StreamWriter sw = new StreamWriter("customers.csv", true))
                 {
                     sw.WriteLine("{0},{1},{2},{3},{4},{5}", name, memberID, dob, "Ordinary", customer.Rewards.Points, customer.Rewards.PunchCard); //"Ordinary" never use customer.Rewards.Points bc customer.Rewards is a pointcard object. Then pointcard obj have pointcard's constructor of Pointcard(int, int). The tier is not in its parameters. So only can access the int aka points and punchcard via customer.Rewards.Points etc and tier cannot. 
-                    Console.WriteLine("Registration for {0} is successful!", customer.Name);
+                    Console.WriteLine("Registration for {0} is done!", customer.Name);
                     Console.WriteLine();
                 }
             }
             catch (FileNotFoundException)
             {
                 Console.WriteLine();
-                Console.WriteLine("*************************************************************************************");
-                Console.WriteLine("*** Error: The database file is missing. Please contact a manager for assistance! ***");
-                Console.WriteLine("*************************************************************************************");
+                Console.WriteLine("Error detected. The file where new data needs to be appended to, could not be found!");
                 Console.WriteLine();
             }
             catch (IOException)
             {
                 Console.WriteLine();
-                Console.WriteLine("*****************************************************************************************");
-                Console.WriteLine("*** Error! Please ensure the Excel file is not open in another program and try again! ***");
-                Console.WriteLine("*****************************************************************************************");
+                Console.WriteLine("Error detected. Do ensure that file is not open in another program.");
+                Console.WriteLine("Once done, please try again!");
                 Console.WriteLine();
             }
 
         }
 
-        // QUESTION 4 (Raeann Tai) -------------------------------------------------------------------------------------------------------------------------------------- //
-        /*
-        static Customer SelectMemberID(int FindCId)
-        {
-            Customer customerMemberId = null;
-            foreach (Customer customer in customerList)
-            {
-                if (customer.MemberId == FindCId)
-                {
-                    customerMemberId = customer; // Return the customer immediately when found
-                    break;
-                }
-            }
+        //------- BASIC 4 ( Amelia ) -------------------------------------------------------------------------------------------------------------------------------------- //
 
-            if (customerMemberId == null)
-            {
-                return null;
-            }
-            else
-            {
-                return customerMemberId;
-            }
-        }*/
         static void CreateCustomerOrder(List<Customer> cList, Queue<Order> goldQueue, Queue<Order> regularQueue)
         {
             int customerMemberId;
             Customer selectedCustomer = SelectMember(customerList);
+            string stringCustomerMemberId = Convert.ToString(selectedCustomer.MemberId); //Bc selectedCustomer is a customer object. So cannot just equate entire thing to string.
+            //^^ need to specifically get what you want aka the member id. Not the whole thing. 
+            //^^ Also put to string first and not int straight away in case of the error below!
+            string stringCustomerMemberIdAgain = "";
 
             while (true)
             {
-                Console.Write("Enter Customer's Member ID (0 to exit): ");  // MAKE THIS PROMPT IF NULL ----------------------------------
-                string stringCustomerMemberId = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(stringCustomerMemberId))
+                if (string.IsNullOrWhiteSpace(stringCustomerMemberId)) //This error^^, where you check if string is null
                 {
                     Console.WriteLine();
-                    Console.WriteLine("*************************************************************");
-                    Console.WriteLine("*** Invalid Member ID! Please re-enter a valid Member ID! ***");
-                    Console.WriteLine("*************************************************************");
+                    Console.WriteLine("Invalid input! Please enter a valid member ID!");
                     Console.WriteLine();
                     continue;
                 }
@@ -474,18 +448,14 @@ class Program
 
                 if (customerMemberId == 0)
                 {
-                    Console.WriteLine("\nReturning to Main Menu...\n");
                     return;
                 }
 
-                //selectedCustomer = SelectMember(customerList);
 
-                if (selectedCustomer == null)
+                if (selectedCustomer == null) //diff from string.IsNullOrWhiteSpace on top as that checks string and this checks the variable of an object type.
                 {
                     Console.WriteLine();
-                    Console.WriteLine("*************************************************************");
-                    Console.WriteLine("*** Invalid Member ID! Please re-enter a valid Member ID! ***");
-                    Console.WriteLine("*************************************************************");
+                    Console.WriteLine("Invalid input! Please enter a valid member ID!");
                     Console.WriteLine();
                 }
                 else
@@ -499,158 +469,154 @@ class Program
                 while (selectedCustomer == null)
                 {
                     Console.WriteLine();
-                    Console.WriteLine("*************************************************************");
-                    Console.WriteLine("*** Invalid Member ID! Please re-enter a valid Member ID! ***");
-                    Console.WriteLine("*************************************************************");
+                    Console.WriteLine("Invalid input! Please enter a valid member ID!");
                     Console.WriteLine();
-                    Console.Write("Enter Customer's Member ID to be order (0 to exit): ");
-                    string stringCustomerMemberId1 = Console.ReadLine();
-                    if (string.IsNullOrWhiteSpace(stringCustomerMemberId1))
+
+                    selectedCustomer = SelectMember(customerList);
+                    stringCustomerMemberIdAgain = Convert.ToString(selectedCustomer.MemberId);
+
+
+                    if (string.IsNullOrWhiteSpace(stringCustomerMemberIdAgain))
                     {
                         Console.WriteLine();
-                        Console.WriteLine("*************************************************************");
-                        Console.WriteLine("*** Invalid Member ID! Please re-enter a valid Member ID! ***");
-                        Console.WriteLine("*************************************************************");
+                        Console.WriteLine("Invalid input! Please enter a valid member ID!");
                         Console.WriteLine();
                     }
-                    customerMemberId = Convert.ToInt32(stringCustomerMemberId1);
+                    customerMemberId = Convert.ToInt32(stringCustomerMemberIdAgain);
+
                     if (customerMemberId == 0)
                     {
-                        Console.WriteLine("Returning to Main Menu...");
                         return;
                     }
+
                     selectedCustomer = SelectMember(customerList);
                 }
             }
 
-            Order newOrder = selectedCustomer.CurrentOrder;
+            Order newOrder = selectedCustomer.CurrentOrder; //making sure the new order they r making is set to their currentorder
             if (newOrder == null)
             {
                 newOrder = selectedCustomer.MakeOrder();
                 selectedCustomer.CurrentOrder = newOrder;
             }
 
-            bool created = false;
-            while (!created)
+            bool orderCreated = false;
+            while (!orderCreated)
             {
-                CreateIceCreamOrder(newOrder);
+                CreatingIceCream(newOrder);
 
-                bool added = false;
-                while (!added)
+                bool addAgain = false;
+                while (!addAgain)
                 {
-                    Console.Write("\nAdd another Ice Cream to Customer's cart? [Y]/[N] : ");
+                    Console.Write("\nWould you like to add another ice cream? [ Y / N ] : ");
                     string orderAgain = Console.ReadLine().ToLower();
 
                     if (orderAgain == "n")
                     {
                         if (newOrder.IceCreamList.Count == 0)
                         {
-                            // If no ice creams added, remove the empty order
                             selectedCustomer.CurrentOrder = null;
                         }
 
                         if (selectedCustomer.Rewards.Tier == "Gold")
                         {
                             goldQueue.Enqueue(newOrder);
+
                             Console.WriteLine();
-                            Console.WriteLine("Success! Order has been added to the Gold Queue!");
+                            Console.WriteLine("Order success! It has been added to the gold queue!");
                             Console.WriteLine();
                         }
                         else
                         {
                             regularQueue.Enqueue(newOrder);
+
                             Console.WriteLine();
-                            Console.WriteLine("Success! Order has been added to the Regular Queue!");
+                            Console.WriteLine("Order success! It has been added to the regular queue!");
                             Console.WriteLine();
                         }
 
-                        added = true;
-                        created = true;
+                        addAgain = true;
+                        orderCreated = true;
                     }
 
                     else if (orderAgain == "y")
                     {
-                        added = true;
+                        addAgain = true;
                     }
 
                     else
                     {
                         Console.WriteLine();
-                        Console.WriteLine("******************************************************");
-                        Console.WriteLine("*** Invalid Input! Please re-enter a valid option! ***");
-                        Console.WriteLine("******************************************************");
+                        Console.WriteLine("Invalid input. Please try again!");
                         Console.WriteLine();
                     }
                 }
             }
         }
 
-        static void CreateIceCreamOrder(Order order) // Method for Adding Ice Cream -------------------------------------------------------
+        //To add the ice creams
+        static void CreatingIceCream(Order order)
         {
             while (true)
             {
                 List<Flavour> flavours = new List<Flavour>();
                 List<Topping> toppings = new List<Topping>();
                 IceCream newIceCream = null;
-                bool validIceCreamOption = false;
+                bool doesOptionExists = false; //check if icecream option person selected exists
 
-                Console.Write("\nEnter Ice Cream option (Cup, Cone, Waffle): ");
+                Console.WriteLine();
+                Console.WriteLine("We offer cup, cone and waffle.");
+                Console.Write("Please enter which you would like: ");
                 string iceCreamOption = Console.ReadLine().ToLower();
 
                 if (string.IsNullOrWhiteSpace(iceCreamOption))
                 {
                     Console.WriteLine();
-                    Console.WriteLine("*****************************************************");
-                    Console.WriteLine("*** Invalid Input! Please re-enter a valid Input! ***");
-                    Console.WriteLine("*****************************************************");
+                    Console.WriteLine("Invalid input. Please try again!");
                     Console.WriteLine();
                     continue;
                 }
 
                 if (iceCreamOption == "cup" || iceCreamOption == "cone" || iceCreamOption == "waffle")
                 {
-                    validIceCreamOption = true;
+                    doesOptionExists = true;
                 }
 
-                if (!validIceCreamOption)
+                if (!doesOptionExists)
                 {
                     Console.WriteLine();
-                    Console.WriteLine("*******************************************************************");
-                    Console.WriteLine("*** Invalid Input! Please re-enter Customer's Ice Cream option! ***");
-                    Console.WriteLine("*******************************************************************");
+                    Console.WriteLine("Invalid input. Please enter your ice cream option again!");
                     Console.WriteLine();
                     continue;
                 }
 
-                bool validNoOfScoops = false;
-                int noOfScoops = 0;
-                while (!validNoOfScoops)
+                bool validScoopsAmt = false;
+                int scoopsAmt = 0;
+                while (!validScoopsAmt)
                 {
                     try
                     {
-                        Console.Write("\nEnter number of scoops (Single[1], Double[2], Triple[3]): "); //-----------------------------------------------------------------------------------------
+                        Console.WriteLine();
+                        Console.WriteLine("We offer single [1], double [2], and triple [3] scoops.");
+                        Console.Write("Please enter your desired scoops amount in numbers: "); //-----------------------------------------------------------------------------------------
                         string stringScoops = Console.ReadLine();
                         if (string.IsNullOrWhiteSpace(stringScoops))
                         {
                             Console.WriteLine();
-                            Console.WriteLine("*****************************************************");
-                            Console.WriteLine("*** Invalid Input! Please re-enter a valid Input! ***");
-                            Console.WriteLine("*****************************************************");
+                            Console.WriteLine("Invalid input. Please try again!");
                             Console.WriteLine();
                             continue;
                         }
-                        noOfScoops = Convert.ToInt32(stringScoops);
+                        scoopsAmt = Convert.ToInt32(stringScoops);
 
-                        if (noOfScoops >= 1 && noOfScoops <= 3)
+                        if (scoopsAmt >= 1 && scoopsAmt <= 3)
                         {
-                            validNoOfScoops = true;
+                            validScoopsAmt = true;
                         }
-                        if (!validNoOfScoops)
+                        if (!validScoopsAmt)
                         {
                             Console.WriteLine();
-                            Console.WriteLine("************************************************************");
-                            Console.WriteLine("*** Invalid Input! Please re-enter the number of scoops! ***");
-                            Console.WriteLine("************************************************************");
+                            Console.WriteLine("Invalid input. Please try again!");
                             Console.WriteLine();
                             continue;
                         }
@@ -659,83 +625,89 @@ class Program
                     catch (FormatException)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("************************************************************");
-                        Console.WriteLine("*** Invalid Input! Please re-enter the number of scoops! ***");
-                        Console.WriteLine("************************************************************");
+                        Console.WriteLine("Invalid input. Please try again!");
                         Console.WriteLine();
                         continue;
                     }
+
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("There has been an error detected: {0}", ex.Message);
+                        Console.WriteLine();
+                    }
                 }
 
-                Console.WriteLine("\nRegular Flavours: Vanilla, Chocolate, Strawberry\nPremium Flavours: Durian, Ube, Sea salt");
+                Console.WriteLine();
+                Console.WriteLine("We offer regular and premium flavours.");
+                Console.WriteLine("Regular Flavours: Vanilla, Chocolate, Strawberry");
+                Console.WriteLine("Premium Flavours: Durian, Ube, Sea Salt");
+                Console.WriteLine();
 
                 while (true)
                 {
-                    bool validFlavorsSelected = false;
-                    Console.Write("\nEnter flavours (comma separated): ");
-                    string[] flavourSelected = Console.ReadLine().Split(','); //--------------------------------------------------------------------------------------------------
+                    bool flavourExists = false;
+                    Console.WriteLine("Take note to enter a flavour for each scoop.");
+                    Console.Write("Please enter your desired flavours [Do ensure that they are comma separated]: ");
+                    string[] selectedFlavours = Console.ReadLine().Split(','); //Split become array
 
 
-                    if (flavourSelected.Length != noOfScoops)
+                    if (selectedFlavours.Length != scoopsAmt) //meaning they choose eg 3 scoops but write desired flavours as Ube, Strawberry only.
                     {
                         Console.WriteLine();
-                        Console.WriteLine("***************************************************************************************************");
-                        Console.WriteLine("*** Invalid Input! Number of flavours should match the number of scoops ({0})! Please try again! ***", noOfScoops);
-                        Console.WriteLine("***************************************************************************************************");
+                        Console.WriteLine("Invalid input. The number of flavours should match the amount of scoops: {0}.", scoopsAmt);
+                        Console.WriteLine("Please enter again!");
                         Console.WriteLine();
                         continue;
                     }
 
                     else
                     {
-                        // False = Not Premium
-                        foreach (var flavour in flavourSelected)
+                        foreach (var flavour in selectedFlavours)
                         {
                             string flavourName = flavour.Trim().ToLower();
 
                             if (flavourName == "vanilla")
                             {
-                                flavours.Add(new Flavour("Vanilla", false, 1));
-                                validFlavorsSelected = true;
+                                flavours.Add(new Flavour("Vanilla", false, 1)); //RMB TO ADD IN THE  DICTIONARY FOR THE QUANTITY HEREEEE !!!!1 
+                                flavourExists = true;
                             }
 
                             else if (flavourName == "chocolate")
                             {
-                                flavours.Add(new Flavour("Chocolate", false, 1));
-                                validFlavorsSelected = true;
+                                flavours.Add(new Flavour("Chocolate", false, 1)); //Flase bc not premium..
+                                flavourExists = true;
                             }
 
                             else if (flavourName == "strawberry")
                             {
                                 flavours.Add(new Flavour("Strawberry", false, 1));
-                                validFlavorsSelected = true;
+                                flavourExists = true;
                             }
 
                             else if (flavourName == "durian")
                             {
                                 flavours.Add(new Flavour("Durian", true, 1));
-                                validFlavorsSelected = true;
+                                flavourExists = true;
                             }
 
                             else if (flavourName == "ube")
                             {
                                 flavours.Add(new Flavour("Ube", true, 1));
-                                validFlavorsSelected = true;
+                                flavourExists = true;
                             }
 
                             else if (flavourName == "sea salt")
                             {
                                 flavours.Add(new Flavour("Sea salt", true, 1));
-                                validFlavorsSelected = true;
+                                flavourExists = true;
                             }
                         }
 
-                        if (!validFlavorsSelected)
+                        if (!flavourExists)
                         {
                             Console.WriteLine();
-                            Console.WriteLine("******************************************************************");
-                            Console.WriteLine("*** Invalid Input! Please re-enter Customer's desired flavour! ***");
-                            Console.WriteLine("******************************************************************");
+                            Console.WriteLine("Invalid input. Please enter flavours again!");
                             Console.WriteLine();
                         }
 
@@ -746,58 +718,58 @@ class Program
                     }
                 }
 
-                Console.WriteLine("\nToppings Available: Sprinkles, Mochi, Sago, Oreos");
+                Console.WriteLine();
+                Console.WriteLine("We offer toppings!");
+                Console.WriteLine("We have sprinkles, mochi, sago and oreos");
 
                 while (true)
                 {
-                    bool validToppingSelected = false;
-                    Console.Write("\nEnter toppings (comma separated or Enter [N] for NO Topping) : ");
-                    string[] toppingSelected = Console.ReadLine().Split(',');
+                    bool toppingsExist = false;
+                    Console.Write("Enter desired toppings or 'N' for no topping [Ensure that they are comma separated] : ");
+                    string[] selectedToppings = Console.ReadLine().Split(','); //become array
 
-                    if (toppingSelected[0].Trim().ToLower() == "n")
+                    if (selectedToppings[0].Trim().ToLower() == "n")
                     {
                         toppings.Add(new Topping("None"));
-                        validToppingSelected = true;
+                        toppingsExist = true;
                     }
 
                     else
                     {
-                        foreach (var topping in toppingSelected)
+                        foreach (var topping in selectedToppings)
                         {
                             string toppingName = topping.Trim().ToLower();
-
 
                             if (toppingName == "sprinkles")
                             {
                                 toppings.Add(new Topping("Sprinkles"));
-                                validToppingSelected = true;
+                                toppingsExist = true;
                             }
 
                             else if (toppingName == "mochi")
                             {
                                 toppings.Add(new Topping("Mochi"));
-                                validToppingSelected = true;
+                                toppingsExist = true;
                             }
 
                             else if (toppingName == "sago")
                             {
                                 toppings.Add(new Topping("Sago"));
-                                validToppingSelected = true;
+                                toppingsExist = true;
                             }
 
                             else if (toppingName == "oreos")
                             {
                                 toppings.Add(new Topping("Oreos"));
-                                validToppingSelected = true;
+                                toppingsExist = true;
                             }
                         }
                     }
-                    if (!validToppingSelected)
+
+                    if (!toppingsExist)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("******************************************************************");
-                        Console.WriteLine("*** Invalid Input! Please re-enter Customer's desired topping! ***");
-                        Console.WriteLine("******************************************************************");
+                        Console.WriteLine("Invalid input. Please enter toppings again!");
                         Console.WriteLine();
                     }
 
@@ -810,37 +782,35 @@ class Program
 
                 if (iceCreamOption == "cup")
                 {
-                    newIceCream = new Cup("Cup", noOfScoops, flavours, toppings);
+                    newIceCream = new Cup("Cup", scoopsAmt, flavours, toppings);
                 }
 
                 else if (iceCreamOption == "cone")
                 {
-                    bool validDippedSelected = false;
+                    bool dippedOrNot = false;
 
-                    while (!validDippedSelected)
+                    while (!dippedOrNot)
                     {
-                        Console.Write("Dipped Cone? [Y]/[N]: ");
+                        Console.Write("Would you like your cone dipped? [Y / N]: ");
 
                         string dipped = Console.ReadLine().ToLower();
 
                         if (dipped == "y")
                         {
-                            newIceCream = new Cone("Cone", noOfScoops, flavours, toppings, true);
-                            validDippedSelected = true;
+                            newIceCream = new Cone("Cone", scoopsAmt, flavours, toppings, true);
+                            dippedOrNot = true;
                         }
 
                         else if (dipped == "n")
                         {
-                            newIceCream = new Cone("Cone", noOfScoops, flavours, toppings, false);
-                            validDippedSelected = true;
+                            newIceCream = new Cone("Cone", scoopsAmt, flavours, toppings, false);
+                            dippedOrNot = true;
                         }
 
-                        if (!validDippedSelected)
+                        if (!dippedOrNot)
                         {
                             Console.WriteLine();
-                            Console.WriteLine("*************************************************************************");
-                            Console.WriteLine("*** Invalid Input! Please re-enter Customer's desired topping choice! ***");
-                            Console.WriteLine("*************************************************************************");
+                            Console.WriteLine("Invalid input. Please enter again!");
                             Console.WriteLine();
                         }
                     }
@@ -848,49 +818,49 @@ class Program
 
                 if (iceCreamOption == "waffle")
                 {
-                    bool validWaffleSelected = false;
-                    while (!validWaffleSelected)
+                    bool waffleExists = false; //see if the waffle type exists
+                    while (!waffleExists)
                     {
-                        Console.Write("\nPremium or Original Waffle Flavour? [Y]/[N] ('N' for Original): ");
-                        string premiumWaffleSelected = Console.ReadLine().ToLower();
+                        Console.WriteLine();
+                        Console.WriteLine("We offer premium and original waffle flavours.");
+                        Console.WriteLine("Premium Flavours: Red Velvet, Charcoal, Pandan");
+                        Console.Write("Would you like it premium? [Y / N]: ");
+                        string premiumOrNot = Console.ReadLine().ToLower();
 
-                        if (premiumWaffleSelected == "y")
+                        if (premiumOrNot == "y")
                         {
-                            Console.WriteLine("\nWaffle Premium Flavours: Red Velvet, Charcoal, Pandan");
-
-                            Console.Write("\nEnter a Premium Waffle Flavour: ");
+                            Console.WriteLine();
+                            Console.Write("Enter a Premium Waffle Flavour: ");
                             string waffleFlavour = Console.ReadLine().Trim().ToLower();
 
                             if (waffleFlavour == "red velvet")
                             {
-                                newIceCream = new Waffle("Waffle", noOfScoops, flavours, toppings, "Red Velvet");
-                                validWaffleSelected = true;
+                                newIceCream = new Waffle("Waffle", scoopsAmt, flavours, toppings, "Red Velvet");
+                                waffleExists = true;
                             }
                             else if (waffleFlavour == "charcoal")
                             {
-                                newIceCream = new Waffle("Waffle", noOfScoops, flavours, toppings, "Charcoal");
-                                validWaffleSelected = true;
+                                newIceCream = new Waffle("Waffle", scoopsAmt, flavours, toppings, "Charcoal");
+                                waffleExists = true;
                             }
                             else if (waffleFlavour == "pandan")
                             {
-                                newIceCream = new Waffle("Waffle", noOfScoops, flavours, toppings, "Pandan");
-                                validWaffleSelected = true;
+                                newIceCream = new Waffle("Waffle", scoopsAmt, flavours, toppings, "Pandan");
+                                waffleExists = true;
                             }
                         }
 
-                        else if (premiumWaffleSelected == "n")
+                        else if (premiumOrNot == "n") //aka they dw premium, so stick with original
                         {
-                            newIceCream = new Waffle("Waffle", noOfScoops, flavours, toppings, "Original");
-                            validWaffleSelected = true;
+                            newIceCream = new Waffle("Waffle", scoopsAmt, flavours, toppings, "Original");
+                            waffleExists = true;
                         }
 
-                        if (!validWaffleSelected)
+                        if (!waffleExists)
                         {
                             Console.WriteLine();
-                            Console.WriteLine("*************************************************************************");
-                            Console.WriteLine("*** Invalid Input! Please re-enter Customer's desired Waffle Flavour! ***");
-                            Console.WriteLine("*************************************************************************");
-                            Console.WriteLine();//----------------------------------------------------------------------------------------------------
+                            Console.WriteLine("Invalid input. Please enter desired waffle flavour again!");
+                            Console.WriteLine();
                         }
                     }
                 }
@@ -899,365 +869,24 @@ class Program
                 {
                     order.AddIceCream(newIceCream);
                     order.Id = currentOrderId;
-                    //order.TimeReceived = DateTime.Now;
                     break;
                 }
             }
         }
 
-        static List<string> ReadFlavoursFromCSV()
-        {
-            List<string> flavours = new List<string>();
-            try
-            {
-                using (StreamReader sr = new StreamReader("flavours.csv"))
-                {
-
-                    // read header first
-                    string s = sr.ReadLine();
-
-                    while ((s = sr.ReadLine()) != null)
-                    {
-                        string[] items = s.Split(',');
-                        for (int i = 0; i < items.Length; i += 2)
-                        {
-                            flavours.Add(items[i].Trim().ToLower()); // Adding flavour names to the list
-                        }
-                    }
-                }
-            }
-            catch (IOException)
-            {
-                Console.WriteLine();
-                Console.WriteLine("****************************************************************************************");
-                Console.WriteLine("*** Error: A database issue has occurred! Please contact the manager for assistance! ***");
-                Console.WriteLine("****************************************************************************************");
-                Console.WriteLine();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine();
-                Console.WriteLine("An error occurred while processing your Order: {0}", ex.Message);
-                Console.WriteLine();
-            }
-
-            return flavours;
-        }
-
-        static bool FlavourExists(string flavourNames)
-        {
-            List<string> availableFlavours = ReadFlavoursFromCSV();
-
-            if (!availableFlavours.Contains(flavourNames.ToLower()))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        static bool FlavourIsPremium(string flavourName)
-        {
-            List<string> premiumFlavours = new List<string> { "durian", "ube", "sea salt" };
-            return premiumFlavours.Contains(flavourName);
-        }
-
-        static bool WaffleIsPremium(string flavourName)
-        {
-            List<string> premiumFlavours = new List<string> { "red velvet", "charcoal", "pandan" };
-            return premiumFlavours.Contains(flavourName);
-        }
-
-        static List<string> ReadToppingsFromCsv()
-        {
-            List<string> toppings = new List<string>();
-            try
-            {
-                using (StreamReader sr = new StreamReader("toppings.csv"))
-                {
-                    // read header first
-                    string s = sr.ReadLine();
-                    string[] header = s.Split(',');
-                    // read the rest 
-                    while ((s = sr.ReadLine()) != null)
-                    {
-                        string[] items = s.Split(',');
-
-                        for (int i = 0; i < items.Length; i++)
-                        {
-                            toppings.Add(items[i].ToLower());
-                        }
-                    }
-                }
-            }
-            catch (IOException ex)
-            {
-                Console.WriteLine();
-                Console.WriteLine("****************************************************************************************");
-                Console.WriteLine("*** Error! A database issue has occurred! Please contact the manager for assistance! ***");
-                Console.WriteLine("****************************************************************************************");
-                Console.WriteLine();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine();
-                Console.WriteLine("An error occurred while processing your Order: {0}", ex.Message);
-                Console.WriteLine();
-            }
-            return toppings;
-        }
-
-        static bool ToppingExist(string toppingName)
-        {
-            List<string> availableToppings = ReadToppingsFromCsv();
-            if (!availableToppings.Contains(toppingName.ToLower()))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        static bool IsDipped(string dipped)
-        {
-            if (dipped == "y")
-            {
-                return true;
-            }
-            return false;
-        }
-
-        // QUESTION 5 (Ng Joe Yi) -------------------------------------------------------------------------------------------------------------------------------------- //
-        static int ReadOrderDetails(List<Customer> cList)
-        {
-            Customer selectedCustomer = SelectMember(customerList);
-            //Dictionary<string, int> flavourQuantity = new Dictionary<string, int>();
-            try
-            {
-                using (StreamReader sr = new StreamReader("orders.csv"))
-                {
-                    // read header first
-                    string s = sr.ReadLine();
-
-                    // read the rest 
-                    while ((s = sr.ReadLine()) != null)
-                    {
-                        try
-                        {
-                            string[] items = s.Split(',');
-                            int orderId = Convert.ToInt32(items[0]);
-                            int memberId = Convert.ToInt32(items[1]);
-                            DateTime timeReceived = Convert.ToDateTime(items[2]);
-                            DateTime timeFulfilled = Convert.ToDateTime(items[3]);
-                            string option = Convert.ToString(items[4]);
-                            int scoops = Convert.ToInt32(items[5]);
-                            bool dipped = false;
-                            if (items[6] != null) // If not null means its a cone
-                            {
-                                string item6 = items[6].Trim().ToLower(); // Trim and convert to lower case
-                                if (item6 == "true")
-                                {
-                                    dipped = true;
-                                }
-                            }
-                            string waffleFlavour = Convert.ToString(items[7]);
-                            lastOrderId = Math.Max(lastOrderId, orderId);
-                            
-                            // FLAVOUR QUANTITY CHECK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                            /*
-                            for (int i = 8; i <= 10; i++)
-                            {
-                                string flavourType = items[i].Trim();
-                                foreach (KeyValuePair<string, int> kvp in flavourQuantity)
-                                {
-                                    if (kvp.Key == flavourType)
-                                    {
-                                        flavourQuantity[flavourType]++;
-                                    }
-                                    else
-                                    {
-                                        flavourQuantity.Add(flavourType, 1);
-                                    }
-                                }
-                            }
-                            List<Flavour> flavours = new List<Flavour>();
-                            for (int i = 8; i <= 10; i++)
-                            {
-                                int quantity = 0;
-                                foreach (KeyValuePair<string, int> kvp in flavourQuantity)
-                                {
-                                    if (items[i] != null)
-                                    {
-                                        if (items[i] == kvp.Key)
-                                        {
-                                            quantity = kvp.Value;
-                                            flavours.Add(new Flavour(items[i], FlavourIsPremium(items[i]), quantity));
-                                        }
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-
-                            } 
-                            */
-                            
-
-                            
-                            List<Flavour> flavours = new List<Flavour>();
-                            for (int i = 8; i <= 10; i++)
-                            {
-                                if (items[i] != null)
-                                {
-                                    flavours.Add(new Flavour(items[i], FlavourIsPremium(items[i]), 1));
-                                }
-                            }
-                            
-
-                            List<Topping> toppings = new List<Topping>();
-                            for (int i = 11; i <= 14; i++)
-                            {
-                                if (items[i] != null)
-                                {
-                                    toppings.Add(new Topping(items[i]));
-                                }
-                            }
-                            Order order = new Order(orderId, timeReceived);
-                            order.TimeFulfilled = timeFulfilled;
-                            IceCream iceCream = null;
-                            if (option.ToLower() == "cup")
-                            {
-                                iceCream = new Cup(option, scoops, flavours, toppings);
-                            }
-                            else if (option.ToLower() == "cone")
-                            {
-                                iceCream = new Cone(option, scoops, flavours, toppings, dipped);
-                            }
-                            else if (option.ToLower() == "waffle")
-                            {
-                                iceCream = new Waffle(option, scoops, flavours, toppings, waffleFlavour);
-                            }
-
-                            order.AddIceCream(iceCream);
-                            if (selectedCustomer != null)
-                            {
-                                // Make sure OrderHistory is initialized before using it.
-                                if (selectedCustomer.OrderHistory == null)
-                                {
-                                    selectedCustomer.OrderHistory = new List<Order>();
-                                }
-                                else
-                                {
-                                    selectedCustomer.OrderHistory.Add(order);
-                                }
-                            }
-
-
-                        }
-                        catch (FormatException)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("******************************************************");
-                            Console.WriteLine("*** Invalid Input! Please re-enter a valid Input! ***");
-                            Console.WriteLine("******************************************************");
-                            Console.WriteLine();
-                        }
-                        catch (InvalidOperationException ex)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("An error occured while processing your Order: {0}", ex.Message);
-                            Console.WriteLine();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("An error occurred while processing your Order: {0}", ex.Message);
-                            Console.WriteLine();
-                        }
-                    }
-                }
-            }
-            catch (FileNotFoundException)
-            {
-                Console.WriteLine();
-                Console.WriteLine("****************************************************************************************");
-                Console.WriteLine("*** Error! A database issue has occurred! Please contact the manager for assistance! ***");
-                Console.WriteLine("****************************************************************************************");
-                Console.WriteLine();
-            }
-            catch (IOException)
-            {
-                Console.WriteLine();
-                Console.WriteLine("*******************************************************************************************");
-                Console.WriteLine("*** Error! A database IO issue has occurred! Please contact the manager for assistance! ***");
-                Console.WriteLine("*******************************************************************************************");
-                Console.WriteLine();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine();
-                Console.WriteLine("An error occurred while processing your Order: {0}", ex.Message);
-                Console.WriteLine();
-            }
-
-            return lastOrderId;
-        }
-
-        static void DisplayCurrentOrder(Customer customerId)
-        {
-            Console.WriteLine();
-            Console.WriteLine("{0,10}-----------------------", "");
-            Console.WriteLine("{0,11}Current Order Details ", "");
-            Console.WriteLine("{0,10}-----------------------", "");
-            if (customerId.CurrentOrder != null)
-            {
-                Console.WriteLine(customerId.CurrentOrder.ToString());
-            }
-            else
-            {
-                Console.WriteLine("*** Current order details are not available ***");
-            }
-        }
-
-        static void DisplayOrderHistory(Customer customerId)
-        {
-            Console.WriteLine("{0,10}-----------------------", "");
-            Console.WriteLine("{0,11}Order History Details ", "");
-            Console.WriteLine("{0,10}-----------------------", "");
-            if (customerId.OrderHistory.Count() > 0)
-            {
-                foreach (Order orderHistory in customerId.OrderHistory)
-                {
-                    Console.WriteLine(orderHistory.ToString());
-                }
-                Console.WriteLine("Returning to Main Menu...");
-            }
-            else
-            {
-                Console.WriteLine();
-                Console.WriteLine("*** Order history details are not available ***");
-                Console.WriteLine("\nReturning to Main Menu...");
-            }
-        }
-
-
-        static void DisplayOrderDetails(List<Customer> cList)
+        //------- BASIC 5 ( Weiying ) -------------------------------------------------------------------------------------------------------------------------------------- //
+        static void DisplayOrderDetailsOfCustomer(List<Customer> cList)
         {
             // List the customer 
-            ListAllCustomer(cList);
-            Customer selectedCustomer = SelectMember(cList); // Assuming this method returns the correct customer
+            ListingAllCustomer(cList);
+            Customer selectedCustomer = SelectMember(cList);
 
             if (selectedCustomer.Name == null)
             {
                 return;
             }
 
-            Dictionary<string, int> flavourQuantity = new Dictionary<string, int>();
-
-            // Initialize OrderHistory if it hasn't been already
-            if (selectedCustomer.OrderHistory == null)
+            if (selectedCustomer.OrderHistory == null) //So if null, then initiaize it?
             {
                 selectedCustomer.OrderHistory = new List<Order>();
             }
@@ -1267,16 +896,18 @@ class Program
 
             using (StreamReader sr = new StreamReader("orders.csv"))
             {
-                string s; // Declare 's' outside the loop for proper scope
-                          // Skip the header
-                sr.ReadLine();
+                string s;
+
+                sr.ReadLine(); // Skip the header
 
                 // Read each line representing an order
                 while ((s = sr.ReadLine()) != null)
                 {
+                    Dictionary<string, int> flavourQuantity = new Dictionary<string, int>();
                     string[] items = s.Split(',');
                     int orderId = Convert.ToInt32(items[0]);
                     int memberId = Convert.ToInt32(items[1]);
+
                     // If the order memberId does not match the selectedCustomer memberId, skip it
                     if (selectedCustomer == null || memberId != selectedCustomer.MemberId)
                     {
@@ -1291,17 +922,7 @@ class Program
                     string waffleFlavour = items.Length > 7 ? items[7] : null;
                     lastOrderId = Math.Max(lastOrderId, orderId);
 
-                    /* 
-                     List<Flavour> flavours = new List<Flavour>();
-                     for (int i = 8; i <= 10; i++)
-                     {
-                         if (items[i] != null)
-                         {
-                             flavours.Add(new Flavour(items[i], FlavourIsPremium(items[i]), 1));
-                         }
-                     } */
-
-                    // FLAVOUR QUANTITY CHECK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    // FLAVOUR QUANTITY CHECK 
                     for (int i = 8; i <= 10; i++)
                     {
                         if (!string.IsNullOrWhiteSpace(items[i]))
@@ -1322,27 +943,15 @@ class Program
                         }
                     }
                     List<Flavour> flavours = new List<Flavour>();
-                    for (int i = 8; i <= 10; i++)
+                    int quantity = 0;
+
+                    foreach (KeyValuePair<string, int> kvp in flavourQuantity)
                     {
-                        int quantity = 0;
-                        foreach (KeyValuePair<string, int> kvp in flavourQuantity)
-                        {
-                            Console.WriteLine(kvp.Key);
-                            if (items[i] != null)
-                            {
-                                if (items[i] == kvp.Key)
-                                {
-                                    quantity = kvp.Value;
-                                    flavours.Add(new Flavour(items[i], FlavourIsPremium(items[i]), quantity));
-                                    
-                                }
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
+                        quantity = kvp.Value;
+                        flavours.Add(new Flavour(kvp.Key, PremiumFlavours(kvp.Key), quantity));
+
                     }
+
 
                     List<Topping> toppings = new List<Topping>();
                     for (int i = 11; i <= 14; i++)
@@ -1355,7 +964,7 @@ class Program
                     Order order = new Order(orderId, timeReceived);
                     order.TimeFulfilled = timeFulfilled;
 
-                    // Create the correct IceCream instance based on the option
+                    // Make IceCream instance based on the option
                     if (option.Equals("cup", StringComparison.OrdinalIgnoreCase))
                     {
                         IceCream iceCream = new Cup(option, scoops, flavours, toppings);
@@ -1364,12 +973,12 @@ class Program
                     else if (option.Equals("cone", StringComparison.OrdinalIgnoreCase))
                     {
                         IceCream iceCream = new Cone(option, scoops, flavours, toppings, dipped);
-                        order.AddIceCream(iceCream); // Add the created ice cream to the order
+                        order.AddIceCream(iceCream);
                     }
                     else if (option.Equals("waffle", StringComparison.OrdinalIgnoreCase))
                     {
                         IceCream iceCream = new Waffle(option, scoops, flavours, toppings, waffleFlavour);
-                        order.AddIceCream(iceCream); // Add the created ice cream to the order
+                        order.AddIceCream(iceCream);
                     }
 
                     // Add the order to the selected customer's order history only once
@@ -1378,103 +987,65 @@ class Program
             }
 
             // Now display current order and order history of the selected customer
-            DisplayCurrentOrder(selectedCustomer); // This should display the current order
+            DisplayCurrentOrder(selectedCustomer);
             Console.WriteLine();
-            DisplayOrderHistory(selectedCustomer); // This should display the order history once
+            DisplayOrderHistory(selectedCustomer);
+
         }
 
 
-
-        /*
-                        else
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("***********************************************");
-                            Console.WriteLine("*** Invalid Member ID! Member ID not found! ***");
-                            Console.WriteLine("***********************************************");
-                            Console.WriteLine();
-                        }
-
-
-                    catch (FormatException)
-                    {
-                        Console.WriteLine();
-                        Console.WriteLine("*******************************************************");
-                        Console.WriteLine("*** Invalid Input! Please enter a valid Member ID! ***");
-                        Console.WriteLine("*******************************************************");
-                        Console.WriteLine();
-                    }*/
-
-
-        // QUESTION 6 (Ng Joe Yi) -------------------------------------------------------------------------------------------------------------------------------------- //
-        static void DisplayIceCreamIndex(Customer customerId)
-        {
-            IceCream iceCreamOrder = null;
-            int iceCreamIndex = 1;
-            Console.WriteLine("-------------------------------------- Ice Cream Index --------------------------------------");
-            foreach (IceCream iceCream in customerId.CurrentOrder.IceCreamList)
-            {
-                iceCreamOrder = iceCream;
-                Console.WriteLine("{0}. ", iceCreamIndex);
-                Console.WriteLine(iceCreamOrder.ToString(), iceCreamIndex);
-                iceCreamIndex++;
-            }
-        }
+        //------- BASIC 6 ( Weiying ) -------------------------------------------------------------------------------------------------------------------------------------- //
         static void ModifyOrderDetails(List<Customer> cList)
         {
             if (cList == null || cList.Count == 0)
             {
                 Console.WriteLine();
-                Console.WriteLine("*****************************************************");
-                Console.WriteLine("*** Error! There are no Customers in our database ***");
-                Console.WriteLine("*****************************************************");
-                Console.WriteLine("\nReturning to Main Menu...\n");
                 Console.WriteLine();
-                return; // Early return to exit the method
+                Console.WriteLine("Error detected. No customers could be found!");
+                Console.WriteLine();
+                Console.WriteLine("Hence, you have exited the process of modifying order details.");
+                Console.WriteLine();
+                return; //so can exit
             }
 
-            ListAllCustomer(cList);
+            ListingAllCustomer(cList);
 
-            int findCustomerMemberId = 0;
+            int findCustomerMemberId = 0; //initialize first
 
             while (true)
             {
-                Console.Write("Enter Customer's Member ID (0 to exit): ");
+                Customer selectedCustomer = SelectMember(customerList);
                 try
                 {
-                    string stringFindCustomerId = Console.ReadLine();
-                    if (string.IsNullOrWhiteSpace(stringFindCustomerId))
+                    string stringCustomerMemberId = Convert.ToString(selectedCustomer.MemberId);
+
+                    if (string.IsNullOrWhiteSpace(stringCustomerMemberId))
                     {
                         Console.WriteLine();
-                        Console.WriteLine("*********************************************************");
-                        Console.WriteLine("*** Invalid input! Please re-enter a valid Member ID! ***");
-                        Console.WriteLine("*********************************************************");
+                        Console.WriteLine("Invalid input. Please enter member ID again!");
                         Console.WriteLine();
                         continue;
                     }
-                    findCustomerMemberId = Convert.ToInt32(stringFindCustomerId);
+
+                    findCustomerMemberId = Convert.ToInt32(stringCustomerMemberId);
                     if (findCustomerMemberId == 0)
                     {
-                        Console.WriteLine("\nReturning to Main Menu...\n");
                         return;
                     }
+
                     Console.WriteLine();
                     break;
                 }
                 catch (FormatException)
                 {
                     Console.WriteLine();
-                    Console.WriteLine("*********************************************************");
-                    Console.WriteLine("*** Invalid input! Please re-enter a valid Member ID! ***");
-                    Console.WriteLine("*********************************************************");
+                    Console.WriteLine("Invalid input. Please enter member ID again!");
                     Console.WriteLine();
                 }
                 catch (OverflowException)
                 {
                     Console.WriteLine();
-                    Console.WriteLine("*************************************************");
-                    Console.WriteLine("*** Error! Please re-enter a valid Member ID! ***");
-                    Console.WriteLine("*************************************************");
+                    Console.WriteLine("Invalid input. Please enter member ID again!");
                     Console.WriteLine();
                 }
             }
@@ -1485,50 +1056,43 @@ class Program
             if (selectedMemberId == null || selectedMemberId.CurrentOrder == null || selectedMemberId.CurrentOrder.IceCreamList == null || selectedMemberId.CurrentOrder.IceCreamList.Count == 0)
             {
                 Console.WriteLine();
-                Console.WriteLine("***********************************************************************************************");
-                Console.WriteLine("*** Error! Ice Cream Modifications can only be made for Customers who have existing Orders! ***");
-                Console.WriteLine("***********************************************************************************************");
+                Console.WriteLine("Error detected. You can only modify ice cream if you have existsing orders!");
                 Console.WriteLine();
-                return; // Early return to exit the method
+                return; // exit
             }
 
             DisplayCurrentOrder(selectedMemberId);
             Console.WriteLine();
 
-            // List all the ice cream objects contained in the order 
 
             int option = 0;
             bool modifyOption = false;
             while (!modifyOption)
             {
-                Console.Write(
-                                "[1] Modify Ice Cream Order\n" +
-                                "[2] Add an Ice Cream to Order\n" +
-                                "[3] Delete an existing Ice Cream\n" +
-                                "[0] Exit to Main Menu\n" +
-                                "Enter an option: "
-                            );
+                Console.WriteLine("[1] Modify Ice Cream Order");
+                Console.WriteLine("[2] Add an Ice Cream to Order");
+                Console.WriteLine("[3] Delete an existing Ice Cream");
+                Console.WriteLine("[0] Exit to the main menu");
+                Console.Write("Enter your option: ");
+
                 try
                 {
-                    string stringOption = Console.ReadLine();
-                    if (string.IsNullOrEmpty(stringOption))
+                    string userOption = Console.ReadLine();
+                    if (string.IsNullOrEmpty(userOption))
                     {
                         Console.WriteLine();
-                        Console.WriteLine("******************************************************");
-                        Console.WriteLine("*** Invalid Input! Please re-enter a valid option! ***");
-                        Console.WriteLine("******************************************************");
+                        Console.WriteLine("Invalid input. Please enter again!");
                         Console.WriteLine();
                         continue;
                     }
-                    option = Convert.ToInt32(stringOption);
+
+                    option = Convert.ToInt32(userOption);
                     modifyOption = true;
                 }
                 catch (FormatException)
                 {
                     Console.WriteLine();
-                    Console.WriteLine("******************************************************");
-                    Console.WriteLine("*** Invalid Input! Please re-enter a valid option! ***");
-                    Console.WriteLine("******************************************************");
+                    Console.WriteLine("Invalid input. Please enter again!");
                     Console.WriteLine();
                 }
 
@@ -1536,107 +1100,107 @@ class Program
 
             if (option == 1 || option == 2 || option == 3)
             {
+
                 Order order = selectedMemberId.CurrentOrder;
-                if (option == 1) // This dont need to change in regards to the new csv implementation 
+
+                if (option == 1)
                 {
-                    DisplayIceCreamIndex(selectedMemberId);
+                    DisplayIndexOfIceCream(selectedMemberId);
                     while (true)
                     {
-                        Console.Write("Enter the index of the ice cream to modify (0 to exit): ");
+                        Console.Write("Enter index of the ice cream to modify ['0' to exit]: ");
                         try
                         {
-                            string stringSelectedIndex = Console.ReadLine();
-                            if (string.IsNullOrWhiteSpace(stringSelectedIndex))
+                            string icIndexToModify = Console.ReadLine();
+
+                            if (string.IsNullOrWhiteSpace(icIndexToModify))
                             {
 
-                                Console.WriteLine("*****************************************************");
-                                Console.WriteLine("*** Invalid index. Please re-enter a valid Index! ***");
-                                Console.WriteLine("*****************************************************");
+                                Console.WriteLine();
+                                Console.WriteLine("Invalid input. Please enter again!");
                                 Console.WriteLine();
                                 continue;
                             }
-                            int selectedIndex = Convert.ToInt32(stringSelectedIndex) - 1; // Adjust for zero-based indexing
-                            if (selectedIndex == -1)
+                            int selectedIC = Convert.ToInt32(icIndexToModify) - 1;  //selectedIC = selected ice cream
+
+                            if (selectedIC == -1) //Aka user enter 0
                             {
-                                Console.WriteLine("\nReturning to Main Menu...\n");
+                                Console.WriteLine();
+                                Console.WriteLine("You have exited the process of modifying ice cream.");
+                                Console.WriteLine();
                                 return;
                             }
-                            if (selectedIndex >= 0 && selectedIndex < selectedMemberId.CurrentOrder.IceCreamList.Count())
+                            if (selectedIC >= 0 && selectedIC < selectedMemberId.CurrentOrder.IceCreamList.Count())
                             {
-                                selectedMemberId.CurrentOrder.ModifyIceCream(selectedIndex);
+                                selectedMemberId.CurrentOrder.ModifyIceCream(selectedIC);
                                 DisplayCurrentOrder(selectedMemberId);
-                                Console.WriteLine("Returning to Main Menu...\n");
+                                Console.WriteLine();
+                                Console.WriteLine("Success!");
+                                Console.WriteLine();
                                 break;
                             }
                             else
                             {
-                                Console.WriteLine("*****************************************************");
-                                Console.WriteLine("*** Invalid index! Please re-enter a valid Index! ***");
-                                Console.WriteLine("*****************************************************");
+                                Console.WriteLine();
+                                Console.WriteLine("Invalid input. Please enter again!");
                                 Console.WriteLine();
                                 continue;
                             }
                         }
                         catch (FormatException)
                         {
-                            Console.WriteLine("**************************************************");
-                            Console.WriteLine("*** Invalid Input! Please enter a valid Index! ***");
-                            Console.WriteLine("***************************************************");
+                            Console.WriteLine();
+                            Console.WriteLine("Invalid input. Please enter again!");
+                            Console.WriteLine();
                         }
                         catch (OverflowException)
                         {
-                            Console.WriteLine("*********************************************");
-                            Console.WriteLine("*** Error! Please re-enter a valid index! ***");
-                            Console.WriteLine("**********************************************");
+                            Console.WriteLine();
+                            Console.WriteLine("Invalid input. Please enter again!");
+                            Console.WriteLine();
                         }
                     }
                 }
                 else if (option == 2)
                 {
-                    CreateIceCreamOrder(order);
+                    CreatingIceCream(order);
                     DisplayCurrentOrder(selectedMemberId);
                     order.Id = currentOrderId;
-                    Console.WriteLine("Returning to Main Menu...\n");
+                    Console.WriteLine("Success!");
                 }
                 else if (option == 3)
                 {
                     while (true)
                     {
-                        DisplayIceCreamIndex(selectedMemberId);
-                        Console.Write("Enter the index of the ice cream to Delete (0 to exit): ");
-                        string stringSelectedIndex = Console.ReadLine();
-                        if (string.IsNullOrWhiteSpace(stringSelectedIndex))
+                        DisplayIndexOfIceCream(selectedMemberId);
+                        Console.Write("Enter the index of ice cream to delete ['0' to exit]: ");
+                        string icIndexToDelete = Console.ReadLine();
+                        if (string.IsNullOrWhiteSpace(icIndexToDelete))
                         {
                             Console.WriteLine();
-                            Console.WriteLine("*****************************************************");
-                            Console.WriteLine("*** Invalid index! Please re-enter a valid Index! ***");
-                            Console.WriteLine("*****************************************************");
+                            Console.WriteLine("Invalid input. Please enter again!");
                             Console.WriteLine();
                             continue;
                         }
-                        int selectedIndex = Convert.ToInt32(stringSelectedIndex) - 1; // Adjust for zero-based indexing
-                        if (selectedIndex == -1)
+                        int selectedIC = Convert.ToInt32(icIndexToDelete) - 1;
+                        if (selectedIC == -1) //aka 0
                         {
-                            Console.WriteLine("\nReturning to Main Menu...\n");
-                            return;
+                            Console.WriteLine("You have exited the process of deleting ice cream.");
+                            return;  //exit
                         }
-                        else if (selectedIndex >= 0 && selectedIndex < selectedMemberId.CurrentOrder.IceCreamList.Count())
+                        else if (selectedIC >= 0 && selectedIC < selectedMemberId.CurrentOrder.IceCreamList.Count())
                         {
                             if (selectedMemberId.CurrentOrder.IceCreamList.Count() > 1)
                             {
-                                selectedMemberId.CurrentOrder.DeleteIceCream(selectedIndex);
-                                Console.WriteLine("Success! Ice Cream Order at Index {0} has been Deleted!", selectedIndex + 1);
-                                Console.WriteLine("\nReturning to Main Menu...\n");
+                                selectedMemberId.CurrentOrder.DeleteIceCream(selectedIC);
+                                Console.WriteLine("Ice cream with index {0} has successfully been deleted!", selectedIC + 1);
                                 DisplayCurrentOrder(selectedMemberId);
-                                Console.WriteLine("\nReturning to Main Menu...\n");
                                 break;
                             }
                             else
                             {
                                 Console.WriteLine();
-                                Console.WriteLine("***********************************************************");
-                                Console.WriteLine("*** Error! Ice Cream Order cannot have zero Ice Creams! ***");
-                                Console.WriteLine("***********************************************************");
+                                Console.WriteLine("Invalid input. Please enter again!");
                                 Console.WriteLine();
                                 break;
                             }
@@ -1644,9 +1208,7 @@ class Program
                         else
                         {
                             Console.WriteLine();
-                            Console.WriteLine("*****************************************************");
-                            Console.WriteLine("*** Invalid index! Please re-enter a valid Index! ***");
-                            Console.WriteLine("*****************************************************");
+                            Console.WriteLine("Invalid input. Please enter again!");
                             Console.WriteLine();
                         }
                     }
@@ -1655,13 +1217,295 @@ class Program
             else
             {
                 Console.WriteLine();
-                Console.WriteLine("*******************************************************");
-                Console.WriteLine("*** Invalid Option! Please re-enter a valid option! ***");
-                Console.WriteLine("*******************************************************");
+                Console.WriteLine("Invalid input. Please enter again!");
                 Console.WriteLine();
             }
         }
 
+        //This is needed for basic 6
+        static void DisplayIndexOfIceCream(Customer customerId) //for optiion 1 when user does basic 6
+        {
+            IceCream iceCreamOrder = null; //initialize
+            int iceCreamIndex = 1;
+            Console.WriteLine();
+            Console.WriteLine("Ice Cream Index");
+            Console.WriteLine("---------------");
+            foreach (IceCream iceCream in customerId.CurrentOrder.IceCreamList)
+            {
+                iceCreamOrder = iceCream;
+                Console.WriteLine("{0}. ", iceCreamIndex);
+                Console.WriteLine(iceCreamOrder.ToString(), iceCreamIndex);
+                iceCreamIndex++;
+            }
+        }
+
+
+        //Additional methods
+
+        // RETURNS FLAVOUR OPTIONS LIST
+        static List<string> FlavourOptionsAvail()
+        {
+            List<string> flavourOptions = new List<string>();
+            using (StreamReader sr = new StreamReader("flavours.csv"))
+            {
+                // read header first
+                string s = sr.ReadLine();
+
+                while ((s = sr.ReadLine()) != null)
+                {
+                    string[] items = s.Split(',');
+                    flavourOptions.Add(items[0]);
+
+                }
+            }
+            return flavourOptions;
+        }
+
+
+        // RETURNS TOPPING OPTIONS LIST
+        static List<string> ToppingOptionsAvail()
+        {
+            List<string> toppingOptions = new List<string>();
+            using (StreamReader sr = new StreamReader("toppings.csv"))
+            {
+                // read header first
+                string s = sr.ReadLine();
+
+                while ((s = sr.ReadLine()) != null)
+                {
+                    string[] items = s.Split(',');
+                    toppingOptions.Add(items[0]);
+
+                }
+            }
+            return toppingOptions;
+        }
+
+
+
+
+        static bool PremiumWaffle(string flavourName)
+        {
+            List<string> premiumFlavours = new List<string> { "red velvet", "charcoal", "pandan" };
+            return premiumFlavours.Contains(flavourName);
+        }
+
+        static bool DoesFlavourExists(string flavourNames)
+        {
+            List<string> flavoursOffered = FlavourOptionsAvail();
+
+            if (!flavoursOffered.Contains(flavourNames.ToLower()))
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+        static bool PremiumFlavours(string flavourName)
+        {
+            List<string> premiumFlavours = new List<string> { "durian", "ube", "sea salt" };
+            return premiumFlavours.Contains(flavourName);
+        }
+
+
+
+        static bool DoesToppingExists(string toppingName)
+        {
+            List<string> toppingsOffered = ToppingOptionsAvail();
+            if (!toppingsOffered.Contains(toppingName.ToLower()))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        static bool IsItDipped(string dipped)
+        {
+            if (dipped == "y")
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        static int ReadingCSVOrders(List<Customer> cList)
+        {
+            Customer selectedCustomer = SelectMember(customerList);
+
+            try
+            {
+                using (StreamReader sr = new StreamReader("orders.csv"))
+                {
+                    // read header first
+                    string s = sr.ReadLine();
+
+                    // read the rest 
+                    while ((s = sr.ReadLine()) != null)
+                    {
+                        try
+                        {
+                            string[] data = s.Split(',');
+                            int orderId = Convert.ToInt32(data[0]);
+                            int memberId = Convert.ToInt32(data[1]);
+                            DateTime timeReceived = Convert.ToDateTime(data[2]);
+                            DateTime timeFulfilled = Convert.ToDateTime(data[3]);
+                            string option = Convert.ToString(data[4]);
+                            int scoops = Convert.ToInt32(data[5]);
+                            bool dipped = false;
+                            if (data[6] != null) // If not null means its a cone since got mention dip or not
+                            {
+                                string item6 = data[6].Trim().ToLower();
+                                if (item6 == "true")
+                                {
+                                    dipped = true;
+                                }
+                            }
+
+
+                            string waffleFlavour = Convert.ToString(data[7]);
+                            lastOrderId = Math.Max(lastOrderId, orderId);
+
+
+                            List<Flavour> flavours = new List<Flavour>();
+                            for (int i = 8; i <= 10; i++)
+                            {
+                                if (data[i] != null)
+                                {
+                                    flavours.Add(new Flavour(data[i], PremiumFlavours(data[i]), 1)); // ----- NEED CHANGE QUANTITY HERE OR NO?? --------
+                                }
+                            }
+
+
+                            List<Topping> toppings = new List<Topping>();
+                            for (int i = 11; i <= 14; i++)
+                            {
+                                if (data[i] != null)
+                                {
+                                    toppings.Add(new Topping(data[i]));
+                                }
+                            }
+
+
+                            Order order = new Order(orderId, timeReceived);
+
+                            order.TimeFulfilled = timeFulfilled;
+                            IceCream iceCream = null;
+
+                            if (option.ToLower() == "cup")
+                            {
+                                iceCream = new Cup(option, scoops, flavours, toppings);
+                            }
+                            else if (option.ToLower() == "cone")
+                            {
+                                iceCream = new Cone(option, scoops, flavours, toppings, dipped);
+                            }
+                            else if (option.ToLower() == "waffle")
+                            {
+                                iceCream = new Waffle(option, scoops, flavours, toppings, waffleFlavour);
+                            }
+
+                            order.AddIceCream(iceCream);
+
+                            if (selectedCustomer != null)
+                            {
+                                if (selectedCustomer.OrderHistory == null)
+                                {
+                                    selectedCustomer.OrderHistory = new List<Order>(); //So if is null, then we initilaize it first
+                                }
+                                else
+                                {
+                                    selectedCustomer.OrderHistory.Add(order);
+                                }
+                            }
+
+
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Invalid input. Please try again.");
+                            Console.WriteLine();
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Error detected: {0}", ex.Message);
+                            Console.WriteLine();
+                        }
+                        catch (Exception ex) //general errors
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Error detected: {0}", ex.Message);
+                            Console.WriteLine();
+                        }
+                    }
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error detected. File could not be found!");
+                Console.WriteLine();
+            }
+            catch (IOException)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error detected. File could not be read!");
+                Console.WriteLine();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error detected: {0}", ex.Message);
+                Console.WriteLine();
+            }
+
+            return lastOrderId;
+        }
+
+        static void DisplayCurrentOrder(Customer customerId)
+        {
+            Console.WriteLine();
+            Console.WriteLine("{0,10}-----------------------", "");
+            Console.WriteLine("{0,11}Current Order Details ", "");
+            Console.WriteLine("{0,10}-----------------------", "");
+            if (customerId.CurrentOrder != null)
+            {
+                Console.WriteLine(customerId.CurrentOrder.ToString());
+            }
+            else
+            {
+                Console.WriteLine("Information regarding current order are not available.");
+            }
+        }
+
+        static void DisplayOrderHistory(Customer customerId)
+        {
+            Console.WriteLine("{0,10}-----------------------", "");
+            Console.WriteLine("{0,11}Order History Details ", "");
+            Console.WriteLine("{0,10}-----------------------", "");
+            if (customerId.OrderHistory.Count() > 0)
+            {
+                foreach (Order oh in customerId.OrderHistory)
+                {
+                    Console.WriteLine(oh.ToString());
+                }
+                Console.WriteLine("You have exited the process of displaying order history.");
+                Console.WriteLine();
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("Information regarding order history are not available.");
+                Console.WriteLine("You have exited the process of displaying order history.");
+                Console.WriteLine();
+            }
+        }
 
 
 

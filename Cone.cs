@@ -1,4 +1,10 @@
-﻿
+﻿//==========================================================
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
+//==========================================================
+
+
 using PairAssignment;
 using Microsoft.VisualBasic.FileIO;
 using System;
@@ -25,16 +31,16 @@ namespace PairAssignment
         }
         public override double CalculatePrice()
         {
-            int countPremium = 0;
-            int countTopping = ToppingList.Count();
+            int premiumCount = 0;
+            int toppingCount = ToppingList.Count();
             double dipped = 0;
             foreach (Flavour flavour in FlavourList)
             {
                 string flavour_str = Convert.ToString(flavour);
                 flavour_str = flavour_str.ToLower();
-                if (flavour_str == "durian" || flavour_str == "ueb" || flavour_str == "sea salt")
+                if (flavour_str == "durian" || flavour_str == "ube" || flavour_str == "sea salt")
                 {
-                    countPremium += 1;
+                    premiumCount += 1;
                 }
             }
             if (Dipped = true)
@@ -43,31 +49,32 @@ namespace PairAssignment
             }
             if (Scoops == 1)
             {
-                return 4 + dipped + (2 * countPremium) + (1 * countTopping);
+                return 4 + dipped + (2 * premiumCount) + (1 * toppingCount);
             }
             else if (Scoops == 2)
             {
-                return 5.5 + dipped + (2 * countPremium) + (1 * countTopping);
+                return 5.5 + dipped + (2 * premiumCount) + (1 * toppingCount);
             }
             else if (Scoops == 3)
             {
-                return 6.5 + dipped + (2 * countPremium) + (1 * countTopping);
+                return 6.5 + dipped + (2 * premiumCount) + (1 * toppingCount);
             }
             return 0;
         }
 
         public override string ToString()
         {
-            string dippedOutput = "";
+            string dipOrNot = "";
             if (Dipped == true)
             {
-                dippedOutput = "Yes";
+                dipOrNot = "Dipped";
             }
             else
             {
-                dippedOutput = "No";
+                dipOrNot = "Not Dipped";
             }
-            return "Dipped: " + dippedOutput + "\n" + base.ToString();
+
+            return "Dipped: " + dipOrNot + "\n" + base.ToString();
         }
     }
 }

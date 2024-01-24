@@ -1,4 +1,10 @@
-﻿
+﻿//==========================================================
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
+//==========================================================
+
+
 using PairAssignment;
 using System;
 using System.Collections.Generic;
@@ -26,36 +32,38 @@ namespace PairAssignment
 
         public override double CalculatePrice()
         {
-            int countPremium = 0;
-            int countTopping = ToppingList.Count();
+            int premiumCount = 0;
+            int toppingCount = ToppingList.Count();
             double premiumWaffle = 0;
 
             foreach (Flavour flavour in FlavourList)
             {
-                string flavour_str = Convert.ToString(flavour).ToLower();
-                if (flavour_str == "durian" || flavour_str == "ube" || flavour_str == "sea salt")
+                string stringFlavour = Convert.ToString(flavour).ToLower();
+                if (stringFlavour == "durian" || stringFlavour == "ube" || stringFlavour == "sea salt")
                 {
-                    countPremium += 1;
+                    premiumCount += 1; //Add $1 premiumm flavours
                 }
             }
+
             WaffleFlavour = WaffleFlavour.ToLower();
             if (WaffleFlavour == "red velvet" || WaffleFlavour == "charcoal" || WaffleFlavour == "pandan")
             {
-                premiumWaffle = 3;
+                premiumWaffle = 3; //since if premium then need add $3
             }
 
             if (Scoops == 1)
             {
-                return 7 + premiumWaffle + countTopping + (2 * countPremium);
+                return 7 + premiumWaffle + toppingCount + (2 * premiumCount);
             }
             else if (Scoops == 2)
             {
-                return 8.5 + premiumWaffle + countTopping+ (2 * countPremium);
+                return 8.5 + premiumWaffle + toppingCount + (2 * premiumCount);
             }
             else if (Scoops == 3)
             {
-                return 9.5 + premiumWaffle + countTopping + (2 * countPremium);
+                return 9.5 + premiumWaffle + toppingCount + (2 * premiumCount);
             }
+
             return 0;
         }
 
