@@ -27,7 +27,12 @@ namespace PairAssignment
         public string Tier { get; set; }
 
         //Constructors
-        public PointCard() { }
+        public PointCard()
+        {
+            Points = 0;
+            PunchCard = 0;
+            Tier = "Ordinary"; //bc in basic 3, will assign pointcard() to new customer and this is the values of the points, punchcard etc bc they are NEW
+        }
 
         public PointCard(int p, int pc)
         {
