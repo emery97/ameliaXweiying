@@ -34,30 +34,31 @@ namespace PairAssignment
             int premiumCount = 0;
             int toppingCount = ToppingList.Count();
             double dipped = 0;
+
             foreach (Flavour flavour in FlavourList)
             {
-                string flavour_str = Convert.ToString(flavour);
-                flavour_str = flavour_str.ToLower();
-                if (flavour_str == "durian" || flavour_str == "ube" || flavour_str == "sea salt")
+                if (flavour.Premium == true) //see if is premium flavour --> bool
                 {
-                    premiumCount += 1;
+                    premiumCount++;
                 }
             }
+
             if (Dipped = true)
             {
-                dipped = 2;
+                dipped = 2; //so if dipped not true aka no dip, then will just remain as 0 
             }
+
             if (Scoops == 1)
             {
-                return 4 + dipped + (2 * premiumCount) + (1 * toppingCount);
+                return 4.00 + dipped + (2 * premiumCount) + (1 * toppingCount);  //2 * premium.. bc each premium flavour is $2 per scoop. 1 * Toppngs bc each topping $1
             }
             else if (Scoops == 2)
             {
-                return 5.5 + dipped + (2 * premiumCount) + (1 * toppingCount);
+                return 5.50 + dipped + (2 * premiumCount) + (1 * toppingCount);
             }
             else if (Scoops == 3)
             {
-                return 6.5 + dipped + (2 * premiumCount) + (1 * toppingCount);
+                return 6.50 + dipped + (2 * premiumCount) + (1 * toppingCount);
             }
             return 0;
         }
@@ -74,7 +75,7 @@ namespace PairAssignment
                 dipOrNot = "Not Dipped";
             }
 
-            return "Dipped: " + dipOrNot + "\n" + base.ToString();
+            return "Dipped?: " + dipOrNot + "\n" + base.ToString();
         }
     }
 }

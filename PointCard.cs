@@ -1,10 +1,8 @@
 ﻿//==========================================================
-// Student Number : S10257856
-// Student Name : Amelia Goh
-// Partner Name : Lee Wei Ying
+// Student Number : S10258645
+// Student Name : Lee Wei Ying
+// Partner Name : Amelia Goh
 //==========================================================
-
-
 using PairAssignment;
 using System;
 using System.Collections.Generic;
@@ -27,12 +25,7 @@ namespace PairAssignment
         public string Tier { get; set; }
 
         //Constructors
-        public PointCard()
-        {
-            Points = 0;
-            PunchCard = 0;
-            Tier = "Ordinary"; //bc in basic 3, will assign pointcard() to new customer and this is the values of the points, punchcard etc bc they are NEW
-        }
+        public PointCard() { }
 
         public PointCard(int p, int pc)
         {

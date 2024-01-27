@@ -28,23 +28,23 @@ namespace PairAssignment
 
             foreach (Flavour flavour in FlavourList)
             {
-                string flavourName = Convert.ToString(flavour).ToLower();
-                if (flavourName == "durian" || flavourName == "ube" || flavourName == "sea salt")
+                if (flavour.Premium == true)
                 {
-                    premiumCount += 1;
+                    premiumCount++;
                 }
             }
+
             if (Scoops == 1)
             {
-                return 4 + toppingCount + (2 * premiumCount);
+                return 4.00 + (1 * toppingCount) + (2 * premiumCount);
             }
             else if (Scoops == 2)
             {
-                return 5.5 + toppingCount + (2 * premiumCount);
+                return 5.50 + (1 * toppingCount) + (2 * premiumCount);
             }
             else if (Scoops == 3)
             {
-                return 6.5 + toppingCount + (2 * premiumCount);
+                return 6.50 + (1 * toppingCount) + (2 * premiumCount);
             }
             return 0;
         }

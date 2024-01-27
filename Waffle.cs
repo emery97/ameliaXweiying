@@ -38,30 +38,30 @@ namespace PairAssignment
 
             foreach (Flavour flavour in FlavourList)
             {
-                string stringFlavour = Convert.ToString(flavour).ToLower();
-                if (stringFlavour == "durian" || stringFlavour == "ube" || stringFlavour == "sea salt")
+                if (flavour.Premium == true)
                 {
-                    premiumCount += 1; //Add $1 premiumm flavours
+                    premiumCount++;
                 }
             }
 
             WaffleFlavour = WaffleFlavour.ToLower();
             if (WaffleFlavour == "red velvet" || WaffleFlavour == "charcoal" || WaffleFlavour == "pandan")
             {
-                premiumWaffle = 3; //since if premium then need add $3
+                premiumWaffle = 3; //since if premium then need add $3.
+                //but if no, then premiumWaffle will just = 0, as can see from the start
             }
 
             if (Scoops == 1)
             {
-                return 7 + premiumWaffle + toppingCount + (2 * premiumCount);
+                return 7.00 + premiumWaffle + (1 * toppingCount) + (2 * premiumCount);
             }
             else if (Scoops == 2)
             {
-                return 8.5 + premiumWaffle + toppingCount + (2 * premiumCount);
+                return 8.50 + premiumWaffle + (1 * toppingCount) + (2 * premiumCount);
             }
             else if (Scoops == 3)
             {
-                return 9.5 + premiumWaffle + toppingCount + (2 * premiumCount);
+                return 9.50 + premiumWaffle + (1 * toppingCount) + (2 * premiumCount);
             }
 
             return 0;
