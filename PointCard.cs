@@ -1,8 +1,10 @@
 ﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
 //==========================================================
+
+
 using PairAssignment;
 using System;
 using System.Collections.Generic;
@@ -52,7 +54,8 @@ namespace PairAssignment
         }
 
         //Methods
-        public void AddPoints(int totalAmt) //totalAmt is the final amount paid by customer for the order since points r earned from those
+
+        public void AddPoints(int totalAmt) // totalAmt is the final amount paid by customer for the order since points are earned from those
         {
             int pointsToAdd = Convert.ToInt32(Math.Floor(totalAmt * 0.72));
             Points += pointsToAdd;
@@ -61,7 +64,7 @@ namespace PairAssignment
             {
                 Tier = "Gold";
             }
-            else if ((Points >= 50 && Points < 100) || Tier == "Sliver")
+            else if ( (Points >= 50 && Points < 100) || Tier == "Sliver" )
             {
                 Tier = "Silver"; // Corrected from 'Sliver' to 'Silver'
             }
@@ -69,15 +72,31 @@ namespace PairAssignment
             {
                 Tier = "Ordinary";
             }
+            
         }
 
         public void Punch()
         {
+            /*
             PunchCard++; // Increase for every ice cream ordered
-            if (PunchCard >= 10) // Corrected from '>' to '>='
+            if (PunchCard >= 10) 
             {
                 PunchCard = 0; // Set to 0 again. 
             }
+            */
+            
+
+            
+            bool isPunchCardComplete = PunchCard >= 10;
+            if (isPunchCardComplete)
+            {
+                // Do not increment punch card because it's complete
+                // Redemption should be asked before calling this method
+                // set PunchCard to 0 in Program when user opt to redeem the foc ice cream
+                return;
+            }
+            PunchCard++; // Increment the punch card count
+            
         }
 
         public void RedeemPoints(int reedemedPoints)
