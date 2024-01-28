@@ -21,11 +21,13 @@ namespace PairAssignment
         {
 
         }
+
+
         public override double CalculatePrice()
         {
             int premiumCount = 0;
-            int toppingCount = ToppingList.Count();
-
+            int toppingCount = 0;
+            double basePrice = 0;
 
             foreach (Flavour flavour in FlavourList)
             {
@@ -35,20 +37,34 @@ namespace PairAssignment
                 }
             }
 
+            foreach (Topping topping in ToppingList)
+            {
+                if (topping.Type.ToLower() != "none") //so that when topping is none, then no add to topping count
+                {
+                    toppingCount++;
+                }
+            }
+
             if (Scoops == 1)
             {
-                return 4.00 + ( 1 * toppingCount ) + (2 * premiumCount);
+                basePrice = 4.00;
             }
             else if (Scoops == 2)
             {
-                return 5.50 + (1 * toppingCount) + (2 * premiumCount);
+                basePrice = 5.50;
             }
             else if (Scoops == 3)
             {
-                return 6.50 + (1 * toppingCount) + (2 * premiumCount);
+                basePrice = 6.50;
             }
-            return 0;
+
+            double finalPrice = (basePrice) + (premiumCount * 2.00) + (toppingCount * 1.00);
+
+            return finalPrice;
+
+
         }
+
         public override string ToString()
         {
             return base.ToString();

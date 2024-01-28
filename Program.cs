@@ -1,13 +1,14 @@
 ﻿//==========================================================
-// Student Number : S10257856
-// Student Name : Amelia Goh
-// Partner Name : Lee Wei Ying
+// Student Number : S10258645
+// Student Name : Lee Wei Ying
+// Partner Name : Amelia Goh
 //==========================================================
 
 using System;
 using PairAssignment;
 using System.Globalization;
 using System.Xml.Linq;
+using System.Diagnostics;
 
 class Program
 {
@@ -52,7 +53,14 @@ class Program
                 }
                 else if (option == "5")
                 {
-                    DisplayOrderDetailsOfCustomer(customerList);
+                    // List the customer 
+                    ListingAllCustomer(customerList);
+                    Customer selectedCustomer = SelectMember(customerList);
+                    DisplayOrderDetailsOfCustomer(customerList,selectedCustomer);
+                    // Now display current order and order history of the selected customer
+                    DisplayCurrentOrder(selectedCustomer);
+                    Console.WriteLine();
+                    DisplayOrderHistory(selectedCustomer);
                     Console.WriteLine();
                 }
                 else if (option == "6")
@@ -62,6 +70,10 @@ class Program
                 else if (option == "7")
                 {
                     ProcessOrderAndCheckout(customerList, goldMemberQueue, regularMemberQueue);
+                }
+                else if (option == "8")
+                {
+                    DisplayAmountForTheYear(customerList);
                 }
                 else if (option == "0")
                 {
@@ -237,8 +249,6 @@ class Program
             return chosenCustomer;
         }
 
-
-
         // -------- BASIC 1 ( Amelia ) -----------------------------------------------------------
 
         static void InitializeCustomerList(List<Customer> cList)
@@ -284,8 +294,6 @@ class Program
 
             Console.WriteLine();
         }
-
-
 
         // -------- BASIC 2 ( Weiying ) -------------------------------------------------------------------------------------------------------------------------------------- //
         static void ListingAllCurrentOrders(List<Customer> cList, Queue<Order> goldQueue, Queue<Order> regularQueue)
@@ -450,6 +458,7 @@ class Program
                     {
                         if (dob > DateTime.Now)
                         {
+                            Console.WriteLine();
                             Console.WriteLine("Error: Date Of Birth has to be before today! Please enter again.");
                             Console.WriteLine();
                             continue; // ask again
@@ -472,27 +481,19 @@ class Program
                 }
             }
 
-
             // Now make customer obj with whatever user just gave
             string dateOnly = dob.ToString("dd/MM/yyyy");
             Customer customer = new Customer(name, memberID, dob);
             cList.Add(customer);
-
 
             //Make pointcard object
             PointCard pointcard = new PointCard();
 
             //Match this new pointcard obj to the new customer
             customer.Rewards = pointcard; //points, tier etc would be 0 and ordinary since is a new customer [all these are declared in pointcard class since this 'pointcard' non paramterized constructor in point card class r points with values of 0, etc etc
-
-            Console.WriteLine();
-            Console.WriteLine($"Customer {name} has been successfully registered!");
-            Console.WriteLine();
-
         }
 
         //------- BASIC 4 ( Amelia ) -------------------------------------------------------------------------------------------------------------------------------------- //
-
         static void CreateCustomerOrder(List<Customer> cList, Queue<Order> goldQueue, Queue<Order> regularQueue)
         {
             int customerMemberId;
@@ -634,9 +635,7 @@ class Program
             }
         }
 
-
-
-        //To add the ice creams
+        //------- To create the ice creams -------------------------------------------------------------------------------------------------------------------------------------- //
         static void CreatingIceCream(Order order)
         {
             while (true)
@@ -739,7 +738,7 @@ class Program
                     // Trim each flavor in the array
                     for (int i = 0; i < selectedFlavours.Length; i++)
                     {
-                        selectedFlavours[i] = selectedFlavours[i].Trim();
+                        selectedFlavours[i] = selectedFlavours[i].Trim().ToLower();
                     }
 
                     if (selectedFlavours.Length != scoopsAmt) //meaning they choose eg 3 scoops but write desired flavours as Ube, Strawberry only.
@@ -754,7 +753,7 @@ class Program
                     {
                         Console.WriteLine();
                         Console.WriteLine("Vanilla | Chocolate | Strawberry | Durian | Ube | Sea Salt");
-                        Console.WriteLine("Please flavours that are listed above");
+                        Console.WriteLine("Please enter flavours listed above");
                         Console.WriteLine();
                         continue;
                     }
@@ -790,62 +789,45 @@ class Program
 
                     while (true)
                     {
-                        bool toppingsExist = false;
+                        // topping content check 
                         Console.Write("Enter desired toppings or 'N' for no topping [Ensure that they are comma separated] : ");
                         string[] selectedToppings = Console.ReadLine().Split(','); //become array
 
-                        if (selectedToppings[0].Trim().ToLower() == "n")
+                        // Trim each flavor in the array
+                        for (int i = 0; i < selectedToppings.Length; i++)
                         {
-                            toppings.Add(new Topping("None"));
-                            toppingsExist = true;
+                            selectedToppings[i] = selectedToppings[i].Trim().ToLower();
                         }
-
-                        else
-                        {
-                            foreach (var topping in selectedToppings)
-                            {
-                                string toppingName = topping.Trim().ToLower();
-
-                                if (toppingName == "sprinkles")
-                                {
-                                    toppings.Add(new Topping("sprinkles"));
-                                    toppingsExist = true;
-                                }
-
-                                else if (toppingName == "mochi")
-                                {
-                                    toppings.Add(new Topping("mochi"));
-                                    toppingsExist = true;
-                                }
-
-                                else if (toppingName == "sago")
-                                {
-                                    toppings.Add(new Topping("sago"));
-                                    toppingsExist = true;
-                                }
-
-                                else if (toppingName == "oreos")
-                                {
-                                    toppings.Add(new Topping("oreos"));
-                                    toppingsExist = true;
-                                }
-                            }
-                        }
-
-                        if (!toppingsExist)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("Invalid input. Please enter toppings again!");
-                            Console.WriteLine();
-                        }
-
-                        else
+                        if (selectedToppings[0] == "n")
                         {
                             break;
                         }
+                        if (selectedToppings.Count() > 4)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Error: Maximum toppings entered is 4.");
+                            Console.WriteLine("Please enter again!");
+                            Console.WriteLine();
+                        }
+                        if (selectedToppings.All(item => toppingsOptionsAvail.Contains(item)) == false)
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("mochi | sago | oreos");
+                            Console.WriteLine("Please enter toppings that are listed above");
+                            Console.WriteLine();
+                            continue;
+                        }
+                        foreach (string t in selectedToppings)
+                        {
+                            Topping topping = new Topping(t);
+                            toppings.Add(topping);
+                        }
+                        if (toppings.Count() == selectedToppings.Count())
+                        {
+                            break;
+                        }
+
                     }
-
-
                     if (iceCreamOption == "cup")
                     {
                         newIceCream = new Cup("cup", scoopsAmt, flavours, toppings);
@@ -884,51 +866,47 @@ class Program
 
                     if (iceCreamOption == "waffle")
                     {
-                        bool waffleExists = false; //see if the waffle type exists
-                        while (!waffleExists)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("We offer premium and original waffle flavours.");
-                            Console.WriteLine("Premium Flavours: Red Velvet, Charcoal, Pandan");
-                            Console.Write("Would you like it premium? [Y / N]: ");
-                            string premiumOrNot = Console.ReadLine().ToLower();
+                        string[] premiumFlavour = { "red velvet", "charcoal", "pandan" };
+                        Console.WriteLine();
+                        Console.WriteLine("We offer premium and original waffle flavours.");
+                        Console.WriteLine("Premium Flavours: Red Velvet, Charcoal, Pandan");
+                        Console.Write("Would you like it premium? [Y / N]: ");
 
-                            if (premiumOrNot == "y")
+                        string premiumOrNot = Console.ReadLine().ToLower();
+
+                        if (premiumOrNot == "y")
+                        {
+                            while (true)
                             {
                                 Console.WriteLine();
                                 Console.Write("Enter a Premium Waffle Flavour: ");
                                 string waffleFlavour = Console.ReadLine().Trim().ToLower();
-
-                                if (waffleFlavour == "red velvet")
+                                if (!premiumFlavour.Contains(waffleFlavour))
                                 {
-                                    newIceCream = new Waffle("waffle", scoopsAmt, flavours, toppings, "red velvet");
-                                    waffleExists = true;
+                                    Console.WriteLine();
+                                    Console.WriteLine("red velvet | charcoal | pandan");
+                                    Console.WriteLine("Please flavours that are listed above");
+                                    continue;
                                 }
-                                else if (waffleFlavour == "charcoal")
+                                else
                                 {
-                                    newIceCream = new Waffle("waffle", scoopsAmt, flavours, toppings, "charcoal");
-                                    waffleExists = true;
+                                    foreach (string pf in premiumFlavour)
+                                    {
+                                        if (waffleFlavour == pf)
+                                        {
+                                            newIceCream = new Waffle("waffle", scoopsAmt, flavours, toppings, pf);
+                                        }
+                                    }
+                                    break;
                                 }
-                                else if (waffleFlavour == "pandan")
-                                {
-                                    newIceCream = new Waffle("waffle", scoopsAmt, flavours, toppings, "pandan");
-                                    waffleExists = true;
-                                }
-                            }
 
-                            else if (premiumOrNot == "n") //aka they dw premium, so stick with original
-                            {
-                                newIceCream = new Waffle("waffle", scoopsAmt, flavours, toppings, "original");
-                                waffleExists = true;
-                            }
-
-                            if (!waffleExists)
-                            {
-                                Console.WriteLine();
-                                Console.WriteLine("Error: Invalid input. Please enter desired waffle flavour again!");
-                                Console.WriteLine();
                             }
                         }
+                        else if (premiumOrNot == "n") //aka they dw premium, so stick with original
+                        {
+                            newIceCream = new Waffle("waffle", scoopsAmt, flavours, toppings, "original");
+                        }
+
                     }
 
                     if (newIceCream != null)
@@ -939,19 +917,15 @@ class Program
                     }
                 }
                 if (newIceCream != null)
-                {
+                { 
                     break;
                 }
             }
         }
 
         //------- BASIC 5 ( Weiying ) -------------------------------------------------------------------------------------------------------------------------------------- //
-        static void DisplayOrderDetailsOfCustomer(List<Customer> cList)
+        static void DisplayOrderDetailsOfCustomer(List<Customer> cList, Customer selectedCustomer)
         {
-            // List the customer 
-            ListingAllCustomer(cList);
-            Customer selectedCustomer = SelectMember(cList);
-
             if (selectedCustomer.Name == null)
             {
                 return;
@@ -977,6 +951,13 @@ class Program
                     {
                         Dictionary<string, int> flavourQuantity = new Dictionary<string, int>();
                         string[] items = s.Split(',');
+
+                        // Convert each element to lowercase and trim
+                        for (int i = 0; i < items.Length; i++)
+                        {
+                            items[i] = items[i].ToLower().Trim();
+                        }
+
                         int orderId = Convert.ToInt32(items[0]);
                         int memberId = Convert.ToInt32(items[1]);
 
@@ -1065,14 +1046,7 @@ class Program
                 // Log the exception or handle it accordingly
             }
 
-
-            // Now display current order and order history of the selected customer
-            DisplayCurrentOrder(selectedCustomer);
-            Console.WriteLine();
-            DisplayOrderHistory(selectedCustomer);
-
         }
-
 
         //------- BASIC 6 ( Weiying ) -------------------------------------------------------------------------------------------------------------------------------------- //
         static void ModifyOrderDetails(List<Customer> cList)
@@ -1591,16 +1565,15 @@ class Program
                 //When any key clicked, these code executes
                 Console.WriteLine();
 
-
                 orderToProcess.TimeFulfilled = DateTime.Now;
 
                 Console.WriteLine($"Payment is successfully completed as of {orderToProcess.TimeFulfilled.ToString()}");
                 Console.WriteLine();
 
+
                 // Only when they successfully make payment, then they can earn the points
                 int pointsEarnedFromOrder = Convert.ToInt32(Math.Floor(iceCreamPrice * 0.72)); // Round down to the nearest integer
                 customerWithOrderToProcess.Rewards.AddPoints(pointsEarnedFromOrder);
-
 
                 // Increment punch card for each ice cream ordered
                 for (int i = 0; i < orderToProcess.IceCreamList.Count; i++)
@@ -1614,8 +1587,6 @@ class Program
                 Console.WriteLine($"Your Punch Card after payment: {customerWithOrderToProcess.Rewards.PunchCard}");
                 Console.WriteLine();
 
-               
-
                 //things to do once payment is completed
                 iceCreamPrice = 0.0; //reset for new customer
                 customerWithOrderToProcess.OrderHistory.Add(orderToProcess);
@@ -1626,10 +1597,86 @@ class Program
             }
         }
 
+        // ------- ADVANCED 2 ( weiying )--------------------------------------------------------------------------------------------------------------------------------------
+        static void DisplayAmountForTheYear(List<Customer> cList)
+        {
+            List<int> amountList = new List<int>();
+            int year;
+            double[] monthlyPrice = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            List<string> months = new List<string> { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+            while (true)
+            {
+                try
+                {
+                    Console.Write("Enter the year: ");
+                    year = Convert.ToInt32(Console.ReadLine());
+                    if (year > 3000 || year < 2000)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Please enter a year in the 2000s");
+                        Console.WriteLine();
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Error: Please enter your desired year thank you.");
+                    Console.WriteLine();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Error: something went wrong please enter again.");
+                    Console.WriteLine();
+                }
+            }
+            // calculating amount for all current orders
+            foreach (Customer c in cList)
+            {
+                Order currentOrder = c.CurrentOrder;
+                if (currentOrder != null)
+                {
+                    int CurrentOrderYear = currentOrder.TimeReceived.Year;
+                    if (CurrentOrderYear == year)
+                    {
+                        int currentOrderMonth = currentOrder.TimeReceived.Month;
+                        monthlyPrice[currentOrderMonth - 1] += currentOrder.CalculateTotal();
+                    }
+                }
+            }
+            // calculating amount for order history
+            foreach (Customer c in cList)
+            {
+                Customer selectedCustomer = c;
+                DisplayOrderDetailsOfCustomer(customerList, selectedCustomer);
+                List<Order> orderHistory = c.OrderHistory;
+                foreach (Order o in orderHistory)
+                {
+                    int orderHistoryYear = o.TimeReceived.Year;
+                    if (orderHistoryYear == year)
+                    {
+                        int orderHistoryMonth = o.TimeReceived.Month;
+                        Console.WriteLine(o+"\n"+o.CalculateTotal()+"\n");
+                        monthlyPrice[orderHistoryMonth - 1] += o.CalculateTotal();
+                    }
+                }
+            }
+            int index = 0;
+            foreach (double p in monthlyPrice)
+            {
+                Console.WriteLine($"{months[index]} {year}:   ${p.ToString("0.00")}");
+                index++;
+            }
+        }
 
         //Additional methods
 
-        // RETURNS FLAVOUR OPTIONS LIST
+        // ------- RETURNS FLAVOUR OPTIONS LIST--------------------------------------------------------------------------------------------------------------------------------------
         static List<string> FlavourOptionsAvail()
         {
             List<string> flavourOptions = new List<string>();
@@ -1648,8 +1695,7 @@ class Program
             return flavourOptions;
         }
 
-
-        // RETURNS TOPPING OPTIONS LIST
+        // ------- RETURNS TOPPING OPTIONS LIST--------------------------------------------------------------------------------------------------------------------------------------
         static List<string> ToppingOptionsAvail()
         {
             List<string> toppingOptions = new List<string>();
@@ -1667,7 +1713,6 @@ class Program
             }
             return toppingOptions;
         }
-
 
         static bool PremiumWaffle(string flavourName)
         {
@@ -1701,141 +1746,6 @@ class Program
                 return true;
             }
             return false;
-        }
-
-        static int ReturnLastOrderID()
-        {
-            //Customer selectedCustomer = SelectMember(customerList);
-            /* try
-             {*/
-            using (StreamReader sr = new StreamReader("orders.csv"))
-            {
-                // read header first
-                string s = sr.ReadLine();
-
-                // read the rest 
-                while ((s = sr.ReadLine()) != null)
-                {
-                    //try
-                    //{
-                    string[] data = s.Split(',');
-                    int orderId = Convert.ToInt32(data[0]);
-                    /*int memberId = Convert.ToInt32(data[1]);
-                    DateTime timeReceived = Convert.ToDateTime(data[2]);
-                    DateTime timeFulfilled = Convert.ToDateTime(data[3]);
-                    string option = Convert.ToString(data[4]);
-                    int scoops = Convert.ToInt32(data[5]);
-                    bool dipped = false;
-                    if (data[6] != null) // If not null means its a cone since got mention dip or not
-                    {
-                        string item6 = data[6].Trim().ToLower();
-                        if (item6 == "true")
-                        {
-                            dipped = true;
-                        }
-                    }
-
-
-                    //string waffleFlavour = Convert.ToString(data[7]); */
-                    lastOrderId = Math.Max(lastOrderId, orderId);
-
-
-                    /*List<Flavour> flavours = new List<Flavour>();
-                    for (int i = 8; i <= 10; i++)
-                    {
-                        if (data[i] != null)
-                        {
-                            flavours.Add(new Flavour(data[i], PremiumFlavours(data[i]), 1)); // ----- NEED CHANGE QUANTITY HERE OR NO?? --------
-                        }
-                    }
-
-
-                    List<Topping> toppings = new List<Topping>();
-                    for (int i = 11; i <= 14; i++)
-                    {
-                        if (data[i] != null)
-                        {
-                            toppings.Add(new Topping(data[i]));
-                        }
-                    }
-
-
-                    Order order = new Order(orderId, timeReceived);
-
-                    order.TimeFulfilled = timeFulfilled;
-                    IceCream iceCream = null;
-
-                    if (option.ToLower() == "cup")
-                    {
-                        iceCream = new Cup(option, scoops, flavours, toppings);
-                    }
-                    else if (option.ToLower() == "cone")
-                    {
-                        iceCream = new Cone(option, scoops, flavours, toppings, dipped);
-                    }
-                    else if (option.ToLower() == "waffle")
-                    {
-                        iceCream = new Waffle(option, scoops, flavours, toppings, waffleFlavour);
-                    }
-
-                    order.AddIceCream(iceCream);
-
-                    if (selectedCustomer != null)
-                    {
-                        if (selectedCustomer.OrderHistory == null)
-                        {
-                            selectedCustomer.OrderHistory = new List<Order>(); //So if is null, then we initilaize it first
-                        }
-                        else
-                        {
-                            selectedCustomer.OrderHistory.Add(order);
-                        }
-                    }
-
-
-                }
-                catch (FormatException)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Invalid input. Please try again.");
-                    Console.WriteLine();
-                }
-                catch (InvalidOperationException ex)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Error detected: {0}", ex.Message);
-                    Console.WriteLine();
-                }
-                catch (Exception ex) //general errors
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Error detected: {0}", ex.Message);
-                    Console.WriteLine();
-                }
-            }
-        }
-    }
-    catch (FileNotFoundException)
-    {
-        Console.WriteLine();
-        Console.WriteLine("Error detected. File could not be found!");
-        Console.WriteLine();
-    }
-    catch (IOException)
-    {
-        Console.WriteLine();
-        Console.WriteLine("Error detected. File could not be read!");
-        Console.WriteLine();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine();
-        Console.WriteLine("Error detected: {0}", ex.Message);
-        Console.WriteLine();
-    }*/
-                }
-            }
-            return lastOrderId;
         }
 
         static void DisplayCurrentOrder(Customer customerId)

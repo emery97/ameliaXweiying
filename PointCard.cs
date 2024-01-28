@@ -1,10 +1,8 @@
 ﻿//==========================================================
-// Student Number : S10257856
-// Student Name : Amelia Goh
-// Partner Name : Lee Wei Ying
+// Student Number : S10258645
+// Student Name : Lee Wei Ying
+// Partner Name : Amelia Goh
 //==========================================================
-
-
 using PairAssignment;
 using System;
 using System.Collections.Generic;
@@ -54,8 +52,7 @@ namespace PairAssignment
         }
 
         //Methods
-
-        public void AddPoints(int totalAmt) // totalAmt is the final amount paid by customer for the order since points are earned from those
+        public void AddPoints(int totalAmt) //totalAmt is the final amount paid by customer for the order since points r earned from those
         {
             int pointsToAdd = Convert.ToInt32(Math.Floor(totalAmt * 0.72));
             Points += pointsToAdd;
@@ -64,7 +61,7 @@ namespace PairAssignment
             {
                 Tier = "Gold";
             }
-            else if ( (Points >= 50 && Points < 100) || Tier == "Sliver" )
+            else if ((Points >= 50 && Points < 100) || Tier == "Sliver")
             {
                 Tier = "Silver"; // Corrected from 'Sliver' to 'Silver'
             }

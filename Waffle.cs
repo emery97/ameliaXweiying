@@ -33,8 +33,9 @@ namespace PairAssignment
         public override double CalculatePrice()
         {
             int premiumCount = 0;
-            int toppingCount = ToppingList.Count();
+            int toppingCount = 0;
             double premiumWaffle = 0;
+            double basePrice = 0;
 
             foreach (Flavour flavour in FlavourList)
             {
@@ -44,27 +45,37 @@ namespace PairAssignment
                 }
             }
 
+            foreach (Topping topping in ToppingList)
+            {
+                if (topping.Type.ToLower() != "none") //so that when topping is none, then no add to topping count
+                {
+                    toppingCount++;
+                }
+            }
+
             WaffleFlavour = WaffleFlavour.ToLower();
             if (WaffleFlavour == "red velvet" || WaffleFlavour == "charcoal" || WaffleFlavour == "pandan")
             {
-                premiumWaffle = 3; //since if premium then need add $3.
+                premiumWaffle = 3.00; //since if premium then need add $3.
                 //but if no, then premiumWaffle will just = 0, as can see from the start
             }
 
             if (Scoops == 1)
             {
-                return 7.00 + premiumWaffle + ( 1 * toppingCount ) + (2 * premiumCount);
+                basePrice = 7.00;
             }
             else if (Scoops == 2)
             {
-                return 8.50 + premiumWaffle + (1 * toppingCount) + (2 * premiumCount);
+                basePrice = 8.50;
             }
             else if (Scoops == 3)
             {
-                return 9.50 + premiumWaffle + (1 * toppingCount) + (2 * premiumCount);
+                basePrice = 9.50;
             }
 
-            return 0;
+            double finalPrice = (basePrice) + (premiumCount * 2.00) + (toppingCount * 1.00) + (premiumWaffle);
+
+            return finalPrice;
         }
 
         public override string ToString()
