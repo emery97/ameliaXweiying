@@ -73,11 +73,26 @@ namespace PairAssignment
 
         public void Punch()
         {
+            /*
             PunchCard++; // Increase for every ice cream ordered
-            if (PunchCard >= 10) // Corrected from '>' to '>='
+            if (PunchCard >= 10) 
             {
                 PunchCard = 0; // Set to 0 again. 
             }
+            */
+
+
+
+            bool isPunchCardComplete = PunchCard >= 10;
+            if (isPunchCardComplete)
+            {
+                // Do not increment punch card because it's complete
+                // Redemption should be asked before calling this method
+                // set PunchCard to 0 in Program when user opt to redeem the foc ice cream
+                return;
+            }
+            PunchCard++; // Increment the punch card count
+
         }
 
         public void RedeemPoints(int reedemedPoints)

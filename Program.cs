@@ -83,73 +83,72 @@ class Program
                         foreach (Order o in allMemberQueue)
                         {
                             Console.WriteLine(o);
-                            string[] dataArray = new string[15];
-
-                            // Initialize with empty strings
-                            for (int i = 0; i < dataArray.Length; i++)
+                            List<string> dataArray = new List<string>
                             {
-                                dataArray[i] = string.Empty;
-                            }
-
-                            dataArray[0] = currentOrderId.ToString();
-                            dataArray[1] = o.Id.ToString();
-                            dataArray[2] = o.TimeReceived.ToString("dd/MM/yyyy HH:mm");
-                            Console.WriteLine(dataArray[2]);
-
-                            // TimeFulfilled will not be null in your case, so no need to check for null
-                            dataArray[3] = o.TimeFulfilled.Value.ToString("dd/MM/yyyy HH:mm");
-
-                            int index = 4; // Starting index for IceCream properties
+                                o.Id.ToString(),
+                                currentOrderId.ToString(),
+                                o.TimeReceived.ToString("dd/MM/yyyy HH:mm"),
+                                o.TimeFulfilled?.ToString("dd/MM/yyyy HH:mm") ?? string.Empty
+                            };
 
                             foreach (IceCream ic in o.IceCreamList)
                             {
-                                dataArray[index++] = ic.Option.ToString();
-                                dataArray[index++] = ic.Scoops.ToString();
+                                dataArray.Add(ic.Option.ToString());
+                                dataArray.Add(ic.Scoops.ToString());
 
                                 if (ic is Cone cone)
                                 {
-                                    dataArray[index++] = cone.Dipped.ToString();
+                                    dataArray.Add(cone.Dipped.ToString());
                                 }
                                 else
                                 {
-                                    dataArray[index++] = string.Empty;
+                                    dataArray.Add(string.Empty);
                                 }
                                 if (ic is Waffle waffle)
                                 {
-                                    dataArray[index++] = waffle.WaffleFlavour.ToString();
+                                    dataArray.Add(waffle.WaffleFlavour.ToString());
                                 }
                                 else
                                 {
-                                    dataArray[index++] = string.Empty;
+                                    dataArray.Add(string.Empty);
                                 }
+
+                                // Handle flavors
                                 for (int i = 0; i < 3; i++)
                                 {
                                     if (i < ic.FlavourList.Count)
                                     {
-                                        dataArray[index] = ic.FlavourList[i].Type.ToString();
+                                        dataArray.Add(ic.FlavourList[i].Type.ToString());
                                     }
                                     else
                                     {
-                                        dataArray[index] = string.Empty;
+                                        dataArray.Add(string.Empty);
                                     }
-
-                                    index++;
                                 }
 
+                                // Handle toppings
                                 for (int i = 0; i < 4; i++)
                                 {
-                                    dataArray[index++] = (i < ic.ToppingList.Count) ? ic.ToppingList[i].ToString() : string.Empty;
+                                    if (i < ic.ToppingList.Count)
+                                    {
+                                        dataArray.Add(ic.ToppingList[i].Type.ToString());
+                                    }
+                                    else
+                                    {
+                                        dataArray.Add(string.Empty);
+                                    }
                                 }
                             }
-
                             // Write the dataArray to the file
                             sw.WriteLine(string.Join(",", dataArray));
+
                         }
                     }
 
                     Console.WriteLine("\nYou have successfully exited. Goodbye!");
                     break;
                 }
+
 
                 else
                 {
@@ -416,17 +415,13 @@ class Program
                     if (stringMemberId.Length != 6 || !stringMemberId.All(char.IsDigit)) //!stringMemberId.All(char.IsDigit) is basically saying if the member id is not a number. (aka the member id has to be a number. not a legit number number, but a number just that it is in string format) So if user enters 'hello' or 11111111 aka exceed 6 digits, then error msg occurs.
                     {
                         Console.WriteLine();
-                        if (stringMemberId.Length < 6)
+                        if (stringMemberId.Length < 6 || !stringMemberId.All(char.IsDigit))
                         {
-                            Console.WriteLine();
-                            Console.WriteLine("Error: Member ID must be 6 digits long. You entered fewer than 6 digits.");
-                            Console.WriteLine();
+                            Console.WriteLine("Error: Member ID must be 6 digits long and contain only numeric characters. You entered fewer than 6 digits or included non-numeric characters.");
                         }
                         else
                         {
-                            Console.WriteLine();
-                            Console.WriteLine("Error: Member ID must be 6 digits long. You entered more than 6 digits.");
-                            Console.WriteLine();
+                            Console.WriteLine("Error: Member ID must be 6 digits long and contain only numeric characters. You entered more than 6 digits or included non-numeric characters.");
                         }
                         Console.WriteLine();
                         continue;
@@ -520,6 +515,9 @@ class Program
 
             //Match this new pointcard obj to the new customer
             customer.Rewards = pointcard; //points, tier etc would be 0 and ordinary since is a new customer [all these are declared in pointcard class since this 'pointcard' non paramterized constructor in point card class r points with values of 0, etc etc
+            Console.WriteLine();
+            Console.WriteLine($"Customer {name} has been successfully registered!");
+            Console.WriteLine();
         }
 
         //------- BASIC 4 ( Amelia ) -------------------------------------------------------------------------------------------------------------------------------------- //
@@ -527,14 +525,15 @@ class Program
         {
             int customerMemberId;
             Customer selectedCustomer = SelectMember(customerList);
-            string stringCustomerMemberId = Convert.ToString(selectedCustomer.MemberId); //Bc selectedCustomer is a customer object. So cannot just equate entire thing to string.
-            //^^ need to specifically get what you want aka the member id. Not the whole thing. 
+            string stringCustomerMemberId = Convert.ToString(selectedCustomer.MemberId);
+
+            //^^ need to specifically get what you want aka the member id. Not the whole thing.
             //^^ Also put to string first and not int straight away in case of the error below!
             string stringCustomerMemberIdAgain = "";
 
             while (true)
             {
-                if (string.IsNullOrWhiteSpace(stringCustomerMemberId)) //This error^^, where you check if string is null
+                if (string.IsNullOrWhiteSpace(stringCustomerMemberId))
                 {
                     Console.WriteLine();
                     Console.WriteLine("Error: Invalid input! Please enter a valid member ID!");
@@ -548,8 +547,7 @@ class Program
                     return;
                 }
 
-
-                if (selectedCustomer == null) //diff from string.IsNullOrWhiteSpace on top as that checks string and this checks the variable of an object type.
+                if (selectedCustomer == null)
                 {
                     Console.WriteLine();
                     Console.WriteLine("Error: Invalid input! Please enter a valid member ID!");
@@ -572,7 +570,6 @@ class Program
                     selectedCustomer = SelectMember(customerList);
                     stringCustomerMemberIdAgain = Convert.ToString(selectedCustomer.MemberId);
 
-
                     if (string.IsNullOrWhiteSpace(stringCustomerMemberIdAgain))
                     {
                         Console.WriteLine();
@@ -590,23 +587,35 @@ class Program
                 }
             }
 
-            Order newOrder = new Order(); // Always create a new Order object
+            Order newOrder = new Order();
             bool orderCreated = false;
             bool addAgain = false;
 
             while (!orderCreated)
             {
                 CreatingIceCream(newOrder);
+                string orderAgain;
+                allMemberQueue.Enqueue(newOrder);
+                do
+                {
+                    Console.WriteLine();
+                    Console.Write("Would you like to add another ice cream? [ Y / N ] : ");
+                    orderAgain = Console.ReadLine().ToLower().Trim();
 
-                Console.WriteLine();
-                Console.Write("Would you like to add another ice cream? [ Y / N ] : ");
-                string orderAgain = Console.ReadLine().ToLower();
-
+                    if (orderAgain == "y" || orderAgain == "n")
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Error: Invalid input. Please try again!");
+                    }
+                } while (true);
                 if (orderAgain == "n")
                 {
                     if (newOrder.IceCreamList.Count > 0)
                     {
-                        allMemberQueue.Enqueue(newOrder);
                         if (selectedCustomer.Rewards.Tier == "Gold")
                         {
                             if (goldQueue.Contains(newOrder))
@@ -638,30 +647,28 @@ class Program
                                 Console.WriteLine("Order success! It has been added to the regular queue!");
                                 Console.WriteLine();
                             }
-                        }
 
-                        selectedCustomer.CurrentOrder = newOrder;
-                        orderCreated = true;
-                        currentOrderId++;
+                            selectedCustomer.CurrentOrder = newOrder;
+                            orderCreated = true;
+                            currentOrderId++;
+                        }
                     }
                     else
                     {
                         Console.WriteLine("No ice creams added. Order not created.");
+                        Console.WriteLine();
                         orderCreated = true;
                     }
-
                 }
-
                 else if (orderAgain == "y")
                 {
                     addAgain = true;
                 }
-
                 else
                 {
                     Console.WriteLine("Error: Invalid input. Please try again!");
+                    Console.WriteLine();
                 }
-
             }
         }
 
@@ -842,7 +849,7 @@ class Program
                         if (selectedToppings.All(item => toppingsOptionsAvail.Contains(item)) == false)
                         {
                             Console.WriteLine();
-                            Console.WriteLine("mochi | sago | oreos");
+                            Console.WriteLine("sprinkles | mochi | sago | oreos");
                             Console.WriteLine("Please enter toppings that are listed above");
                             Console.WriteLine();
                             continue;
@@ -1322,6 +1329,7 @@ class Program
         }
 
         // ------- ADVANCED 1 ( Amelia )--------------------------------------------------------------------------------------------------------------------------------------
+
         static void ProcessOrderAndCheckout(List<Customer> cList, Queue<Order> goldQueue, Queue<Order> regularQueue)
         {
             if (goldQueue.Count > 0)
@@ -1352,280 +1360,294 @@ class Program
                 Console.WriteLine("The Queues are empty. There are no orders waiting to be processed!");
                 Console.WriteLine();
             }
+        }
 
-            //These are needed for advanced 1
-            static Customer LinkOrderToCustomer(List<Customer> cList, Order customerOrder) //**rmb need return smth of customer type
+        //These are needed for advanced 1
+        static Customer LinkOrderToCustomer(List<Customer> cList, Order customerOrder) //**rmb need return smth of customer type
+        {
+            foreach (Customer c in cList)
             {
-                foreach (Customer c in cList)
+                if (c.CurrentOrder == customerOrder && c.CurrentOrder != null) //Rmb is compare c.CurrentOrder and not c.OrderHistory bc now, for advanced we want find price of those orders that have not completed yet. Orders in order history are orders that have final price alrd. That order is fulfilled alrady.
                 {
-                    if (c.CurrentOrder == customerOrder && c.CurrentOrder != null) //Rmb is compare c.CurrentOrder and not c.OrderHistory bc now, for advanced we want find price of those orders that have not completed yet. Orders in order history are orders that have final price alrd. That order is fulfilled alrady.
+                    return c; //info abt customer
+                }
+            }
+            return null; //return null if no customers' current order ends up matching the customerOrder
+        }
+
+        static double ListAllIceCreamsAndFindTotalPrice(Order order)
+        {
+            int i = 1;
+            double icPrice = 0;
+            foreach (IceCream ic in order.IceCreamList)
+            {
+                string stringIceCreamData = ic.ToString();
+                Console.WriteLine($"{i}. {stringIceCreamData} Price: ${ic.CalculatePrice()}");
+                //Console.WriteLine($"Price: ${ic.CalculatePrice()}");
+                i++;
+                icPrice += ic.CalculatePrice();
+            }
+            return icPrice;
+        }
+
+        static void PunchIceCream(Order order, PointCard rewards, bool redeemPunchOrNo) //need include redeemPunchOrNo to see if user want redeem punch card
+        {
+            foreach (var iceCream in order.IceCreamList)
+            {
+                if (redeemPunchOrNo && rewards.PunchCard == 10)
+                {
+                    rewards.PunchCard = 0; //reset it to 0 once hit 10
+                }
+                rewards.Punch();
+            }
+        }
+
+
+        static void ProcessAnOrder(Customer customerWithOrderToProcess, Order orderToProcess)
+        {
+            double pointsToMoney = 0.02;
+            double findMostExpensiveIC = 0;
+            int iceCreamCount = orderToProcess.IceCreamList.Count; // Track the number of ice creams purchased in this order
+            bool completePC = customerWithOrderToProcess.Rewards.PunchCard == 10;
+
+            //Need display all ice creams + price soo..
+            double iceCreamPrice = ListAllIceCreamsAndFindTotalPrice(orderToProcess); //This method also calculates the price of all the ice creams 
+
+
+            if (customerWithOrderToProcess.IsBirthday() == true) //is their birthday
+            {
+                Console.WriteLine();
+                Console.WriteLine("Happy Birthday!");
+                Console.WriteLine("As a gift, the most expensive ice cream in your order would be free of charge!");
+                foreach (IceCream ic in orderToProcess.IceCreamList)
+                {
+                    if (ic.CalculatePrice() > findMostExpensiveIC)
                     {
-                        return c; //info abt customer
+                        findMostExpensiveIC = ic.CalculatePrice();
                     }
                 }
-                return null; //return null if no customers' current order ends up matching the customerOrder
+                iceCreamPrice -= findMostExpensiveIC; //since above equate iceCreamPrice to ListAllIceCreamsAndFindTotalPrice method, and this method returns the total price, which iceCreamPrice is then equated to.
             }
 
-            static double ListAllIceCreamsAndFindTotalPrice(Order order)
+            bool completePCCheck = customerWithOrderToProcess.CurrentOrder.IceCreamList.Count() + customerWithOrderToProcess.Rewards.PunchCard >= 10;
+            bool redeemPunchOrNo = false; //need ask and see if user want redeem or nt
+            if (completePCCheck)
             {
-                int i = 1;
-                double icPrice = 0;
-                foreach (IceCream ic in order.IceCreamList)
+                while (true)
                 {
-                    string stringIceCreamData = ic.ToString();
-                    Console.WriteLine($"{i}. {stringIceCreamData}");
-                    Console.WriteLine($"Price: ${ic.CalculatePrice()}");
-                    i++;
-                    icPrice += ic.CalculatePrice();
-                }
-                return icPrice;
-            }
-
-            static void ProcessAnOrder(Customer customerWithOrderToProcess, Order orderToProcess)
-            {
-                double pointsToMoney = 0.02;
-                double findMostExpensiveIC = 0;
-
-                //Need display all ice creams + price soo..
-                double iceCreamPrice = ListAllIceCreamsAndFindTotalPrice(orderToProcess); //This method also calculates the price of all the ice creams 
-
-                if (customerWithOrderToProcess.IsBirthday() == true) //is their birthday
-                {
-                    //need do calculation of : total price - most expensive ice cream
-                    foreach (IceCream ic in orderToProcess.IceCreamList)
+                    Console.WriteLine();
+                    Console.WriteLine("You have completed your Punch Card!");
+                    Console.WriteLine();
+                    Console.Write("Would you like to redeem it [ Y / N ]? : ");
+                    try
                     {
-                        if (ic.CalculatePrice() > findMostExpensiveIC)
+                        string userRedeemPC = Console.ReadLine();
+                        if (string.IsNullOrWhiteSpace(userRedeemPC))
                         {
-                            findMostExpensiveIC = ic.CalculatePrice();
+                            Console.WriteLine();
+                            Console.WriteLine("Error: Invalid input! Please try again.");
+                            Console.WriteLine();
+                            continue;
+                        }
+                        if (userRedeemPC.Trim().ToLower() == "y")
+                        {
+                            double firstIceCreamPrice = orderToProcess.IceCreamList[0].CalculatePrice();  // returns the first element since qn says charge the first to be free
+
+                            redeemPunchOrNo = true;
+                            Console.WriteLine();
+                            Console.WriteLine($"You have chosen to redeem your Punch Card.\n Your first Ice Cream will be free.\n Discount: ${firstIceCreamPrice}");
+                            Console.WriteLine();
+
+                            iceCreamPrice -= firstIceCreamPrice;
+
+                            break;
+                        }
+                        else if (userRedeemPC.Trim().ToLower() == "n")
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Error: Invalid input! Please try again.");
+                            Console.WriteLine();
+                            continue;
                         }
                     }
-                    iceCreamPrice -= findMostExpensiveIC; //since above equate iceCreamPrice to ListAllIceCreamsAndFindTotalPrice method, and this method returns the total price, which iceCreamPrice is then equated to.
-                }
-
-                if (customerWithOrderToProcess.Rewards.PunchCard == 10)
-                {
-                    while (true) //to handle inputs by user 
+                    catch (FormatException)
                     {
                         Console.WriteLine();
-                        Console.WriteLine("Congratulations! You have completed your Punch Card.");
-                        Console.WriteLine("Would you like to redeem [ Y / N ] ?: ");
+                        Console.WriteLine("Error: Invalid input! Please only enter [ Y / N ].");
                         Console.WriteLine();
-                        try
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Error: Invalid input! Please try again.");
+                        Console.WriteLine();
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Error: Invalid input! Please try again.");
+                        Console.WriteLine();
+                    }
+                }
+            }
+
+
+
+            if (customerWithOrderToProcess.Rewards.Points > 0 && customerWithOrderToProcess.Rewards.Tier != "Ordinary") //Only gold and sliver can redeem
+            {
+                Console.WriteLine("You are eligible for points redemption!");
+
+                while (true)
+                {
+                    try
+                    {
+                        Console.WriteLine($"Amount of points available before payment: {customerWithOrderToProcess.Rewards.Points}");
+
+                        int maxAmtOfPointsToRedeem = Convert.ToInt32(Math.Floor(iceCreamPrice / pointsToMoney)); //bc if dont do this, can customer might want to redeem all of their points. but then they buy a $1 thing only, yet they choose use all their points which is worth $10. just dont make sense
+                                                                                                                 //^^ int bc points should be in int. and round down to nearest integer, NOT round up.
+
+                        if (customerWithOrderToProcess.Rewards.Points <= maxAmtOfPointsToRedeem) //bc in case customer have 20 pts, but they can redeem up to 100 pts. the max amount of pts they eventually can redeem is 20 pts since they dh enough pts to redeem all 100 pts. the ELSE part for this would be like: but if they have 500 pts, can redeem 100 pts, the max amount they can redeem is just 100 pts. etc etc
                         {
-                            string redeemPC = Console.ReadLine();
-                            if (string.IsNullOrEmpty(redeemPC)) //CHECK IF STRING IS EMPTY
+                            maxAmtOfPointsToRedeem = customerWithOrderToProcess.Rewards.Points;
+                        }
+
+                        Console.WriteLine($"You can redeem up to a maximum of {maxAmtOfPointsToRedeem} points.");
+                        Console.Write("Would you like to redeem your points [ Y / N ] ?: ");
+                        string redeemOrNot = Console.ReadLine();
+                        if (string.IsNullOrWhiteSpace(redeemOrNot))
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine("Error: Invalid input. Please enter again!");
+                            Console.WriteLine();
+                        }
+
+                        if (redeemOrNot.ToLower() == "y")
+                        {
+                            Console.Write("Enter amount of points to redeem: ");
+                            string stringRedeemPts = Console.ReadLine();
+
+                            if (string.IsNullOrWhiteSpace(stringRedeemPts))
                             {
                                 Console.WriteLine();
                                 Console.WriteLine("Error: Invalid input. Please enter again!");
                                 Console.WriteLine();
                                 continue;
                             }
-                            if (redeemPC.ToLower() == "n")
-                            {
-                                break;
-                            }
-                            else if (redeemPC.ToLower() == "y")
-                            {
-                                //will get 11th ice cream free
-                                IceCream freeIC = orderToProcess.IceCreamList[0]; //aka the 11th ice cream
-                                double freeICPrice = freeIC.CalculatePrice();
-                                iceCreamPrice -= freeICPrice;
-                                customerWithOrderToProcess.Rewards.PunchCard = 0; //reset pc back to 0.
-                                Console.WriteLine();
-                                Console.WriteLine("Your Punch Card has been resetted to 0.");
-                                Console.WriteLine();
-                                break;
-                            }
-                            else //aka output is not y or n. 
-                            {
-                                Console.WriteLine();
-                                Console.WriteLine("Error: Invalid input. Please only enter Y or N.");
-                                Console.WriteLine();
-                            }
 
+                            int intRedeemPts = Convert.ToInt32(stringRedeemPts);
+
+                            if (intRedeemPts > maxAmtOfPointsToRedeem)
+                            {
+                                Console.WriteLine();
+                                Console.WriteLine($"Error: You can only redeem up to a maximum of {maxAmtOfPointsToRedeem} points!");
+                                Console.WriteLine();
+                                continue;
+
+                            }
+                            iceCreamPrice -= intRedeemPts * pointsToMoney;
+                            customerWithOrderToProcess.Rewards.RedeemPoints(intRedeemPts); //RedeemPoints is method in class. Will basically take the total points that customer currently have - amt of points they redeemed
+                            Console.WriteLine();
+                            Console.WriteLine($"You have successfully redeemed {intRedeemPts} points!");
+                            Console.WriteLine();
+                            break;
                         }
-                        catch (FormatException)
+                        else if (redeemOrNot.ToLower() == "n")
                         {
                             Console.WriteLine();
-                            Console.WriteLine("Error: Invalid input. Please only enter Y or N.");
+                            Console.WriteLine("You have chosen not to redeem any points.");
                             Console.WriteLine();
+                            break; //bc they do not want redeem
                         }
-                        catch (ArgumentException ex)
+                        else
                         {
                             Console.WriteLine();
-                            Console.WriteLine("Error: Invalid input. Please enter again");
+                            Console.WriteLine("Error: Invalid input. Please only enter [ Y / N ]!");
                             Console.WriteLine();
-                        }
-                        catch (InvalidOperationException ex)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine($"Error: {ex.Message}");
-                            Console.WriteLine();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine($"Error: {ex.Message}");
-                            Console.WriteLine();
+
                         }
                     }
-                }
-
-                if (customerWithOrderToProcess.Rewards.Points > 0 && customerWithOrderToProcess.Rewards.Tier != "Ordinary") //Only gold and sliver can redeem
-                {
-                    Console.WriteLine("You are eligible for points redemption!");
-
-                    while (true)
+                    catch (FormatException)
                     {
-                        try
-                        {
-                            Console.WriteLine($"Amount of points available before payment: {customerWithOrderToProcess.Rewards.Points}");
-
-                            int maxAmtOfPointsToRedeem = Convert.ToInt32(Math.Floor(iceCreamPrice / pointsToMoney)); //bc if dont do this, can customer might want to redeem all of their points. but then they buy a $1 thing only, yet they choose use all their points which is worth $10. just dont make sense
-                                                                                                                     //^^ int bc points should be in int. and round down to nearest integer, NOT round up.
-
-                            if (customerWithOrderToProcess.Rewards.Points <= maxAmtOfPointsToRedeem) //bc in case customer have 20 pts, but they can redeem up to 100 pts. the max amount of pts they eventually can redeem is 20 pts since they dh enough pts to redeem all 100 pts. the ELSE part for this would be like: but if they have 500 pts, can redeem 100 pts, the max amount they can redeem is just 100 pts. etc etc
-                            {
-                                maxAmtOfPointsToRedeem = customerWithOrderToProcess.Rewards.Points;
-                            }
-
-                            Console.WriteLine($"You can redeem up to a maximum of {maxAmtOfPointsToRedeem} points.");
-                            Console.Write("Would you like to redeem your points [ Y / N ] ?: ");
-                            string redeemOrNot = Console.ReadLine();
-                            if (string.IsNullOrWhiteSpace(redeemOrNot))
-                            {
-                                Console.WriteLine();
-                                Console.WriteLine("Error: Invalid input. Please enter again!");
-                                Console.WriteLine();
-                            }
-
-                            if (redeemOrNot.ToLower() == "y")
-                            {
-                                Console.Write("Enter amount of points to redeem: ");
-                                string stringRedeemPts = Console.ReadLine();
-
-                                if (string.IsNullOrWhiteSpace(stringRedeemPts))
-                                {
-                                    Console.WriteLine();
-                                    Console.WriteLine("Error: Invalid input. Please enter again!");
-                                    Console.WriteLine();
-                                    continue;
-                                }
-
-                                int intRedeemPts = Convert.ToInt32(stringRedeemPts);
-
-                                if (intRedeemPts > maxAmtOfPointsToRedeem)
-                                {
-                                    Console.WriteLine();
-                                    Console.WriteLine($"Error: You can only redeem up to a maximum of {maxAmtOfPointsToRedeem} points!");
-                                    Console.WriteLine();
-                                    continue;
-
-                                }
-                                iceCreamPrice -= intRedeemPts * pointsToMoney;
-                                customerWithOrderToProcess.Rewards.RedeemPoints(intRedeemPts); //RedeemPoints is method in class. Will basically take the total points that customer currently have - amt of points they redeemed
-                                Console.WriteLine();
-                                Console.WriteLine($"You have successfully redeemed {intRedeemPts} points!");
-                                Console.WriteLine();
-                                break;
-                            }
-                            else if (redeemOrNot.ToLower() == "n")
-                            {
-                                Console.WriteLine();
-                                Console.WriteLine("You have chosen not to redeem any points.");
-                                Console.WriteLine();
-                                break; //bc they do not want redeem
-                            }
-                            else
-                            {
-                                Console.WriteLine();
-                                Console.WriteLine("Error: Invalid input. Please only enter [ Y / N ]!");
-                                Console.WriteLine();
-
-                            }
-                        }
-                        catch (FormatException)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("Error: Invalid input. Please enter a valid integer.");
-                            Console.WriteLine();
-                            // Additional handling if needed
-                        }
-                        catch (ArgumentNullException)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("Error: Invalid input. Please enter a valid value.");
-                            Console.WriteLine();
-                            // Additional handling if needed
-                        }
-                        catch (ArgumentException)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("Error: Invalid input. Please enter a valid value.");
-                            Console.WriteLine();
-                            // Additional handling if needed
-                        }
-                        catch (OverflowException)
-                        {
-                            Console.WriteLine();
-                            Console.WriteLine("Error: Invalid input. Please enter a valid value.");
-                            Console.WriteLine();
-                            // Additional handling if needed
-                        }
+                        Console.WriteLine();
+                        Console.WriteLine("Error: Invalid input. Please enter a valid integer.");
+                        Console.WriteLine();
+                        // Additional handling if needed
+                    }
+                    catch (ArgumentNullException)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Error: Invalid input. Please enter a valid value.");
+                        Console.WriteLine();
+                        // Additional handling if needed
+                    }
+                    catch (ArgumentException)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Error: Invalid input. Please enter a valid value.");
+                        Console.WriteLine();
+                        // Additional handling if needed
+                    }
+                    catch (OverflowException)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Error: Invalid input. Please enter a valid value.");
+                        Console.WriteLine();
+                        // Additional handling if needed
                     }
                 }
-                else
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("You are not eligible for points redemption.");
-                }
-
-                //Now display all new info like final total bill
-                Console.WriteLine();
-                Console.WriteLine($"Your Final Total Bill: ${iceCreamPrice}");
-                //Console.WriteLine($"Your Points before payment: {customerWithOrderToProcess.Rewards.Points}");
-                Console.WriteLine($"Your Tier before payment: {customerWithOrderToProcess.Rewards.Tier}");
-                Console.WriteLine($"Your Punch Card before payment: {customerWithOrderToProcess.Rewards.PunchCard}");
-                Console.WriteLine();
-
-                //Promot customer press any key makej payment
-                Console.Write("Enter any key to make payment: ");
-                Console.ReadKey();
-
-                //When any key clicked, these code executes
-                Console.WriteLine();
-
-                orderToProcess.TimeFulfilled = DateTime.Now;
-
-                Console.WriteLine($"Payment is successfully completed as of {orderToProcess.TimeFulfilled.ToString()}");
-                Console.WriteLine();
-
-
-                // Only when they successfully make payment, then they can earn the points
-                int pointsEarnedFromOrder = Convert.ToInt32(Math.Floor(iceCreamPrice * 0.72)); // Round down to the nearest integer
-                customerWithOrderToProcess.Rewards.AddPoints(pointsEarnedFromOrder);
-
-                // Increment punch card for each ice cream ordered
-                for (int i = 0; i < orderToProcess.IceCreamList.Count; i++)
-                {
-                    customerWithOrderToProcess.Rewards.Punch();
-                }
-
-                // The tier should be automatically updated within the Rewards class
-                Console.WriteLine($"Your Points after payment: {customerWithOrderToProcess.Rewards.Points}");
-                Console.WriteLine($"Your Tier after payment: {customerWithOrderToProcess.Rewards.Tier}");
-                Console.WriteLine($"Your Punch Card after payment: {customerWithOrderToProcess.Rewards.PunchCard}");
-                Console.WriteLine();
-
-                //things to do once payment is completed
-                iceCreamPrice = 0.0; //reset for new customer
-                customerWithOrderToProcess.OrderHistory.Add(orderToProcess);
-                customerWithOrderToProcess.CurrentOrder = null; //check out alrd, current order becomes empty
-                                                                //^^ if want append data here, can make dictionary with key = customerWithOrderToProcess then value = orderToProcess???
-
-                //continueagain FROM HERE. APPEND THE COMPLETED ORDER TO ORDER CSV AT THE EXIT 0 THERE. AND THEN TEST THIS ADV 1 OUT BC U COMPLETE BUT HAVENT TEST YETTT
             }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("You are not eligible for points redemption.");
+            }
+
+            //Now display all new info like final total bill
+            Console.WriteLine();
+            Console.WriteLine($"Your Final Total Bill: ${iceCreamPrice}");
+            //Console.WriteLine($"Your Points before payment: {customerWithOrderToProcess.Rewards.Points}");
+            Console.WriteLine($"Your Tier before payment: {customerWithOrderToProcess.Rewards.Tier}");
+            Console.WriteLine($"Your Punch Card before payment: {customerWithOrderToProcess.Rewards.PunchCard}");
+            Console.WriteLine();
+
+            //Promot customer press any key makej payment
+            Console.Write("Enter any key to make payment: ");
+            Console.ReadKey();
+
+            //When any key clicked, these code executes
+            Console.WriteLine();
+
+
+            orderToProcess.TimeFulfilled = DateTime.Now;
+
+            Console.WriteLine($"Payment is successfully completed as of {orderToProcess.TimeFulfilled.ToString()}");
+            Console.WriteLine();
+
+            // Only when they successfully make payment, then they can earn the points
+            customerWithOrderToProcess.Rewards.AddPoints(Convert.ToInt32(Math.Floor(iceCreamPrice)));
+
+            PunchIceCream(orderToProcess, customerWithOrderToProcess.Rewards, redeemPunchOrNo);
+            // The tier should be automatically updated within the Rewards class
+            Console.WriteLine($"Your Points after payment: {customerWithOrderToProcess.Rewards.Points}");
+            Console.WriteLine($"Your Tier after payment: {customerWithOrderToProcess.Rewards.Tier}");
+            Console.WriteLine($"Your Punch Card after payment: {customerWithOrderToProcess.Rewards.PunchCard}");
+            Console.WriteLine();
+
+
+
+            //things to do once payment is completed
+            iceCreamPrice = 0.0; //reset for new customer
+            customerWithOrderToProcess.OrderHistory.Add(orderToProcess);
+            customerWithOrderToProcess.CurrentOrder = null; //check out alrd, current order becomes empty
+                                                            //^^ if want append data here, can make dictionary with key = customerWithOrderToProcess then value = orderToProcess???
+
+            //continueagain FROM HERE. APPEND THE COMPLETED ORDER TO ORDER CSV AT THE EXIT 0 THERE. AND THEN TEST THIS ADV 1 OUT BC U COMPLETE BUT HAVENT TEST YETTT
         }
+
 
         // ------- ADVANCED 2 ( weiying )--------------------------------------------------------------------------------------------------------------------------------------
         static void DisplayAmountForTheYear(List<Customer> cList)
@@ -1817,5 +1839,3 @@ class Program
         }
     }
 }
-
-
