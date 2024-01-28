@@ -1,9 +1,8 @@
 ﻿//==========================================================
-// Student Number : S10257856
-// Student Name : Amelia Goh
-// Partner Name : Lee Wei Ying
+// Student Number : S10258645
+// Student Name : Lee Wei Ying
+// Partner Name : Amelia Goh
 //==========================================================
-
 using PairAssignment;
 using System;
 using System.Collections.Generic;

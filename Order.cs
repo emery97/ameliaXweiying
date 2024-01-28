@@ -1,9 +1,8 @@
 ﻿//==========================================================
-// Student Number : S10257856
-// Student Name : Amelia Goh
-// Partner Name : Lee Wei Ying
+// Student Number : S10258645
+// Student Name : Lee Wei Ying
+// Partner Name : Amelia Goh
 //==========================================================
-
 using PairAssignment;
 using System;
 using System.Collections.Generic;
@@ -60,16 +59,16 @@ namespace PairAssignment
                     Console.WriteLine();
                     Console.WriteLine("How would you like to modify your ice cream:");
 
-                    Console.WriteLine("[1] Ice Cream Option");
+                    Console.Write("[1] Ice Cream Option: ");
                     string userOption = Console.ReadLine(); //Dont convert to int yet so can check if the user input for option is null/invalid
 
-                    Console.WriteLine("[2] Ice Cream Scoops");
+                    Console.Write("[2] Ice Cream Scoops: ");
                     int userScoops = int.Parse(Console.ReadLine());
 
-                    Console.WriteLine("[3] Ice Cream Flavour Type");
+                    Console.Write("[3] Ice Cream Flavour Type: ");
                     string userFlavourType = Console.ReadLine();
 
-                    Console.WriteLine("[4] Ice Cream Toppings");
+                    Console.Write("[4] Ice Cream Toppings: ");
                     string userToppings = Console.ReadLine();
 
                     Console.WriteLine("[5]  Dipped (Only for Cone)");
@@ -470,7 +469,6 @@ namespace PairAssignment
 
         public double CalculateTotal()
         {
-
             double totalamount = 0;
 
             foreach (var icecream in IceCreamList)
@@ -478,7 +476,6 @@ namespace PairAssignment
                 totalamount += icecream.CalculatePrice();
             }
             return totalamount;  //NOT INCLUDING FREE ONES 
-
 
         }
 

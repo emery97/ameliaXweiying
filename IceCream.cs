@@ -1,7 +1,7 @@
 ﻿//==========================================================
-// Student Number : S10257856
-// Student Name : Amelia Goh
-// Partner Name : Lee Wei Ying
+// Student Number : S10258645
+// Student Name : Lee Wei Ying
+// Partner Name : Amelia Goh
 //==========================================================
 
 using PairAssignment;
@@ -58,7 +58,7 @@ namespace PairAssignment
             }
             if (flavoursText == "")
             {
-                flavoursText = "NIL";
+                flavoursText = "None"; //When no toppings, this wil print!
             }
 
 
@@ -76,7 +76,7 @@ namespace PairAssignment
             }
             if (toppingsText == "")
             {
-                toppingsText = "None"; //When no toppings, this wil print!
+                toppingsText = "None";
             }
 
 
