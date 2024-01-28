@@ -26,6 +26,7 @@ namespace PairAssignment
             int premiumCount = 0;
             int toppingCount = ToppingList.Count();
 
+
             foreach (Flavour flavour in FlavourList)
             {
                 if (flavour.Premium == true)
@@ -36,7 +37,7 @@ namespace PairAssignment
 
             if (Scoops == 1)
             {
-                return 4.00 + (1 * toppingCount) + (2 * premiumCount);
+                return 4.00 + ( 1 * toppingCount ) + (2 * premiumCount);
             }
             else if (Scoops == 2)
             {

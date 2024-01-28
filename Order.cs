@@ -1,8 +1,9 @@
 ﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
 //==========================================================
+
 using PairAssignment;
 using System;
 using System.Collections.Generic;
@@ -59,16 +60,16 @@ namespace PairAssignment
                     Console.WriteLine();
                     Console.WriteLine("How would you like to modify your ice cream:");
 
-                    Console.Write("[1] Ice Cream Option: ");
+                    Console.WriteLine("[1] Ice Cream Option");
                     string userOption = Console.ReadLine(); //Dont convert to int yet so can check if the user input for option is null/invalid
 
-                    Console.Write("[2] Ice Cream Scoops: ");
+                    Console.WriteLine("[2] Ice Cream Scoops");
                     int userScoops = int.Parse(Console.ReadLine());
 
-                    Console.Write("[3] Ice Cream Flavour Type: ");
+                    Console.WriteLine("[3] Ice Cream Flavour Type");
                     string userFlavourType = Console.ReadLine();
 
-                    Console.Write("[4] Ice Cream Toppings: ");
+                    Console.WriteLine("[4] Ice Cream Toppings");
                     string userToppings = Console.ReadLine();
 
                     Console.WriteLine("[5]  Dipped (Only for Cone)");

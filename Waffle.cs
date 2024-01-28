@@ -53,7 +53,7 @@ namespace PairAssignment
 
             if (Scoops == 1)
             {
-                return 7.00 + premiumWaffle + (1 * toppingCount) + (2 * premiumCount);
+                return 7.00 + premiumWaffle + ( 1 * toppingCount ) + (2 * premiumCount);
             }
             else if (Scoops == 2)
             {

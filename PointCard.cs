@@ -1,8 +1,10 @@
 ﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
 //==========================================================
+
+
 using PairAssignment;
 using System;
 using System.Collections.Generic;
@@ -25,7 +27,12 @@ namespace PairAssignment
         public string Tier { get; set; }
 
         //Constructors
-        public PointCard() { }
+        public PointCard()
+        {
+            Points = 0;
+            PunchCard = 0;
+            Tier = "Ordinary"; //bc in basic 3, will assign pointcard() to new customer and this is the values of the points, punchcard etc bc they are NEW
+        }
 
         public PointCard(int p, int pc)
         {
@@ -47,22 +54,32 @@ namespace PairAssignment
         }
 
         //Methods
-        public void AddPoints(int totalAmt) //totalAmt is the final amount paid by customer for the order since points r earned from those
+
+        public void AddPoints(int totalAmt) // totalAmt is the final amount paid by customer for the order since points are earned from those
         {
             int pointsToAdd = Convert.ToInt32(Math.Floor(totalAmt * 0.72));
             Points += pointsToAdd;
 
-            if (Points >= 100) //Update their tier since points increase
+            if (Points >= 100 || Tier == "Gold") // Update their tier since points increase ++ Have the '|| Tier == "Gold"' is so that if your tier = gold, our tier is forveer = gold since you cant drop back down.
             {
                 Tier = "Gold";
             }
-            else if (Points >= 50 && Points < 100)
+            else if ( (Points >= 50 && Points < 100) || Tier == "Sliver" )
             {
-                Tier = "Sliver";
+                Tier = "Silver"; // Corrected from 'Sliver' to 'Silver'
             }
             else
             {
                 Tier = "Ordinary";
+            }
+        }
+
+        public void Punch()
+        {
+            PunchCard++; // Increase for every ice cream ordered
+            if (PunchCard >= 10) // Corrected from '>' to '>='
+            {
+                PunchCard = 0; // Set to 0 again. 
             }
         }
 
@@ -73,15 +90,7 @@ namespace PairAssignment
             {
                 Points -= reedemedPoints;  // Will ask for amt of points they want redeem in main prg. 
             }
-        }
 
-        public void Punch()
-        {
-            punchCard++; //increase for every ice cream ordered
-            if (PunchCard > 10) //bc for every 10 ice creams ordered, then aft that punchcard will reset to 0
-            {
-                PunchCard = 0; //set to 0 again. 
-            }
         }
 
         public override string ToString()

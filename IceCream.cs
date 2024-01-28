@@ -1,7 +1,7 @@
 ﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
 //==========================================================
 
 using PairAssignment;
@@ -40,7 +40,7 @@ namespace PairAssignment
 
         public override string ToString()
         {
-            string results = String.Format("{0,-10} {1,-10} {2,-40} {3,-40} \n", "Option", "Scoops", "Flavour [Quantity]", "Topping");
+            string results = String.Format("{0,-10} {1,-10} {2,-45} {3,-40} \n", "Option", "Scoops", "Flavour [Quantity]", "Topping");
 
 
             string flavoursText = "";
@@ -76,11 +76,11 @@ namespace PairAssignment
             }
             if (toppingsText == "")
             {
-                toppingsText = "NIL";
+                toppingsText = "None"; //When no toppings, this wil print!
             }
 
 
-            results += String.Format("{0,-10} {1,-10} {2,-40} {3,-15}\n", Option, Scoops, flavoursText, toppingsText);
+            results += String.Format("{0,-10} {1,-10} {2,-45} {3,-25}\n", Option, Scoops, flavoursText, toppingsText);
 
             return results;
         }

@@ -1,7 +1,7 @@
 ﻿//==========================================================
-// Student Number : S10258645
-// Student Name : Lee Wei Ying
-// Partner Name : Amelia Goh
+// Student Number : S10257856
+// Student Name : Amelia Goh
+// Partner Name : Lee Wei Ying
 //==========================================================
 
 using System;
@@ -440,7 +440,6 @@ class Program
                 string dobInput = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(dobInput))
                 {
-                    Console.WriteLine();
                     Console.WriteLine("Error: Date Of Birth cannot be empty. Please enter again!");
                     Console.WriteLine();
                     continue; // ask the user again
@@ -451,7 +450,6 @@ class Program
                     {
                         if (dob > DateTime.Now)
                         {
-                            Console.WriteLine();
                             Console.WriteLine("Error: Date Of Birth has to be before today! Please enter again.");
                             Console.WriteLine();
                             continue; // ask again
@@ -463,29 +461,34 @@ class Program
                     }
                     else
                     {
-                        Console.WriteLine();
                         Console.WriteLine("Error: Invalid date format. Please enter again in the format of (DD/MM/YYYY)!");
                         Console.WriteLine();
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine();
                     Console.WriteLine($"Error: {ex.Message}");
                     Console.WriteLine();
                 }
             }
+
 
             // Now make customer obj with whatever user just gave
             string dateOnly = dob.ToString("dd/MM/yyyy");
             Customer customer = new Customer(name, memberID, dob);
             cList.Add(customer);
 
+
             //Make pointcard object
             PointCard pointcard = new PointCard();
 
             //Match this new pointcard obj to the new customer
             customer.Rewards = pointcard; //points, tier etc would be 0 and ordinary since is a new customer [all these are declared in pointcard class since this 'pointcard' non paramterized constructor in point card class r points with values of 0, etc etc
+
+            Console.WriteLine();
+            Console.WriteLine($"Customer {name} has been successfully registered!");
+            Console.WriteLine();
+
         }
 
         //------- BASIC 4 ( Amelia ) -------------------------------------------------------------------------------------------------------------------------------------- //
@@ -607,7 +610,6 @@ class Program
                         }
 
                         selectedCustomer.CurrentOrder = newOrder;
-                        //selectedCustomer.CurrentOrder = null; // Reset current order
                         orderCreated = true;
                         currentOrderId++;
                     }
@@ -937,7 +939,7 @@ class Program
                     }
                 }
                 if (newIceCream != null)
-                { 
+                {
                     break;
                 }
             }
@@ -1588,34 +1590,31 @@ class Program
 
                 //When any key clicked, these code executes
                 Console.WriteLine();
-                foreach (IceCream ic in orderToProcess.IceCreamList)
-                {
-                    Console.WriteLine(customerWithOrderToProcess.Rewards.PunchCard);
-                    customerWithOrderToProcess.Rewards.Punch(); //for increment of pucnchcard for every ice cream ordered
-                    Console.WriteLine(customerWithOrderToProcess.Rewards.PunchCard);
-                }
 
-                if (customerWithOrderToProcess.Rewards.PunchCard == 10) //this is for when AFTER they order everything already, then they hit 10. eg PC was 6, then customer buy 4 ice creams. Hit 10, but cannot redeem now since they also havent buy their 11th ice cream yet. If PC was 6 then they buy 5, still can. but if PC 6, they buy 4, canot
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("You have completed your Punch Card!");
-                    Console.WriteLine("Your next ice cream order would be free of charge.");
-                    Console.WriteLine();
-                }
 
                 orderToProcess.TimeFulfilled = DateTime.Now;
 
                 Console.WriteLine($"Payment is successfully completed as of {orderToProcess.TimeFulfilled.ToString()}");
                 Console.WriteLine();
 
-                //only when they actually successfully make payment, then can earn the pts 
-                int pointsEarnedFromOrder = Convert.ToInt32(Math.Floor(iceCreamPrice * 0.72)); //bc pts muust round down to be integer
+                // Only when they successfully make payment, then they can earn the points
+                int pointsEarnedFromOrder = Convert.ToInt32(Math.Floor(iceCreamPrice * 0.72)); // Round down to the nearest integer
                 customerWithOrderToProcess.Rewards.AddPoints(pointsEarnedFromOrder);
 
+
+                // Increment punch card for each ice cream ordered
+                for (int i = 0; i < orderToProcess.IceCreamList.Count; i++)
+                {
+                    customerWithOrderToProcess.Rewards.Punch();
+                }
+
+                // The tier should be automatically updated within the Rewards class
                 Console.WriteLine($"Your Points after payment: {customerWithOrderToProcess.Rewards.Points}");
-                Console.WriteLine($"Your Tier after payment: {customerWithOrderToProcess.Rewards.Tier}");            // ********************** error here, tier is not remaining as gold
-                Console.WriteLine($"Your Punch Card after payment: {customerWithOrderToProcess.Rewards.PunchCard}"); // *********************** error here, punch card is not increasing even after payment
+                Console.WriteLine($"Your Tier after payment: {customerWithOrderToProcess.Rewards.Tier}");
+                Console.WriteLine($"Your Punch Card after payment: {customerWithOrderToProcess.Rewards.PunchCard}");
                 Console.WriteLine();
+
+               
 
                 //things to do once payment is completed
                 iceCreamPrice = 0.0; //reset for new customer
@@ -1866,7 +1865,6 @@ class Program
                 {
                     Console.WriteLine(oh.ToString());
                 }
-                Console.WriteLine("You have exited the process of displaying order history.");
                 Console.WriteLine();
             }
             else
