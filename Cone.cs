@@ -54,7 +54,6 @@ namespace PairAssignment
                 }
             }
 
-
             if (Dipped == true)
             {
                 dipped = 2; //so if dipped not true aka no dip, then will just remain as 0 
@@ -74,9 +73,9 @@ namespace PairAssignment
             }
 
             double finalPrice = (basePrice) + (premiumCount * 2.00) + (toppingCount * 1.00) + (dipped);
+
             return finalPrice;
 
-            
 
         }
 

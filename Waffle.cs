@@ -45,6 +45,7 @@ namespace PairAssignment
                 }
             }
 
+
             foreach (Topping topping in ToppingList)
             {
                 // Check if topping type is not "none" and not an empty string
@@ -54,13 +55,11 @@ namespace PairAssignment
                 }
             }
 
-
-
-            List<string> premiumWaffleFlavors = new List<string> { "red velvet", "charcoal", "pandan" };
-
-            if (premiumWaffleFlavors.Contains(WaffleFlavour.ToLower()))
+            WaffleFlavour = WaffleFlavour.ToLower();
+            if (WaffleFlavour == "red velvet" || WaffleFlavour == "charcoal" || WaffleFlavour == "pandan")
             {
-                premiumWaffle = 3;
+                premiumWaffle = 3.00; //since if premium then need add $3.
+                //but if no, then premiumWaffle will just = 0, as can see from the start
             }
 
             if (Scoops == 1)
@@ -77,6 +76,7 @@ namespace PairAssignment
             }
 
             double finalPrice = (basePrice) + (premiumCount * 2.00) + (toppingCount * 1.00) + (premiumWaffle);
+
             return finalPrice;
         }
 

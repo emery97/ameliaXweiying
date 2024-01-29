@@ -22,7 +22,7 @@ namespace PairAssignment
 
         }
 
-        
+
         public override double CalculatePrice()
         {
             int premiumCount = 0;
@@ -63,7 +63,7 @@ namespace PairAssignment
             double finalPrice = (basePrice) + (premiumCount * 2.00) + (toppingCount * 1.00);
 
             return finalPrice;
-         
+
 
         }
 
