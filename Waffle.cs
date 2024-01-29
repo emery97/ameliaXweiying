@@ -41,23 +41,26 @@ namespace PairAssignment
             {
                 if (flavour.Premium == true)
                 {
-                    premiumCount++;
+                    premiumCount += flavour.Quantity;
                 }
             }
 
             foreach (Topping topping in ToppingList)
             {
-                if (topping.Type.ToLower() != "none") //so that when topping is none, then no add to topping count
+                // Check if topping type is not "none" and not an empty string
+                if (!string.IsNullOrEmpty(topping.Type) && topping.Type.ToLower() != "none")
                 {
                     toppingCount++;
                 }
             }
 
-            WaffleFlavour = WaffleFlavour.ToLower();
-            if (WaffleFlavour == "red velvet" || WaffleFlavour == "charcoal" || WaffleFlavour == "pandan")
+
+
+            List<string> premiumWaffleFlavors = new List<string> { "red velvet", "charcoal", "pandan" };
+
+            if (premiumWaffleFlavors.Contains(WaffleFlavour.ToLower()))
             {
-                premiumWaffle = 3.00; //since if premium then need add $3.
-                //but if no, then premiumWaffle will just = 0, as can see from the start
+                premiumWaffle = 3;
             }
 
             if (Scoops == 1)
@@ -74,7 +77,6 @@ namespace PairAssignment
             }
 
             double finalPrice = (basePrice) + (premiumCount * 2.00) + (toppingCount * 1.00) + (premiumWaffle);
-
             return finalPrice;
         }
 

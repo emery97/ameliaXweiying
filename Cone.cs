@@ -38,19 +38,22 @@ namespace PairAssignment
 
             foreach (Flavour flavour in FlavourList)
             {
-                if (flavour.Premium == true) //see if is premium flavour --> bool
+                if (flavour.Premium == true)
                 {
-                    premiumCount++;
+                    premiumCount += flavour.Quantity;
                 }
             }
 
+
             foreach (Topping topping in ToppingList)
             {
-                if (topping.Type.ToLower() != "none") //so that when topping is none, then no add to topping count
+                // Check if topping type is not "none" and not an empty string
+                if (!string.IsNullOrEmpty(topping.Type) && topping.Type.ToLower() != "none")
                 {
                     toppingCount++;
                 }
             }
+
 
             if (Dipped == true)
             {
@@ -71,9 +74,9 @@ namespace PairAssignment
             }
 
             double finalPrice = (basePrice) + (premiumCount * 2.00) + (toppingCount * 1.00) + (dipped);
-
             return finalPrice;
 
+            
 
         }
 
